@@ -1,0 +1,5 @@
+name = Entity Print
+core = 7.x
+package = Other
+
+dependencies[] = phpwkhtmltopdf

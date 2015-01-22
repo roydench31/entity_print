@@ -1,0 +1,162 @@
+<?php
+
+/**
+ * @file
+ * Print any entity.
+ */
+
+/**
+ * Implements hook_entity_print().
+ */
+function entity_print_menu()  {
+  $items['entityprint/%/%'] = array(
+    'title' => 'Print PDF',
+    'page callback' => 'entity_print_entity_to_pdf',
+    'page arguments' => array(1, 2),
+    'type' => MENU_CALLBACK,
+    'access callback' => 'entity_print_access',
+    'access arguments' => array(1, 2),
+  );
+  $items['entityprint/%/%/debug'] = array(
+    'title' => 'Print PDF Debug',
+    'page callback' => 'entity_print_entity_debug',
+    'page arguments' => array(1, 2),
+    'type' => MENU_CALLBACK,
+    'access callback' => 'entity_print_access',
+    'access arguments' => array(1, 2),
+  );
+  return $items;
+}
+
+/**
+ * Validate that the current user has access.
+ *
+ * We need to validate that the user is allowed to access this entity also the
+ * print version.
+ *
+ * @param string $entity_type
+ *   The entity type.
+ * @param int $entity_id
+ *   The entity id.
+ *
+ * @return bool
+ *   TRUE if they have access otherwise FALSE.
+ */
+function entity_print_access($entity_type, $entity_id) {
+  // The user can't use our entity print module.
+  if (!user_access('entity print access')) {
+    return FALSE;
+  }
+  if ($entities = entity_load($entity_type, array($entity_id))) {
+    $entity = array_pop($entities);
+    return entity_access('view', $entity_type, $entity);
+  }
+
+  return FALSE;
+}
+
+/**
+ * Output an entity as a PDF.
+ *
+ * @param string $entity_type
+ *   The entity type.
+ * @param int $entity_id
+ *   The entity id.
+ */
+function entity_print_entity_to_pdf($entity_type, $entity_id) {
+  if ($entities = entity_load($entity_type, array($entity_id))) {
+
+    $library = libraries_load('phpwkhtmltopdf');
+    if (!empty($library['loaded'])) {
+
+      $pdf = new WkHtmlToPdf(array('binary' => variable_get('entity_print_wkhtmltopdf', '/usr/local/bin/wkhtmltopdf')));
+      $entity = reset($entities);
+      $html = _entity_print_get_generated_html($entity_type, $entity);
+
+      // Add a HTML file, a HTML string or a page from a URL
+      $pdf->addPage($html);
+
+      if (!$pdf->send()) {
+        print $pdf->getError();
+      }
+    }
+    else {
+      print $library['error message'];
+    }
+  }
+}
+
+/**
+ * A debug callback for styling up the PDF.
+ *
+ * @param string $entity_type
+ *   The entity type.
+ * @param int $entity_id
+ *   The entity id.
+ */
+function entity_print_entity_debug($entity_type, $entity_id) {
+  if ($entities = entity_load($entity_type, array($entity_id))) {
+    $entity = reset($entities);
+    print _entity_print_get_generated_html($entity_type, $entity);
+  }
+}
+
+/**
+ * Generate the HTML for our entity.
+ *
+ * @param string $entity_type
+ *   The entity type.
+ * @param object $entity
+ *   The entity we're rendering.
+ * @return string
+ *   The generate HTML.
+ *
+ * @throws \Exception
+ */
+function _entity_print_get_generated_html($entity_type, $entity) {
+  $info = entity_get_info($entity_type);
+  $entity_id = $entity->{$info['entity keys']['id']};
+
+  $html_array = entity_view($entity_type, array($entity), 'pdf');
+  return theme('entity_print__' . $entity_type . '__' . $entity_id, array('entity_array' => $html_array, 'entity' => $entity));
+}
+
+/**
+ * Implements hook_theme().
+ */
+function entity_print_theme($existing, $type, $theme, $path) {
+  return array(
+    'entity_print' => array(
+      'path' => $path . '/templates',
+      'template' => 'entity-print',
+      'variables' => array(
+        'entity_array' => NULL,
+        'entity' => NULL,
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_permission().
+ */
+function entity_print_permission() {
+  return array(
+    'entity print access' => array(
+      'title' => 'Use Entity Print',
+      'description' => 'Allow a user to use entity print to view the generated PDF',
+    ),
+  );
+}
+
+/**
+ * Implements hook_entity_info_alter().
+ */
+function entity_print_entity_info_alter(&$entity_info) {
+  foreach ($entity_info as $type => $info) {
+    $entity_info[$type]['view modes']['pdf'] = array(
+      'label' => 'PDF',
+      'custom settings' => FALSE,
+    );
+  }
+}
