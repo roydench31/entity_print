@@ -5,6 +5,8 @@
  * Print any entity.
  */
 
+define('ENTITY_PRINT_CSS_GROUP', 'entity_print');
+
 /**
  * Implements hook_entity_print().
  */
@@ -118,12 +120,78 @@ function _entity_print_get_generated_html($entity_type, $entity) {
   $entity_id = $entity->{$info['entity keys']['id']};
 
   $html_array = entity_view($entity_type, array($entity), 'pdf');
-  drupal_add_css(drupal_get_path('module', 'entity_print') . '/css/entity-print.css');
+
+  // Inject some generic CSS across all templates.
+  if (variable_get('entity_print_default_css', TRUE)) {
+    drupal_add_css(drupal_get_path('module', ENTITY_PRINT_CSS_GROUP) . '/css/entity-print.css', array('group' => 'entity_print'));
+  }
+
+  // Inject CSS from the theme info files.
+  $entity_print_css = _entity_print_get_css($entity_type, $entity, $info);
 
   return theme('entity_print__' . $entity_type . '__' . $entity_id, array(
     'entity_array' => $html_array,
-    'entity' => $entity
+    'entity' => $entity,
+    'entity_print_css' => $entity_print_css,
   ));
+}
+
+/**
+ * Inject the relevant css for the template.
+ *
+ * You can specify CSS files to be included per entity type and bundle in your
+ * themes css file. This code uses your current theme which is likely to be the
+ * front end theme.
+ *
+ * Example:
+ *
+ * entity_print[all] = 'css/all-pdfs.css'
+ * entity_print[commerce_order][commerce_order] = 'css/orders.css'
+ * entity_print[node][article] = 'css/article-pdf.css'
+ *
+ * @param string $entity_type
+ *   The entity type to add the css for.
+ * @param object $entity
+ *   The entity object.
+ * @param $entity_info
+ *   The entity info from entity_get_info().
+ *
+ * @return array
+ *   An array of stylesheets to be used for this template.
+ */
+function _entity_print_get_css($entity_type, $entity, $entity_info) {
+  global $theme;
+  $theme_path = drupal_get_path('theme', $theme);
+  $theme_info = drupal_parse_info_file($theme_path . "/$theme.info");
+
+  // Parse out the CSS from the theme info.
+  if (isset($theme_info['entity_print'])) {
+    foreach ($theme_info['entity_print'] as $key => $value) {
+      // All has special meaning and is applied to every PDF.
+      if ($key === 'all') {
+        drupal_add_css("$theme_path/$value", array('group' => ENTITY_PRINT_CSS_GROUP));
+      }
+      else {
+        // Parse our css files per entity type and bundle.
+        foreach ($value as $css_bundle => $css) {
+          if ($key === $entity_type && $entity->{$entity_info['entity keys']['bundle']} === $css_bundle) {
+            drupal_add_css("$theme_path/$css", array('group' => ENTITY_PRINT_CSS_GROUP));
+          }
+        }
+      }
+    }
+  }
+
+  // Grab all the css files and filter by group so we only have css defined to
+  // be used in entity print.
+  $entity_print_css = array();
+  foreach (drupal_add_css() as $css) {
+    if ($css['group'] === 'entity_print') {
+      $entity_print_css[] = $css;
+    }
+  }
+
+  return $entity_print_css;
 }
 
 /**
@@ -135,6 +203,7 @@ function entity_print_theme($existing, $type, $theme, $path) {
     'variables' => array(
       'entity_array' => NULL,
       'entity' => NULL,
+      'entity_print_css' => NULL,
     ),
   );
 
