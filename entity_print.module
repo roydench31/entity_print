@@ -143,10 +143,10 @@ function _entity_print_get_generated_html($entity_type, $entity) {
  * themes css file. This code uses your current theme which is likely to be the
  * front end theme.
  *
- * Example:
+ * Examples:
  *
  * entity_print[all] = 'css/all-pdfs.css'
- * entity_print[commerce_order][commerce_order] = 'css/orders.css'
+ * entity_print[commerce_order] = 'css/orders.css'
  * entity_print[node][article] = 'css/article-pdf.css'
  *
  * @param string $entity_type
@@ -172,12 +172,22 @@ function _entity_print_get_css($entity_type, $entity, $entity_info) {
         drupal_add_css("$theme_path/$value", array('group' => ENTITY_PRINT_CSS_GROUP));
       }
       else {
-        // Parse our css files per entity type and bundle.
-        foreach ($value as $css_bundle => $css) {
-          if ($key === $entity_type && $entity->{$entity_info['entity keys']['bundle']} === $css_bundle) {
-            drupal_add_css("$theme_path/$css", array('group' => ENTITY_PRINT_CSS_GROUP));
+
+        if ($key === $entity_type) {
+          // Parse our css files per entity type and bundle.
+          if (is_array($value)) {
+            foreach ($value as $css_bundle => $css) {
+              if ($entity->{$entity_info['entity keys']['bundle']} === $css_bundle) {
+                drupal_add_css("$theme_path/$css", array('group' => ENTITY_PRINT_CSS_GROUP));
+              }
+            }
+          }
+          else {
+            // They've supplied a css file for the whole entity type.
+            drupal_add_css("$theme_path/$value", array('group' => ENTITY_PRINT_CSS_GROUP));
           }
         }
+
       }
     }
   }
