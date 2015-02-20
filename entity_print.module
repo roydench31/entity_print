@@ -118,23 +118,30 @@ function _entity_print_get_generated_html($entity_type, $entity) {
   $entity_id = $entity->{$info['entity keys']['id']};
 
   $html_array = entity_view($entity_type, array($entity), 'pdf');
-  return theme('entity_print__' . $entity_type . '__' . $entity_id, array('entity_array' => $html_array, 'entity' => $entity));
+  drupal_add_css(drupal_get_path('module', 'entity_print') . '/css/entity-print.css');
+
+  return theme('entity_print__' . $entity_type . '__' . $entity_id, array(
+    'entity_array' => $html_array,
+    'entity' => $entity
+  ));
 }
 
 /**
  * Implements hook_theme().
  */
 function entity_print_theme($existing, $type, $theme, $path) {
-  return array(
-    'entity_print' => array(
-      'path' => $path . '/templates',
-      'template' => 'entity-print',
-      'variables' => array(
-        'entity_array' => NULL,
-        'entity' => NULL,
-      ),
+  $defaults = array(
+    'path' => $path . '/templates',
+    'variables' => array(
+      'entity_array' => NULL,
+      'entity' => NULL,
     ),
   );
+
+  $theme = array(
+    'entity_print' => $defaults + array('template' => 'entity-print'),
+  );
+  return $theme;
 }
 
 /**

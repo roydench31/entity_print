@@ -11,10 +11,13 @@
 ?>
 
 <html>
-  <head>
-    <title>PDF</title>
-  </head>
-  <body>
-    <?php print render($entity_array); ?>
-  </body>
+<head>
+  <title>PDF</title>
+  <?php print drupal_get_css();?>
+</head>
+<body>
+<div class="page">
+  <?php print render($entity_array); ?>
+</div>
+</body>
 </html>
