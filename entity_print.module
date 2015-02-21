@@ -123,7 +123,7 @@ function _entity_print_get_generated_html($entity_type, $entity) {
 
   // Inject some generic CSS across all templates.
   if (variable_get('entity_print_default_css', TRUE)) {
-    drupal_add_css(drupal_get_path('module', ENTITY_PRINT_CSS_GROUP) . '/css/entity-print.css', array('group' => 'entity_print'));
+    entity_print_add_css(drupal_get_path('module', 'entity_print') . '/css/entity-print.css');
   }
 
   // Inject CSS from the theme info files.
@@ -169,7 +169,7 @@ function _entity_print_get_css($entity_type, $entity, $entity_info) {
     foreach ($theme_info['entity_print'] as $key => $value) {
       // All has special meaning and is applied to every PDF.
       if ($key === 'all') {
-        drupal_add_css("$theme_path/$value", array('group' => ENTITY_PRINT_CSS_GROUP));
+        entity_print_add_css("$theme_path/$value");
       }
       else {
 
@@ -178,16 +178,15 @@ function _entity_print_get_css($entity_type, $entity, $entity_info) {
           if (is_array($value)) {
             foreach ($value as $css_bundle => $css) {
               if ($entity->{$entity_info['entity keys']['bundle']} === $css_bundle) {
-                drupal_add_css("$theme_path/$css", array('group' => ENTITY_PRINT_CSS_GROUP));
+                entity_print_add_css("$theme_path/$css");
               }
             }
           }
           else {
             // They've supplied a css file for the whole entity type.
-            drupal_add_css("$theme_path/$value", array('group' => ENTITY_PRINT_CSS_GROUP));
+            entity_print_add_css("$theme_path/$value");
           }
         }
-
       }
     }
   }
@@ -202,6 +201,16 @@ function _entity_print_get_css($entity_type, $entity, $entity_info) {
   }
 
   return $entity_print_css;
+}
+
+/**
+ * Add a CSS file for entity print.
+ *
+ * @param string $css_file
+ *   Path to the CSS file.
+ */
+function entity_print_add_css($css_file) {
+  drupal_add_css($css_file, array('group' => ENTITY_PRINT_CSS_GROUP));
 }
 
 /**
