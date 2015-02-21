@@ -41,7 +41,7 @@ function hook_entity_print_css($entity_type, $entity) {
  * @param $entity
  *   The entity we're rending.
  */
-function hook_entity_print_pdf(WkHtmlToPdf $pdf, $entity_type, $entity) {
+function hook_entity_print_pdf_alter(WkHtmlToPdf $pdf, $entity_type, $entity) {
   $terms = variable_get('terms_and_conditions', '');
   $pdf->addPage($terms);
 }
