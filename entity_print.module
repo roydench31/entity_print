@@ -161,7 +161,7 @@ function _entity_print_get_generated_html($entity_type, $entity) {
  * Examples:
  *
  * entity_print[all] = 'css/all-pdfs.css'
- * entity_print[commerce_order] = 'css/orders.css'
+ * entity_print[commerce_order][all] = 'css/orders.css'
  * entity_print[node][article] = 'css/article-pdf.css'
  *
  * @param string $entity_type
