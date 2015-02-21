@@ -183,16 +183,11 @@ function _entity_print_get_css($entity_type, $entity, $entity_info) {
       }
 
       // Parse our css files per entity type and bundle.
-      if (is_array($value)) {
-        foreach ($value as $css_bundle => $css) {
-          if ($entity->{$entity_info['entity keys']['bundle']} === $css_bundle) {
-            entity_print_add_css("$theme_path/$css");
-          }
+      foreach ($value as $css_bundle => $css) {
+        // If it's magic key "all" add it otherwise check the bundle.
+        if ($css_bundle === 'all' || $entity->{$entity_info['entity keys']['bundle']} === $css_bundle) {
+          entity_print_add_css("$theme_path/$css");
         }
-      }
-      else {
-        // They've supplied a css file for the whole entity type.
-        entity_print_add_css("$theme_path/$value");
       }
     }
   }

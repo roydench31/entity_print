@@ -1,0 +1,8 @@
+name = Entity Print Test Theme
+description = Test theme for testing Entity Print CSS
+core = 7.x
+hidden = TRUE
+
+entity_print[all] = css/entityprint-all.css
+entity_print[node][all] = css/entityprint-node.css
+entity_print[node][page] = css/entityprint-page.css

@@ -1,0 +1,5 @@
+name = Entity Print Test
+core = 7.x
+package = Entity Print
+hidden = true
+dependencies[] = entity_print

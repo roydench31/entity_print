@@ -1,6 +1,12 @@
 name = Entity Print
 core = 7.x
-package = Other
+package = Entity Print
 
 dependencies[] = entity
 dependencies[] = phpwkhtmltopdf
+
+files[] = tests/entity_print.test
+
+test_dependencies[] = entity
+test_dependencies[] = libraries
+test_dependencies[] = phpwkhtmltopdf
