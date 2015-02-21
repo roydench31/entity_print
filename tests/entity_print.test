@@ -54,6 +54,10 @@ class EntityPrintTest extends DrupalWebTestCase {
     $this->assertRaw('entityprint-all.css');
     $this->assertRaw('entityprint-page.css');
     $this->assertRaw('entityprint-node.css');
+
+    // Test that CSS was added from hook_entity_print_css(). See the
+    // entity_print_test module for the implementation.
+    $this->assertRaw('entityprint-module.css');
   }
 
 }
