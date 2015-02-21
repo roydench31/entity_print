@@ -126,6 +126,9 @@ function _entity_print_get_generated_html($entity_type, $entity) {
     entity_print_add_css(drupal_get_path('module', 'entity_print') . '/css/entity-print.css');
   }
 
+  // Allow other modules to add their own CSS.
+  module_invoke_all('entity_print_css', $entity_type, $entity);
+
   // Inject CSS from the theme info files.
   $entity_print_css = _entity_print_get_css($entity_type, $entity, $info);
 
