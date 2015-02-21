@@ -1,6 +1,7 @@
 name = Entity Print
 core = 7.x
 package = Entity Print
+configure = admin/config/content/entityprint
 
 dependencies[] = entity
 dependencies[] = phpwkhtmltopdf
