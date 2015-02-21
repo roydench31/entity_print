@@ -27,3 +27,21 @@ function hook_entity_print_css($entity_type, $entity) {
     entity_print_add_css($path . '/css/commerce-order.css');
   }
 }
+
+/**
+ * Allows other modules to get hold of the pdf object for making changes.
+ *
+ * Only use this function if you're not able to achieve the right outcome with
+ * a custom template and CSS.
+ *
+ * @param \WkHtmlToPdf $pdf
+ *   The pdf object.
+ * @param string $entity_type
+ *   The entity type of the entity we're rendering.
+ * @param $entity
+ *   The entity we're rending.
+ */
+function hook_entity_print_pdf(WkHtmlToPdf $pdf, $entity_type, $entity) {
+  $terms = variable_get('terms_and_conditions', '');
+  $pdf->addPage($terms);
+}

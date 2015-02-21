@@ -87,6 +87,9 @@ function entity_print_entity_to_pdf($entity_type, $entity_id) {
       // Add a HTML file, a HTML string or a page from a URL
       $pdf->addPage($html);
 
+      // Allow other modules to alter the generated PDF object.
+      drupal_alter('entity_print_pdf', $pdf, $entity_type, $entity);
+
       if (!$pdf->send()) {
         print $pdf->getError();
       }
