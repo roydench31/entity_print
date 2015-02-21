@@ -19,7 +19,7 @@ function entity_print_settings_form() {
   $form['entity_print_wkhtmltopdf'] = array(
     '#type' => 'textfield',
     '#title' => t('WkhtmlToPdf Location'),
-    '#description' => t('Set this to the system path where WkhtmlToPdf is stored.'),
+    '#description' => t('Set this to the system path where WkhtmlToPdf is located.'),
     '#default_value' => variable_get('entity_print_wkhtmltopdf', '/usr/local/bin/wkhtmltopdf'),
   );
   return system_settings_form($form);
