@@ -1,0 +1,10 @@
+{
+  "name": "benjy/entity_print",
+  "type": "drupal-module",
+  "description": "PDF print solution for any Drupal entity.",
+  "homepage": "http://drupal.org/project/entity_print",
+  "license": "GPL-2.0+",
+  "require": {
+    "mikehaertl/phpwkhtmltopdf": "*"
+  }
+}

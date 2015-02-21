@@ -1,0 +1,7 @@
+entity print access:
+  title: 'Use Entity Print'
+  description: 'Allow a user to use entity print to view the generated PDF.'
+administer entity print:
+  title: 'Administer Entity Print'
+  description: 'Allow users to administer the Entity Print settings.'
+  restrict access: true

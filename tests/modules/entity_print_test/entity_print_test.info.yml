@@ -1,0 +1,8 @@
+name: Entity Print Test
+type: module
+core: 8.x
+version: VERSION
+package: Testing
+hidden: true
+dependencies:
+  - entity_print

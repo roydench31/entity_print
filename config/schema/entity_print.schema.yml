@@ -1,0 +1,13 @@
+entity_print.settings:
+  type: mapping
+  label: 'Entity Print settings'
+  mapping:
+    default_css:
+      type: string
+      label: 'Enable the default CSS'
+    wkhtmltopdf_location:
+      type: string
+      label: 'Location of the wkhtmltopdf binary'
+    pdf_engine:
+      type: string
+      label: 'Pdf engine to use'

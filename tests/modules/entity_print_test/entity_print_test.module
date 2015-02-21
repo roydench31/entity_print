@@ -16,6 +16,6 @@ function entity_print_test_system_theme_info() {
 /**
  * Implements hook_entity_print_css().
  */
-function entity_print_test_entity_print_css($entity_type, $entity) {
-  entity_print_add_css(drupal_get_path('theme', 'entity_print_test_theme') . '/css/entityprint-module.css');
+function entity_print_test_entity_print_css_alter(&$render, $entity) {
+  $render['#attached']['library'][] = 'entity_print_test_theme/module';
 }

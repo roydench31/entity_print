@@ -1,0 +1,25 @@
+entity_print.view:
+  path: 'entityprint/{entity_type}/{entity_id}'
+  defaults:
+    _controller: '\Drupal\entity_print\Controller\EntityPrintController::viewPdf'
+    _titlte: 'Entity Print'
+  requirements:
+    _permission: 'entity print access'
+    _custom_access: '\Drupal\entity_print\Controller\EntityPrintController::checkAccess'
+
+entity_print.view.debug:
+  path: 'entityprint/{entity_type}/{entity_id}/debug'
+  defaults:
+    _controller: '\Drupal\entity_print\Controller\EntityPrintController::viewPdfDebug'
+    _title: 'Entity Print Debug'
+  requirements:
+    _permission: 'entity print access'
+    _custom_access: '\Drupal\entity_print\Controller\EntityPrintController::checkAccess'
+
+entity_print.config:
+  path: 'admin/config/content/entityprint'
+  defaults:
+    _form: '\Drupal\entity_print\Form\SettingsForm'
+    _title: 'Entity Print'
+  requirements:
+    _permission: 'administer entity print'
