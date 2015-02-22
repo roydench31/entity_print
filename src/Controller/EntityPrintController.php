@@ -95,7 +95,6 @@ class EntityPrintController extends ControllerBase {
       $use_default_css = $this->config('entity_print.settings')->get('default_css');
       $response->setContent($this->pdfBuilder->getEntityRenderedAsHtml($entity, $use_default_css, $this->config('system.performance')->get('css.preprocess')));
     }
-
     return $response;
   }
 

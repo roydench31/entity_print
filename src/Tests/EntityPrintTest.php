@@ -35,9 +35,11 @@ class EntityPrintTest extends WebTestBase {
    */
   protected function setUp() {
     parent::setUp();
-    // Create a user and login.
-    $account = $this->drupalCreateUser(['entity print access'], $this->randomMachineName());
-    $this->drupalLogin($account);
+
+    // We revoke the access content permission because we use that to test our
+    // permissions around entity view.
+    user_role_revoke_permissions(DRUPAL_ANONYMOUS_RID, ['access content']);
+    user_role_revoke_permissions(DRUPAL_AUTHENTICATED_RID, ['access content']);
 
     // Create a content type and a dummy node.
     $this->drupalCreateContentType(array(
@@ -58,6 +60,10 @@ class EntityPrintTest extends WebTestBase {
    * Test that CSS is parsed from our test theme correctly.
    */
   public function testEntityPrintThemeCss() {
+    // Create a user and login.
+    $account = $this->drupalCreateUser(['entity print access', 'access content'], $this->randomMachineName());
+    $this->drupalLogin($account);
+
     $this->drupalGet('entityprint/node/' . $this->node->id() . '/debug');
     $config = \Drupal::configFactory()->getEditable('entity_print.settings');
 
@@ -76,6 +82,35 @@ class EntityPrintTest extends WebTestBase {
     // Test that CSS was added from hook_entity_print_css(). See the
     // entity_print_test module for the implementation.
     $this->assertRaw('entityprint-module.css');
+  }
+
+  /**
+   * Test the access works for viewing the PDF's.
+   */
+  public function testEntityPrintAccess() {
+    // User with entity print access but not content access.
+    $account = $this->drupalCreateUser(['entity print access'], $this->randomMachineName());
+    $this->drupalLogin($account);
+    $this->drupalGet('entityprint/node/' . $this->node->id() . '/debug');
+    $this->assertResponse(403, 'User with only the entity print access permission cannot view PDF.');
+
+    // User with access content but not entity print access.
+    $account = $this->drupalCreateUser(['access content'], $this->randomMachineName());
+    $this->drupalLogin($account);
+    $this->drupalGet('entityprint/node/' . $this->node->id() . '/debug');
+    $this->assertResponse(403, 'User with access content but no entity print permission cannot view PDF.');
+
+    // User with both entity print and entity view.
+    $account = $this->drupalCreateUser(['entity print access', 'access content'], $this->randomMachineName());
+    $this->drupalLogin($account);
+    $this->drupalGet('entityprint/node/' . $this->node->id() . '/debug');
+    $this->assertResponse(200, 'User with both permissions can view the PDF.');
+
+    // User with neither permissions.
+    $account = $this->drupalCreateUser([], $this->randomMachineName());
+    $this->drupalLogin($account);
+    $this->drupalGet('entityprint/node/' . $this->node->id() . '/debug');
+    $this->assertResponse(403, 'User with neither permission cannot view the PDF.');
   }
 
 }
