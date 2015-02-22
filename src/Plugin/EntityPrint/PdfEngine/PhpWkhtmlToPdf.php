@@ -26,7 +26,7 @@ class PhpWkhtmlToPdf extends PluginBase implements PdfEngineInterface {
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->pdf = new Pdf(['binary' => $configuration['wkhtmltopdf_location']]);
+    $this->pdf = new Pdf(['binary' => $configuration['binary_location']]);
   }
 
   /**

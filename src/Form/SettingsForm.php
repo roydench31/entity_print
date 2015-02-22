@@ -39,19 +39,30 @@ class SettingsForm extends ConfigFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state, Request $request = NULL) {
 
+    /** @var \Drupal\entity_print\Plugin\EntityPrintPluginManager $pluginManager */
+    $pluginManager = \Drupal::service('plugin.manager.entity_print.pdf_engine');
+    $pdf_engines = array_keys($pluginManager->getDefinitions());
+
     $config = $this->config('entity_print.settings');
-    $form['default_css'] = array(
+    $form['default_css'] = [
       '#type' => 'checkbox',
       '#title' => t('Enable Default CSS'),
       '#description' => t('Provides some very basic font and padding styles.'),
       '#default_value' => $config->get('default_css'),
-    );
-    $form['wkhtmltopdf_location'] = array(
+    ];
+    $form['binary_location'] = [
       '#type' => 'textfield',
-      '#title' => t('WkhtmlToPdf Location'),
-      '#description' => t('Set this to the system path where WkhtmlToPdf is located.'),
-      '#default_value' => $config->get('wkhtmltopdf_location'),
-    );
+      '#title' => t('Binary Location'),
+      '#description' => t('Set this to the system path where the PDF engine binary is located.'),
+      '#default_value' => $config->get('binary_location'),
+    ];
+    $form['pdf_engine'] = [
+      '#type' => 'select',
+      '#title' => t('Pdf Engine'),
+      '#description' => 'Select the PDF engine to render the PDF',
+      '#options' => $pdf_engines,
+      '#default_value' => '',
+    ];
 
     return parent::buildForm($form, $form_state);
   }
@@ -63,7 +74,7 @@ class SettingsForm extends ConfigFormBase {
     $values = $form_state->getValues();
     $this->config('entity_print.settings')
       ->set('default_css', $values['default_css'])
-      ->set('wkhtmltopdf_location', $values['wkhtmltopdf_location'])
+      ->set('binary_location', $values['binary_location'])
       ->save();
   }
 

@@ -67,7 +67,7 @@ class EntityPrintController extends ControllerBase {
       // Create the PDF engine plugin.
       $config = $this->config('entity_print.settings');
       $pdf_engine = $this->pluginManager
-        ->createInstance($config->get('pdf_engine'), ['wkhtmltopdf_location' => $config->get('wkhtmltopdf_location')]);
+        ->createInstance($config->get('pdf_engine'), ['binary_location' => $config->get('binary_location')]);
 
       // Just set the content into the response. It will either be an error or
       // the PDF should just be sent to the browser.
