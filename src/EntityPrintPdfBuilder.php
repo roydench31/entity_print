@@ -98,7 +98,7 @@ class EntityPrintPdfBuilder implements PdfBuilderInterface {
   /**
    * {@inheritdoc}
    */
-  public function getEntityRenderedAsPdf(ContentEntityInterface $entity, PdfEngineInterface $pdf_engine, $use_default_css = TRUE) {
+  public function getEntityRenderedAsPdf(ContentEntityInterface $entity, PdfEngineInterface $pdf_engine, $force_download = FALSE, $use_default_css = TRUE) {
     // Force CSS optimization for the PDF.
     $html = $this->getHtml($entity, $use_default_css, TRUE);
     $pdf_engine->addPage($html);
@@ -106,8 +106,12 @@ class EntityPrintPdfBuilder implements PdfBuilderInterface {
     // Allow other modules to alter the generated PDF object.
     $this->moduleHandler->alter('entity_print_pdf', $pdf_engine, $entity);
 
+    // If we're forcing a download we need a filename otherwise it's just sent
+    // straight to the browser.
+    $filename = $force_download ? $this->generateFilename($entity) : NULL;
+
     // Try to send the PDF otherwise return the error.
-    if (!$result = $pdf_engine->send()) {
+    if (!$result = $pdf_engine->send($filename)) {
       return $pdf_engine->getError();
     }
     return $result;
@@ -219,6 +223,25 @@ class EntityPrintPdfBuilder implements PdfBuilderInterface {
     }
 
     return $render;
+  }
+
+  /**
+   * Generate a filename from the entity.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   The content entity to generate the filename.
+   *
+   * @return string
+   *   The cleaned filename from the entity label.
+   */
+  protected function generateFilename(ContentEntityInterface $entity) {
+    $filename = preg_replace("/[^A-Za-z0-9 ]/", '', $entity->label());
+    // If for some bizarre reason there isn't a valid character in the entity
+    // title or the entity doesn't provide a label then we use the entity type.
+    if (!$filename) {
+      $filename = $entity->getEntityTypeId();
+    }
+    return $filename . '.pdf';
   }
 
   /**

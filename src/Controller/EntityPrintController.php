@@ -71,7 +71,7 @@ class EntityPrintController extends ControllerBase {
 
       // Just set the content into the response. It will either be an error or
       // the PDF should just be sent to the browser.
-      $response->setContent($this->pdfBuilder->getEntityRenderedAsPdf($entity, $pdf_engine, $config->get('default_css')));
+      $response->setContent($this->pdfBuilder->getEntityRenderedAsPdf($entity, $pdf_engine, $config->get('force_download'), $config->get('default_css')));
     }
     return $response;
   }

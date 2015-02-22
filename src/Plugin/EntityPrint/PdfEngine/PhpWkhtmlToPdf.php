@@ -39,8 +39,8 @@ class PhpWkhtmlToPdf extends PluginBase implements PdfEngineInterface {
   /**
    * {@inheritdoc}
    */
-  public function send() {
-    return $this->pdf->send();
+  public function send($filename = NULL) {
+    return $this->pdf->send($filename);
   }
 
   /**

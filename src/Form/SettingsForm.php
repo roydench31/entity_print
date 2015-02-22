@@ -41,7 +41,8 @@ class SettingsForm extends ConfigFormBase {
 
     /** @var \Drupal\entity_print\Plugin\EntityPrintPluginManager $pluginManager */
     $pluginManager = \Drupal::service('plugin.manager.entity_print.pdf_engine');
-    $pdf_engines = array_keys($pluginManager->getDefinitions());
+    $pdf_plugins = array_keys($pluginManager->getDefinitions());
+    $pdf_engines = array_combine($pdf_plugins, $pdf_plugins);
 
     $config = $this->config('entity_print.settings');
     $form['default_css'] = [
@@ -49,6 +50,12 @@ class SettingsForm extends ConfigFormBase {
       '#title' => t('Enable Default CSS'),
       '#description' => t('Provides some very basic font and padding styles.'),
       '#default_value' => $config->get('default_css'),
+    ];
+    $form['force_download'] = [
+      '#type' => 'checkbox',
+      '#title' => t('Force Download'),
+      '#description' => t('This option will attempt to force the browser to download the PDF with a filename from the node title.'),
+      '#default_value' => $config->get('force_download'),
     ];
     $form['binary_location'] = [
       '#type' => 'textfield',
@@ -74,7 +81,9 @@ class SettingsForm extends ConfigFormBase {
     $values = $form_state->getValues();
     $this->config('entity_print.settings')
       ->set('default_css', $values['default_css'])
+      ->set('force_download', $values['force_download'])
       ->set('binary_location', $values['binary_location'])
+      ->set('pdf_engine', $values['pdf_engine'])
       ->save();
   }
 

@@ -34,10 +34,13 @@ interface PdfEngineInterface extends PluginInspectionInterface {
   /**
    * Send the PDF contents to the browser.
    *
+   * @param $filename
+   *   (optional) The filename if we want to force the browser to download.
+   *
    * @return bool
    *   TRUE if the PDF contents were sent otherwise FALSE.
    */
-  public function send();
+  public function send($filename = NULL);
 
   /**
    * Get any errors during PDF creation or sending.

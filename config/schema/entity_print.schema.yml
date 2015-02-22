@@ -3,8 +3,11 @@ entity_print.settings:
   label: 'Entity Print settings.'
   mapping:
     default_css:
-      type: string
+      type: boolean
       label: 'Enable the default CSS.'
+    force_download:
+      type: boolean
+      label: 'Force download of PDF'
     binary_location:
       type: string
       label: 'Location of the PDF engine binary.'
