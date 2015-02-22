@@ -16,7 +16,7 @@ entity_print.view.debug:
     _permission: 'entity print access'
     _custom_access: '\Drupal\entity_print\Controller\EntityPrintController::checkAccess'
 
-entity_print.config:
+entity_print.settings:
   path: 'admin/config/content/entityprint'
   defaults:
     _form: '\Drupal\entity_print\Form\SettingsForm'
