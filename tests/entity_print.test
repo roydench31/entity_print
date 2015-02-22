@@ -71,25 +71,25 @@ class EntityPrintTest extends DrupalWebTestCase {
    */
   public function testEntityPrintAccess() {
     // User with entity print access but not content access.
-    $account = $this->drupalCreateUser(['entity print access']);
+    $account = $this->drupalCreateUser(array('entity print access'));
     $this->drupalLogin($account);
     $this->drupalGet('entityprint/node/' . $this->node->nid . '/debug');
     $this->assertResponse(403, 'User with only the entity print access permission cannot view PDF.');
 
     // User with access content but not entity print access.
-    $account = $this->drupalCreateUser(['access content']);
+    $account = $this->drupalCreateUser(array('access content'));
     $this->drupalLogin($account);
     $this->drupalGet('entityprint/node/' . $this->node->nid . '/debug');
     $this->assertResponse(403, 'User with access content but no entity print permission cannot view PDF.');
 
     // User with both entity print and entity view.
-    $account = $this->drupalCreateUser(['entity print access', 'access content']);
+    $account = $this->drupalCreateUser(array('entity print access', 'access content'));
     $this->drupalLogin($account);
     $this->drupalGet('entityprint/node/' . $this->node->nid . '/debug');
     $this->assertResponse(200, 'User with both permissions can view the PDF.');
 
     // User with neither permissions.
-    $account = $this->drupalCreateUser([]);
+    $account = $this->drupalCreateUser(array());
     $this->drupalLogin($account);
     $this->drupalGet('entityprint/node/' . $this->node->nid . '/debug');
     $this->assertResponse(403, 'User with neither permission cannot view the PDF.');
