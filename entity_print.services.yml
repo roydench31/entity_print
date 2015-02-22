@@ -2,3 +2,6 @@ services:
   plugin.manager.entity_print.pdf_engine:
     class: Drupal\entity_print\Plugin\EntityPrintPluginManager
     arguments: ['@container.namespaces', '@cache.discovery', '@module_handler']
+  entity_print.pdf_manager:
+    class: Drupal\entity_print\EntityPrintPdfBuilder
+    arguments: ['@entity.manager', '@theme_handler', '@module_handler', '@info_parser', '@asset.resolver', '@asset.css.collection_renderer', '@renderer']

@@ -57,7 +57,4 @@ class PhpWkhtmlToPdf extends PluginBase implements PdfEngineInterface {
     $this->pdf->addPage($content);
   }
 
-  public function getText() {
-    return "YES";
-  }
 }

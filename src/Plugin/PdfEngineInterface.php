@@ -10,6 +10,7 @@ namespace Drupal\entity_print\Plugin;
 use Drupal\Component\Plugin\PluginInspectionInterface;
 
 interface PdfEngineInterface extends PluginInspectionInterface {
+
   /**
    * Get the PDF implementation.
    *
@@ -45,4 +46,5 @@ interface PdfEngineInterface extends PluginInspectionInterface {
    *   The error message.
    */
   public function getError();
+
 }
