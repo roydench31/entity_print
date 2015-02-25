@@ -4,4 +4,4 @@ type: module
 core: 8.x
 package: Entity Print
 version: VERSION
-configure: entity_print.config
+configure: entity_print.settings
