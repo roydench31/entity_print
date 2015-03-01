@@ -9,7 +9,7 @@
  */
 
 /**
- * This module is provided to allow modules to add their own CSS files.
+ * This hook is provided to allow modules to add their own CSS files.
  *
  * Note, you can also manage the CSS files from your theme.
  * @see https://www.drupal.org/node/2430561#from-your-theme
