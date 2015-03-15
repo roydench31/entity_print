@@ -12,16 +12,6 @@ use Drupal\Component\Plugin\PluginInspectionInterface;
 interface PdfEngineInterface extends PluginInspectionInterface {
 
   /**
-   * Get the PDF implementation.
-   *
-   * You should not use this unless you know which engine you're expecting.
-   *
-   * @return mixed
-   *   The raw PDF implementation.
-   */
-  public function getInstance();
-
-  /**
    * Add a string of HTML to a new page.
    *
    * @param string $content
@@ -49,5 +39,15 @@ interface PdfEngineInterface extends PluginInspectionInterface {
    *   The error message.
    */
   public function getError();
+
+  /**
+   * Get the PDF implementation.
+   *
+   * You should not use this unless you know which engine you're expecting.
+   *
+   * @return mixed
+   *   The raw PDF implementation.
+   */
+  public function getInstance();
 
 }

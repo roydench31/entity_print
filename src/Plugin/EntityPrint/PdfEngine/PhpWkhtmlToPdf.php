@@ -32,13 +32,6 @@ class PhpWkhtmlToPdf extends PluginBase implements PdfEngineInterface {
   /**
    * {@inheritdoc}
    */
-  public function getInstance() {
-    return $this->pdf;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function send($filename = NULL) {
     return $this->pdf->send($filename);
   }
@@ -55,6 +48,13 @@ class PhpWkhtmlToPdf extends PluginBase implements PdfEngineInterface {
    */
   public function addPage($content) {
     $this->pdf->addPage($content);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getInstance() {
+    return $this->pdf;
   }
 
 }
