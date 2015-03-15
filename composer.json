@@ -1,5 +1,5 @@
 {
-  "name": "benjy/entity_print",
+  "name": "drupal/entity_print",
   "type": "drupal-module",
   "description": "PDF print solution for any Drupal entity.",
   "keywords": ["drupal", "web", "PDF", "print"],
