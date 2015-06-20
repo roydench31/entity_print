@@ -2,7 +2,7 @@ entity_print.view:
   path: 'entityprint/{entity_type}/{entity_id}'
   defaults:
     _controller: '\Drupal\entity_print\Controller\EntityPrintController::viewPdf'
-    _titlte: 'Entity Print'
+    _title: 'Entity Print'
   requirements:
     _permission: 'entity print access'
     _custom_access: '\Drupal\entity_print\Controller\EntityPrintController::checkAccess'
