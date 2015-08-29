@@ -1,5 +1,5 @@
 entity_print.settings:
-  type: mapping
+  type: config_object
   label: 'Entity Print settings.'
   mapping:
     default_css:
