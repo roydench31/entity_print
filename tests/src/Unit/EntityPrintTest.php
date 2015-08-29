@@ -5,7 +5,7 @@
  * Contains \Drupal\entity_print\Unit\EntityPrintTest
  */
 
-namespace Drupal\entity_print\Unit;
+namespace Drupal\Tests\entity_print\Unit;
 
 use Drupal\Tests\UnitTestCase;
 
