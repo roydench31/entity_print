@@ -8,6 +8,7 @@
 namespace Drupal\entity_print\Tests;
 
 use Drupal\simpletest\WebTestBase;
+use Drupal\Core\Session\AccountInterface;
 
 /**
  * Entity Print tests.
@@ -38,8 +39,8 @@ class EntityPrintTest extends WebTestBase {
 
     // We revoke the access content permission because we use that to test our
     // permissions around entity view.
-    user_role_revoke_permissions(DRUPAL_ANONYMOUS_RID, ['access content']);
-    user_role_revoke_permissions(DRUPAL_AUTHENTICATED_RID, ['access content']);
+    user_role_revoke_permissions(AccountInterface::ANONYMOUS_ROLE, ['access content']);
+    user_role_revoke_permissions(AccountInterface::AUTHENTICATED_ROLE, ['access content']);
 
     // Create a content type and a dummy node.
     $this->drupalCreateContentType(array(

@@ -7,11 +7,9 @@
 
 namespace Drupal\entity_print\Form;
 
-use Drupal\Component\Utility\SafeMarkup;
 use Drupal\Core\Form\ConfigFormBase;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Url;
 
 /**
  * Defines a form that configures Entity Print settings.
