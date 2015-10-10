@@ -35,7 +35,7 @@ function hook_entity_print_views_css($view) {
  * @param object $view
  *   The view object we're rendering.
  */
-function hook_entity_print_views_pdf_alter(WkHtmlToPdf $pdf, $view) {
+function hook_entity_print_view_pdf_alter(WkHtmlToPdf $pdf, $view) {
   $terms = variable_get('terms_and_conditions', '');
   $pdf->addPage($terms);
 }
