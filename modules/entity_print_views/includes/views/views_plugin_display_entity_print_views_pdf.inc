@@ -34,6 +34,8 @@ class views_plugin_display_entity_print_views_pdf extends views_plugin_display_p
       $pdf->addPage($html);
 
       // Allow other modules to alter the generated PDF object.
+      drupal_alter('entity_print_pdf_views', $pdf, $this->view);
+      // Keep backwards compatability.
       drupal_alter('entity_print_pdf_view', $pdf, $this->view);
 
       if (!$pdf->send()) {
