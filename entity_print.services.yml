@@ -4,4 +4,4 @@ services:
     arguments: ['@container.namespaces', '@cache.discovery', '@module_handler']
   entity_print.pdf_manager:
     class: Drupal\entity_print\EntityPrintPdfBuilder
-    arguments: ['@entity.manager', '@theme_handler', '@module_handler', '@info_parser', '@asset.resolver', '@asset.css.collection_renderer', '@renderer']
+    arguments: ['@entity_type.manager', '@theme_handler', '@module_handler', '@info_parser', '@asset.resolver', '@asset.css.collection_renderer', '@renderer']

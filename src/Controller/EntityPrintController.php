@@ -9,7 +9,7 @@ namespace Drupal\entity_print\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\entity_print\PdfBuilderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,19 +32,19 @@ class EntityPrintController extends ControllerBase {
   protected $pdfBuilder;
 
   /**
-   * The Entity manager.
+   * The Entity Type manager.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityManager;
+  protected $entityTypeManager;
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(EntityPrintPluginManager $plugin_manager, PdfBuilderInterface $pdf_builder, EntityManagerInterface $entity_manager) {
+  public function __construct(EntityPrintPluginManager $plugin_manager, PdfBuilderInterface $pdf_builder, EntityTypeManagerInterface $entity_type_manager) {
     $this->pluginManager = $plugin_manager;
     $this->pdfBuilder = $pdf_builder;
-    $this->entityManager = $entity_manager;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -54,7 +54,7 @@ class EntityPrintController extends ControllerBase {
     return new static(
       $container->get('plugin.manager.entity_print.pdf_engine'),
       $container->get('entity_print.pdf_manager'),
-      $container->get('entity.manager')
+      $container->get('entity_type.manager')
     );
   }
 
@@ -73,7 +73,7 @@ class EntityPrintController extends ControllerBase {
     $response = new Response('Unable to find entity');
 
     // Render the entity as a PDF if we have a valid entity.
-    if ($entity = $this->entityManager->getStorage($entity_type)->load($entity_id)) {
+    if ($entity = $this->entityTypeManager->getStorage($entity_type)->load($entity_id)) {
       // Create the PDF engine plugin.
       $config = $this->config('entity_print.settings');
       $pdf_engine = $this->pluginManager
@@ -101,7 +101,7 @@ class EntityPrintController extends ControllerBase {
   public function viewPdfDebug($entity_type, $entity_id) {
     $response = new Response('Unable to find entity');
 
-    if ($entity = $this->entityManager->getStorage($entity_type)->load($entity_id)) {
+    if ($entity = $this->entityTypeManager->getStorage($entity_type)->load($entity_id)) {
       $use_default_css = $this->config('entity_print.settings')->get('default_css');
       $response->setContent($this->pdfBuilder->getEntityRenderedAsHtml($entity, $use_default_css, $this->config('system.performance')->get('css.preprocess')));
     }
@@ -124,7 +124,7 @@ class EntityPrintController extends ControllerBase {
    */
   public function checkAccess($entity_type, $entity_id) {
     $account = $this->currentUser();
-    if (AccessResult::allowedIfHasPermission($account, 'entity print access')->isAllowed() && $entity = $this->entityManager->getStorage($entity_type)->load($entity_id)) {
+    if (AccessResult::allowedIfHasPermission($account, 'entity print access')->isAllowed() && $entity = $this->entityTypeManager->getStorage($entity_type)->load($entity_id)) {
       return $entity->access('view', $account, TRUE);
     }
     return AccessResult::forbidden();

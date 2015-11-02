@@ -9,7 +9,7 @@ namespace Drupal\entity_print;
 
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\entity_print\Plugin\PdfEngineInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\InfoParserInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Extension\ThemeHandlerInterface;
@@ -23,9 +23,9 @@ class EntityPrintPdfBuilder implements PdfBuilderInterface {
   /**
    * The entity manager.
    *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityManager;
+  protected $entityTypeManager;
 
   /**
    * The theme handler.
@@ -70,7 +70,7 @@ class EntityPrintPdfBuilder implements PdfBuilderInterface {
   /**
    * Constructs a new EntityPrintPdfBuilder.
    *
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity manager.
    * @param \Drupal\Core\Extension\ThemeHandlerInterface $theme_handler
    *   The theme handler.
@@ -85,8 +85,8 @@ class EntityPrintPdfBuilder implements PdfBuilderInterface {
    * @param \Drupal\Core\Render\RendererInterface $renderer
    *   The theme renderer.
    */
-  public function __construct(EntityManagerInterface $entity_manager, ThemeHandlerInterface $theme_handler, ModuleHandlerInterface $module_handler, InfoParserInterface $info_parser, AssetResolverInterface $asset_resolver, AssetCollectionRendererInterface $css_renderer, RendererInterface $renderer) {
-    $this->entityManager = $entity_manager;
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, ThemeHandlerInterface $theme_handler, ModuleHandlerInterface $module_handler, InfoParserInterface $info_parser, AssetResolverInterface $asset_resolver, AssetCollectionRendererInterface $css_renderer, RendererInterface $renderer) {
+    $this->entityTypeManager = $entity_type_manager;
     $this->themeHandler = $theme_handler;
     $this->moduleHandler = $module_handler;
     $this->infoParser = $info_parser;
@@ -140,7 +140,7 @@ class EntityPrintPdfBuilder implements PdfBuilderInterface {
    * @throws \Exception
    */
   protected function getHtml(ContentEntityInterface $entity, $use_default_css, $optimize_css) {
-    $render_controller = $this->entityManager->getViewBuilder($entity->getEntityTypeId());
+    $render_controller = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId());
     $render = [
       '#theme' => 'entity_print__' . $entity->getEntityTypeId() . '__' . $entity->id(),
       '#entity' => $entity,
