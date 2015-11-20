@@ -12,6 +12,6 @@
     }
   ],
   "require": {
-    "mikehaertl/phpwkhtmltopdf": "*"
+    "mikehaertl/phpwkhtmltopdf": "~2.1"
   }
 }
