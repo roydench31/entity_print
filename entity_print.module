@@ -54,10 +54,31 @@ function entity_print_menu()  {
  *   TRUE if they have access otherwise FALSE.
  */
 function entity_print_access($entity_type, $entity_id) {
-  // The user can't use our entity print module.
-  if (!user_access('entity print access')) {
-    return FALSE;
+
+  // Check for overall entity access permission.
+  if (user_access('bypass entity print access')) {
+    return entity_print_view_access($entity_type, $entity_id);
   }
+
+  // Check for entity type access permission.
+  if (user_access('entity print access type ' . $entity_type)) {
+    return entity_print_view_access($entity_type, $entity_id);
+  }
+
+  // Check for entity bundle access permission.
+  $entity = entity_load_single($entity_type, $entity_id);
+  list($id, $vid, $bundle) = entity_extract_ids($entity_type, $entity);
+  if (user_access('entity print access bundle ' . $bundle)) {
+    return entity_print_view_access($entity_type, $entity_id);
+  }
+
+  return FALSE;
+}
+
+/**
+ * Function to check for entity view permission.
+ */
+function entity_print_view_access($entity_type, $entity_id) {
   if ($entities = entity_load($entity_type, array($entity_id))) {
     $entity = array_pop($entities);
     return entity_access('view', $entity_type, $entity);
@@ -245,20 +266,48 @@ function entity_print_theme($existing, $type, $theme, $path) {
  * Implements hook_permission().
  */
 function entity_print_permission() {
-  return array(
-    'entity print access' => array(
-      'title' => t('Use Entity Print'),
-      'description' => t('Allow a user to use entity print to view the generated PDF'),
-    ),
-    'administer entity print' => array(
-      'title' => t('Administer Entity Print'),
-      'description' => t('Allow users to administer the Entity Print settings.'),
-      // We make this restricted because you can set the path to the wkhtmltopdf
-      // binary from the settings page. It isn't vulnerable to injection but
-      // it's probably not a setting you want everyone configuring anyway.
-      'restrict access' => TRUE,
-    ),
+  // Administer entity print.
+  $permissions['administer entity print'] = array(
+    'title' => t('Administer Entity Print'),
+    'description' => t('Allow users to administer the Entity Print settings.'),
+    // We make this restricted because you can set the path to the wkhtmltopdf
+    // binary from the settings page. It isn't vulnerable to injection but
+    // it's probably not a setting you want everyone configuring anyway.
+    'restrict access' => TRUE,
   );
+
+  // Bypass access.
+  $permissions['bypass entity print access'] = array(
+    'title' => t('Bypass entity print access'),
+    'description' => t('Allow a user to bypass the entity print access rights.'),
+  );
+
+  // Create a permission for every entity type and bundle.
+  $entities = entity_get_info();
+  foreach($entities as $entity_key => $entity_info) {
+    $permissions['entity print access type ' . $entity_key] = array(
+      'title' => t('%entity_label: Use entity print for all bundles', array(
+        '%entity_label' => $entity_info['label'])
+      ),
+      'description' => t('Allow a user to use entity print to view the generated PDF for all %entity_label bundles.', [
+        '%entity_label' => $entity_info['label'],
+      ]),
+    );
+    foreach($entity_info['bundles'] as $bundle_key => $entity_bundle) {
+      $permissions['entity print access bundle ' . $bundle_key] = array(
+        'title' => t('%entity_label (%entity_bundle_label): Use entity print', array(
+          '%entity_label' => $entity_info['label'],
+          '%entity_bundle_label' => $entity_bundle['label'],
+        )),
+        'description' => t('Allow a user to use entity print to view the generated PDF for entity type %entity_label and bundle %entity_bundle_label', [
+          '%entity_label' => $entity_info['label'],
+          '%entity_bundle_label' => $entity_bundle['label'],
+        ]),
+      );
+    }
+  }
+
+  return $permissions;
 }
 
 /**
