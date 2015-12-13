@@ -20,7 +20,7 @@ function entity_print_update_7001() {
   }
 
   // Prepare permission array.
-  $rid_permissions = [];
+  $rid_permissions = array();
   foreach($loaded_roles as $loaded_role) {
     $rid_permissions[] = array(
       'rid' => $loaded_role->rid,
