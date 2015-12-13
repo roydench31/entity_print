@@ -289,9 +289,9 @@ function entity_print_permission() {
       'title' => t('%entity_label: Use entity print for all bundles', array(
         '%entity_label' => $entity_info['label'])
       ),
-      'description' => t('Allow a user to use entity print to view the generated PDF for all %entity_label bundles.', [
+      'description' => t('Allow a user to use entity print to view the generated PDF for all %entity_label bundles.', array(
         '%entity_label' => $entity_info['label'],
-      ]),
+      )),
     );
     foreach($entity_info['bundles'] as $bundle_key => $entity_bundle) {
       $permissions['entity print access bundle ' . $bundle_key] = array(
@@ -299,10 +299,10 @@ function entity_print_permission() {
           '%entity_label' => $entity_info['label'],
           '%entity_bundle_label' => $entity_bundle['label'],
         )),
-        'description' => t('Allow a user to use entity print to view the generated PDF for entity type %entity_label and bundle %entity_bundle_label', [
+        'description' => t('Allow a user to use entity print to view the generated PDF for entity type %entity_label and bundle %entity_bundle_label', array(
           '%entity_label' => $entity_info['label'],
           '%entity_bundle_label' => $entity_bundle['label'],
-        ]),
+        )),
       );
     }
   }
