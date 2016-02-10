@@ -14,3 +14,11 @@ entity_print.settings:
     pdf_engine:
       type: string
       label: 'The plugin id of the PDF engine to use.'
+
+core.entity_view_display.*.*.*.third_party.entity_print:
+  type: mapping
+  label: 'Schema for Entity Print third party settings'
+  mapping:
+    label:
+      type: string
+      label: 'Label for view link'
