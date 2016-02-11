@@ -40,9 +40,9 @@ class EntityPrintTest extends UnitTestCase {
   public function entityAsPdfDataProvider() {
     return [
       // $force_download, $use_default_css, $send_result, $expected.
-      [TRUE, TRUE, TRUE, TRUE],
-      [FALSE, TRUE, TRUE, TRUE],
-      [TRUE, FALSE, TRUE, TRUE],
+      [TRUE, TRUE, TRUE, ''],
+      [FALSE, TRUE, TRUE, ''],
+      [TRUE, FALSE, TRUE, ''],
       [TRUE, TRUE, FALSE, 'Sending PDF failed'],
     ];
   }

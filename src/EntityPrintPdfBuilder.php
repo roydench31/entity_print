@@ -114,7 +114,9 @@ class EntityPrintPdfBuilder implements PdfBuilderInterface {
     if (!$result = $pdf_engine->send($filename)) {
       return $pdf_engine->getError();
     }
-    return $result;
+
+    // Must be a valid response.
+    return '';
   }
 
   /**
