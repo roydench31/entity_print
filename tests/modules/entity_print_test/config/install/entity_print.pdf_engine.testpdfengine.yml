@@ -1,0 +1,3 @@
+id: testpdfengine
+settings:
+  test_engine_setting: 'initial value'

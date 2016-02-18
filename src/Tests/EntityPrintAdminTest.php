@@ -43,8 +43,54 @@ class EntityPrintAdminTest extends WebTestBase {
     ));
     $this->node = $this->drupalCreateNode();
 
-    $account = $this->drupalCreateUser(['entity print access', 'access content', 'administer content types', 'administer node fields', 'administer node form display', 'administer node display', 'administer users', 'administer account settings', 'administer user display', 'bypass node access']);
+    $account = $this->drupalCreateUser(['entity print access', 'administer entity print', 'access content', 'administer content types', 'administer node display']);
     $this->drupalLogin($account);
+  }
+
+  /**
+   * Test the configuration form and expected settings.
+   */
+  public function testAdminSettings() {
+    $this->drupalGet('/admin/config/content/entityprint');
+    // The default implementation is Dompdf but that is not available in tests
+    // make sure its settings form is not rendered.
+    $this->assertNoText('Dompdf Settings');
+
+    // Make sure we also get a warning telling us to install it.
+    $this->assertText('Dompdf is not available because it is not configured. Please install using composer.');
+
+    // Ensure saving the form without any PDF engine selected doesn't blow up.
+    $this->drupalPostForm(NULL, [], 'Save configuration');
+
+    // Assert the intial config values.
+    $this->drupalPostAjaxForm(NULL, ['pdf_engine' => 'testpdfengine'], 'pdf_engine');
+    $this->assertFieldByName('test_engine_setting', 'initial value');
+
+    // Ensure the plugin gets the chance to validate the form.
+    $this->drupalPostForm(NULL, [
+      'pdf_engine' => 'testpdfengine',
+      'test_engine_setting' => 'rejected',
+    ], 'Save configuration');
+    $this->assertText('Setting has an invalid value');
+
+    $this->drupalPostForm(NULL, [
+      'default_css' => 0,
+      'force_download' => 0,
+      'pdf_engine' => 'testpdfengine',
+      'test_engine_setting' => 'testvalue',
+    ], 'Save configuration');
+
+    /** @var \Drupal\entity_print\Entity\PdfEngineInterface $config_entity */
+    $config_entity = \Drupal::entityTypeManager()->getStorage('pdf_engine')->load('testpdfengine');
+
+    // Assert the expected settings were stored.
+    $this->assertEqual('testpdfengine', $config_entity->id());
+    $this->assertEqual(['test_engine_setting' => 'testvalue'], $config_entity->getSettings());
+    $this->assertEqual('entity_print_test', $config_entity->getDependencies()['module'][0]);
+
+    // Assert that the testpdfengine is actually used.
+    $this->drupalGet('/entityprint/node/1');
+    $this->assertText('Using testpdfengine');
   }
 
   /**
@@ -67,7 +113,7 @@ class EntityPrintAdminTest extends WebTestBase {
       'fields[entity_print_view][type]' => 'visible',
     ], 'Save');
 
-    // Visit out page node and ensure the link is available.
+    // Visit our page node and ensure the link is available.
     $this->drupalGet($this->node->toUrl());
     $this->assertLink($random_text);
     $this->assertLinkByHref('/entityprint/node/1');

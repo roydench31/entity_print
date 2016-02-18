@@ -1,4 +1,3 @@
 default_css: true
 force_download: true
-binary_location: /usr/local/bin/wkhtmltopdf
-pdf_engine: phpwkhtmltopdf
+pdf_engine: dompdf

@@ -76,12 +76,11 @@ class EntityPrintController extends ControllerBase {
     if ($entity = $this->entityTypeManager->getStorage($entity_type)->load($entity_id)) {
       // Create the PDF engine plugin.
       $config = $this->config('entity_print.settings');
-      $pdf_engine = $this->pluginManager
-        ->createInstance($config->get('pdf_engine'), ['binary_location' => $config->get('binary_location')]);
+      $pdf_engine = $this->pluginManager->createInstance($config->get('pdf_engine'));
 
-      // Just set the content into the response. It will either be an error or
-      // the PDF should just be sent to the browser.
-      $response->setContent($this->pdfBuilder->getEntityRenderedAsPdf($entity, $pdf_engine, $config->get('force_download'), $config->get('default_css')));
+      // The PDF is sent straight to the browser.
+      $result = $this->pdfBuilder->getEntityRenderedAsPdf($entity, $pdf_engine, $config->get('force_download'), $config->get('default_css'));
+      $response->setContent($result ?: 'No response from PDF engine');
     }
     return $response;
   }

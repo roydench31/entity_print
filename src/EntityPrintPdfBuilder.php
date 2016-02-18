@@ -110,13 +110,7 @@ class EntityPrintPdfBuilder implements PdfBuilderInterface {
     // straight to the browser.
     $filename = $force_download ? $this->generateFilename($entity) : NULL;
 
-    // Try to send the PDF otherwise return the error.
-    if (!$result = $pdf_engine->send($filename)) {
-      return $pdf_engine->getError();
-    }
-
-    // Must be a valid response.
-    return '';
+    return $pdf_engine->send($filename);
   }
 
   /**

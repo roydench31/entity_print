@@ -19,3 +19,17 @@ function entity_print_test_system_theme_info() {
 function entity_print_test_entity_print_css_alter(&$render, $entity) {
   $render['#attached']['library'][] = 'entity_print_test_theme/module';
 }
+
+/**
+ * Implements hook_entity_print_pdf_engine_alter().
+ */
+function entity_print_test_entity_print_pdf_engine_alter(&$definitions) {
+  // Replace these with a class that always makes them not available so I don't
+  // have to manually disable to run the tests locally where they're installed.
+  $disabled_engines = ['dompdf', 'phpwkhtmltopdf'];
+  foreach ($disabled_engines as $id) {
+    if (isset($definitions[$id]['class'])) {
+      $definitions[$id]['class'] = 'Drupal\entity_print_test\Plugin\EntityPrint\PdfEngine\NotAvailablePdfEngine';
+    }
+  }
+}

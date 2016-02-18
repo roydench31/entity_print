@@ -16,38 +16,6 @@ use Drupal\Tests\UnitTestCase;
 class EntityPrintTest extends UnitTestCase {
 
   /**
-   * Test the rendered entity as PDF.
-   *
-   * @covers ::getEntityRenderedAsPdf
-   * @dataProvider entityAsPdfDataProvider
-   */
-  public function testEntityRenderedAsPdf($force_download, $use_css, $send_result, $expected) {
-    $pdf_engine = $this->getMockPdfEngine($force_download, $send_result);
-    $entity = $this->getMockEntity($force_download ? 'myfile' : '');
-    $pdf_builder = $this->getMockPdfBuilder($entity, $use_css, $force_download);
-
-    // Run the tests and assert the results.
-    $result = $pdf_builder->getEntityRenderedAsPdf($entity, $pdf_engine, $force_download, $use_css);
-    $this->assertEquals($expected, $result);
-  }
-
-  /**
-   * Entity print data provider.
-   *
-   * @return array
-   *   An array of data combinations.
-   */
-  public function entityAsPdfDataProvider() {
-    return [
-      // $force_download, $use_default_css, $send_result, $expected.
-      [TRUE, TRUE, TRUE, ''],
-      [FALSE, TRUE, TRUE, ''],
-      [TRUE, FALSE, TRUE, ''],
-      [TRUE, TRUE, FALSE, 'Sending PDF failed'],
-    ];
-  }
-
-  /**
    * Test safe file generation.
    *
    * @covers ::generateFilename
@@ -56,7 +24,7 @@ class EntityPrintTest extends UnitTestCase {
   public function testGenerateFilename($entity_label, $expected_filename) {
     $force_download = $use_css = TRUE;
     $entity = $this->getMockEntity($entity_label);
-    $pdf_engine = $this->getMockPdfEngine($force_download, TRUE, $expected_filename);
+    $pdf_engine = $this->getMockPdfEngine($force_download, $expected_filename);
 
     $pdf_builder = $this->getMockPdfBuilder($entity, TRUE);
     $pdf_builder->getEntityRenderedAsPdf($entity, $pdf_engine, $force_download, $use_css);
@@ -113,15 +81,13 @@ class EntityPrintTest extends UnitTestCase {
    *
    * @param bool $force_download
    *   Whether to force the pdf download.
-   * @param bool $send_result
-   *   The result from send.
    * @param string $filename
    *   The PDF filename.
    *
    * @return \PHPUnit_Framework_MockObject_MockObject
    *   The mock pdf engine,
    */
-  protected function getMockPdfEngine($force_download, $send_result, $filename = 'myfile.pdf') {
+  protected function getMockPdfEngine($force_download, $filename = 'myfile.pdf') {
     $pdf_engine = $this->getMock('Drupal\entity_print\Plugin\PdfEngineInterface');
     $pdf_engine
       ->expects($this->once())
@@ -129,14 +95,7 @@ class EntityPrintTest extends UnitTestCase {
     $pdf_engine
       ->expects($this->once())
       ->method('send')
-      ->with($force_download ? $filename : NULL)
-      ->willReturn($send_result);
-    if (!$send_result) {
-      $pdf_engine
-        ->expects($this->once())
-        ->method('getError')
-        ->willReturn('Sending PDF failed');
-    }
+      ->with($force_download ? $filename : NULL);
     return $pdf_engine;
   }
 

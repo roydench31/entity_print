@@ -8,8 +8,10 @@
 namespace Drupal\entity_print\Plugin;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;
+use Drupal\Component\Plugin\ConfigurablePluginInterface;
+use Drupal\Core\Plugin\PluginFormInterface;
 
-interface PdfEngineInterface extends PluginInspectionInterface {
+interface PdfEngineInterface extends PluginInspectionInterface, PluginFormInterface, ConfigurablePluginInterface {
 
   /**
    * Add a string of HTML to a new page.
@@ -29,25 +31,26 @@ interface PdfEngineInterface extends PluginInspectionInterface {
    *
    * @return bool
    *   TRUE if the PDF contents were sent otherwise FALSE.
+   *
+   * @throws \Drupal\entity_print\PdfEngineException
+   *   Thrown when PDF generation fails.
    */
   public function send($filename = NULL);
 
   /**
-   * Get any errors during PDF creation or sending.
+   * Checks if the PDF engine dependencies are available.
    *
-   * @return string
-   *   The error message.
+   * @return bool
+   *   TRUE if this implementation has its dependencies met otherwise FALSE.
    */
-  public function getError();
+  public static function dependenciesAvailable();
 
   /**
-   * Get the PDF implementation.
+   * Gets the installation instructions for this PDF engine.
    *
-   * You should not use this unless you know which engine you're expecting.
-   *
-   * @return mixed
-   *   The raw PDF implementation.
+   * @return string
+   *   A description of how the user can meet the dependencies for this engine.
    */
-  public function getInstance();
+  public static function getInstallationInstructions();
 
 }
