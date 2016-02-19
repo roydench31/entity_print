@@ -97,6 +97,12 @@ class EntityPrintAdminTest extends WebTestBase {
    * Test the view PDF extra field and the configurable text.
    */
   public function testViewPdfLink() {
+    // Run the module install actions as a workaround for the fact that the
+    // page content type isn't created until setUp() here and therefore our PDF
+    // view mode isn't added the first time. Note, this might causes issues if
+    // we ever add to hook_install() actions that cannot run twice.
+    module_load_install('entity_print');
+    entity_print_install();
 
     // Visit the manage display.
     $this->drupalGet('admin/structure/types/manage/page/display');
@@ -112,6 +118,9 @@ class EntityPrintAdminTest extends WebTestBase {
       'fields[entity_print_view][empty_cell]' => $random_text,
       'fields[entity_print_view][type]' => 'visible',
     ], 'Save');
+
+    // Assert that there is a PDF view mode available on nodes by default.
+    $this->assertFieldByName('display_modes_custom[pdf]');
 
     // Visit our page node and ensure the link is available.
     $this->drupalGet($this->node->toUrl());
