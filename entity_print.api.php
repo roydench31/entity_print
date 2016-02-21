@@ -45,3 +45,15 @@ function hook_entity_print_pdf_alter(PdfEngineInterface $pdf_engine, ContentEnti
   $terms = \Drupal::config('mymodule.settings')->get('terms_and_conditions');
   $pdf_engine->addPage($terms);
 }
+
+/**
+ * Fired when rendering multiple entities onto one PDF. E.g. PdfDownload action.
+ *
+ * @param \Drupal\entity_print\Plugin\PdfEngineInterface $pdf_engine
+ *   The PDF Engine that is being used.
+ * @param \Drupal\Core\Entity\ContentEntityInterface[] $entities
+ *   An array of content entities that are being rendered.
+ */
+function hook_entity_print_pdf_multiple_alter(PdfEngineInterface $pdf_engine, $entities) {
+
+}

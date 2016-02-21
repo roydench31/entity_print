@@ -8,6 +8,7 @@
 namespace Drupal\entity_print;
 
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityDisplayBase;
 use Drupal\entity_print\Plugin\PdfEngineInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\InfoParserInterface;
@@ -17,6 +18,7 @@ use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Asset\AssetCollectionRendererInterface;
 use Drupal\Core\Asset\AssetResolverInterface;
 use Drupal\Core\Asset\AttachedAssets;
+use Drupal\migrate\Plugin\migrate\destination\EntityViewMode;
 
 class EntityPrintPdfBuilder implements PdfBuilderInterface {
 
@@ -99,9 +101,7 @@ class EntityPrintPdfBuilder implements PdfBuilderInterface {
    * {@inheritdoc}
    */
   public function getEntityRenderedAsPdf(ContentEntityInterface $entity, PdfEngineInterface $pdf_engine, $force_download = FALSE, $use_default_css = TRUE) {
-    // Force CSS optimization for the PDF.
-    $html = $this->getHtml($entity, $use_default_css, TRUE);
-    $pdf_engine->addPage($html);
+    $pdf_engine->addPage($this->getHtml($entity, $use_default_css, TRUE));
 
     // Allow other modules to alter the generated PDF object.
     $this->moduleHandler->alter('entity_print_pdf', $pdf_engine, $entity);
@@ -109,6 +109,22 @@ class EntityPrintPdfBuilder implements PdfBuilderInterface {
     // If we're forcing a download we need a filename otherwise it's just sent
     // straight to the browser.
     $filename = $force_download ? $this->generateFilename($entity) : NULL;
+
+    return $pdf_engine->send($filename);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getMultipleEntitiesRenderedAsPdf(array $entities, PdfEngineInterface $pdf_engine, $force_download = FALSE, $use_default_css = TRUE) {
+    $pdf_engine->addPage($this->getHtmlMultiple($entities, $use_default_css, TRUE));
+
+    // Allow other modules to alter the generated PDF object.
+    $this->moduleHandler->alter('entity_print_pdf_multiple', $pdf_engine, $entities);
+
+    // If we're forcing a download we need a filename otherwise it's just sent
+    // straight to the browser.
+    $filename = $force_download ? $this->generateMultiFilename($entities) : NULL;
 
     return $pdf_engine->send($filename);
   }
@@ -140,25 +156,96 @@ class EntityPrintPdfBuilder implements PdfBuilderInterface {
     $render = [
       '#theme' => 'entity_print__' . $entity->getEntityTypeId() . '__' . $entity->id(),
       '#entity' => $entity,
-      '#entity_array' => $render_controller->view($entity, 'pdf'),
+      '#entity_array' => $render_controller->view($entity, $this->getViewMode($entity)),
       '#attached' => [],
     ];
 
+    return $this->generateHtml($render, [$entity], $use_default_css, $optimize_css);
+  }
+
+  /**
+   * Generate the HTML for our entity.
+   *
+   * @param array $entities
+   *   An array of entities to generate the HTML for.
+   * @param bool $use_default_css
+   *   TRUE if we should inject our default CSS otherwise FALSE.
+   * @param bool $optimize_css
+   *   TRUE if we should compress the CSS otherwise FALSE.
+   *
+   * @return string
+   *   The generated HTML.
+   *
+   * @throws \Exception
+   */
+  protected function getHtmlMultiple($entities, $use_default_css, $optimize_css) {
+    $first_entity = reset($entities);
+    $render_controller = $this->entityTypeManager->getViewBuilder($first_entity->getEntityTypeId());
+
+    // @TODO, maybe we should implement a different theme function?
+    $render = [
+      '#theme' => 'entity_print__' . $first_entity->getEntityTypeId(),
+      '#entity' => $entities,
+      '#entity_array' => $render_controller->viewMultiple($entities, $this->getViewMode($first_entity)),
+      '#attached' => [],
+    ];
+
+    return $this->generateHtml($render, $entities, $use_default_css, $optimize_css);
+  }
+
+  /**
+   * Generate the HTML for the PDF.
+   *
+   * @param array $render
+   *   The renderable array for our Entity Print theme hook.
+   * @param array $entities
+   *   An array of entities that we're rendering.
+   * @param bool $use_default_css
+   *   TRUE if we're including the default CSS otherwise FALSE.
+   * @param bool $optimize_css
+   *   TRUE if we want to compress the CSS otherwise FALSE.
+   *
+   * @return string
+   *   The HTML rendered string.
+   */
+  protected function generateHtml(array $render, array $entities, $use_default_css, $optimize_css) {
     // Inject some generic CSS across all templates.
     if ($use_default_css) {
       $render['#attached']['library'][] = 'entity_print/default';
     }
 
-    // Allow other modules to add their own CSS.
-    $this->moduleHandler->alter('entity_print_css', $render, $entity);
+    foreach ($entities as $entity) {
+      // Allow other modules to add their own CSS.
+      $this->moduleHandler->alter('entity_print_css', $render, $entity);
 
-    // Inject CSS from the theme info files and then render the CSS.
-    $render = $this->addCss($render, $entity);
+      // Inject CSS from the theme info files and then render the CSS.
+      $render = $this->addCss($render, $entity);
+    }
+
     $css_assets = $this->assetResolver->getCssAssets(AttachedAssets::createFromRenderArray($render), $optimize_css);
     $rendered_css = $this->cssRenderer->render($css_assets);
     $render['#entity_print_css'] = $this->renderer->render($rendered_css);
 
-    return $this->renderer->render($render);
+    return (string) $this->renderer->render($render);
+  }
+
+  /**
+   * Gets the view mode to use for this entity.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   The content entity we're viewing.
+   *
+   * @return string
+   *   The view mode machine name.
+   */
+  protected function getViewMode(ContentEntityInterface $entity) {
+    // We check to see if the PDF view display have been configured, if not
+    // then we simply fall back to the full display.
+    $view_mode = 'pdf';
+    if (!$this->entityTypeManager->getStorage('entity_view_display')->load($entity->getEntityTypeId() . '.' . $entity->bundle() . '.' . $view_mode)) {
+      $view_mode = 'full';
+    }
+    return $view_mode;
   }
 
   /**
@@ -226,18 +313,35 @@ class EntityPrintPdfBuilder implements PdfBuilderInterface {
    *
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity
    *   The content entity to generate the filename.
+   * @param bool $with_extension
+   *   Allow us to exclude the PDF file extension when generating the filename.
    *
    * @return string
    *   The cleaned filename from the entity label.
    */
-  protected function generateFilename(ContentEntityInterface $entity) {
+  protected function generateFilename(ContentEntityInterface $entity, $with_extension = TRUE) {
     $filename = preg_replace("/[^A-Za-z0-9 ]/", '', $entity->label());
     // If for some bizarre reason there isn't a valid character in the entity
     // title or the entity doesn't provide a label then we use the entity type.
     if (!$filename) {
       $filename = $entity->getEntityTypeId();
     }
-    return $filename . '.pdf';
+    return $with_extension ? $filename . '.pdf' : $filename;
+  }
+
+  /**
+   * @param array $entities
+   *   An array of entities to derive the filename for.
+   *
+   * @return string
+   *   The filename to use.
+   */
+  protected function generateMultiFilename(array $entities) {
+    $filename = '';
+    foreach ($entities as $entity) {
+      $filename .= $this->generateFilename($entity, FALSE) . '-';
+    }
+    return rtrim($filename, '-');
   }
 
   /**

@@ -20,6 +20,11 @@ use Drupal\entity_print\Plugin\PdfEngineBase;
 class TestPdfEngine extends PdfEngineBase {
 
   /**
+   * @var string
+   */
+  protected $html;
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
@@ -30,7 +35,10 @@ class TestPdfEngine extends PdfEngineBase {
    * {@inheritdoc}
    */
   public function send($filename = NULL) {
-    return 'Using testpdfengine';
+    // Echo the response and then flush, just like a PDF implementation would.
+    echo 'Using testpdfengine';
+    echo $this->html;
+    flush();
   }
 
   /**
@@ -82,7 +90,9 @@ class TestPdfEngine extends PdfEngineBase {
   /**
    * {@inheritdoc}
    */
-  public function addPage($content) {}
+  public function addPage($content) {
+    $this->html = $content;
+  }
 
   /**
    * {@inheritdoc}

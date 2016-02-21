@@ -29,9 +29,6 @@ interface PdfEngineInterface extends PluginInspectionInterface, PluginFormInterf
    * @param $filename
    *   (optional) The filename if we want to force the browser to download.
    *
-   * @return bool
-   *   TRUE if the PDF contents were sent otherwise FALSE.
-   *
    * @throws \Drupal\entity_print\PdfEngineException
    *   Thrown when PDF generation fails.
    */

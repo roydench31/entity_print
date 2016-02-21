@@ -10,6 +10,7 @@ namespace Drupal\entity_print\Plugin;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
+use Drupal\entity_print\PdfEngineException;
 
 class EntityPrintPluginManager extends DefaultPluginManager {
 
@@ -35,6 +36,16 @@ class EntityPrintPluginManager extends DefaultPluginManager {
    */
   public function createInstance($plugin_id, array $configuration = []) {
     $configuration = array_merge($this->getPdfEngineSettings($plugin_id), $configuration);
+
+    /** @var \Drupal\entity_print\Plugin\PdfEngineInterface $class */
+    $definition = $this->getDefinition($plugin_id);
+    $class = $definition['class'];
+
+    // Throw an exception if someone tries to use a plugin that doesn't have all
+    // of its dependencies met.
+    if (!$class::dependenciesAvailable()) {
+      throw new PdfEngineException(sprintf('Missing dependencies. %s', $class::getInstallationInstructions()));
+    }
 
     return parent::createInstance($plugin_id, $configuration);
   }

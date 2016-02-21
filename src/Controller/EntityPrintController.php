@@ -14,6 +14,7 @@ use Drupal\entity_print\PdfBuilderInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Drupal\entity_print\Plugin\EntityPrintPluginManager;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class EntityPrintController extends ControllerBase {
 
@@ -70,21 +71,17 @@ class EntityPrintController extends ControllerBase {
    *   The response object on error otherwise the PDF is sent.
    */
   public function viewPdf($entity_type, $entity_id) {
-    $response = new Response('Unable to find entity');
+    return (new StreamedResponse(function() use ($entity_type, $entity_id) {
+      if ($entity = $this->entityTypeManager->getStorage($entity_type)->load($entity_id)) {
+        // Create the PDF engine plugin.
+        $config = $this->config('entity_print.settings');
+        $pdf_engine = $this->pluginManager->createInstance($config->get('pdf_engine'));
 
-    // Render the entity as a PDF if we have a valid entity.
-    if ($entity = $this->entityTypeManager->getStorage($entity_type)->load($entity_id)) {
-      // Create the PDF engine plugin.
-      $config = $this->config('entity_print.settings');
-      $pdf_engine = $this->pluginManager->createInstance($config->get('pdf_engine'));
-
-      // The PDF is sent straight to the browser.
-      $result = $this->pdfBuilder->getEntityRenderedAsPdf($entity, $pdf_engine, $config->get('force_download'), $config->get('default_css'));
-      $response->setContent($result ?: 'No response from PDF engine');
-    }
-    return $response;
+        // The PDF is sent straight to the browser.
+        $this->pdfBuilder->getEntityRenderedAsPdf($entity, $pdf_engine, $config->get('force_download'), $config->get('default_css'));
+      }
+    }))->send();
   }
-
 
   /**
    * A debug callback for styling up the PDF.
@@ -99,7 +96,6 @@ class EntityPrintController extends ControllerBase {
    */
   public function viewPdfDebug($entity_type, $entity_id) {
     $response = new Response('Unable to find entity');
-
     if ($entity = $this->entityTypeManager->getStorage($entity_type)->load($entity_id)) {
       $use_default_css = $this->config('entity_print.settings')->get('default_css');
       $response->setContent($this->pdfBuilder->getEntityRenderedAsHtml($entity, $use_default_css, $this->config('system.performance')->get('css.preprocess')));

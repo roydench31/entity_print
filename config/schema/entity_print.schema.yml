@@ -51,3 +51,7 @@ core.entity_view_display.*.*.*.third_party.entity_print:
     label:
       type: string
       label: 'Label for view link'
+
+action.configuration.entity_print_download_action:
+  type: action_configuration_default
+  label: 'Download entities as a PDF'

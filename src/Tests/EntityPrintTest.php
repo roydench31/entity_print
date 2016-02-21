@@ -22,7 +22,7 @@ class EntityPrintTest extends WebTestBase {
    *
    * @var array
    */
-  public static $modules = array('node', 'entity_print_test');
+  public static $modules = ['node', 'entity_print_test'];
 
   /**
    * The node object to test against.

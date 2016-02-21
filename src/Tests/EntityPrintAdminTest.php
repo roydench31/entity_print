@@ -104,28 +104,41 @@ class EntityPrintAdminTest extends WebTestBase {
     module_load_install('entity_print');
     entity_print_install();
 
-    // Visit the manage display.
-    $this->drupalGet('admin/structure/types/manage/page/display');
-
     // Ensure the link doesn't appear by default.
     $this->drupalGet($this->node->toUrl());
     $this->assertNoText('View PDF');
     $this->assertNoLinkByHref('entityprint/node/1');
 
-    // Save the display with new text.
+    // Save the default display with custom text.
     $random_text = $this->randomMachineName();
     $this->drupalPostForm('admin/structure/types/manage/page/display', [
       'fields[entity_print_view][empty_cell]' => $random_text,
       'fields[entity_print_view][type]' => 'visible',
     ], 'Save');
 
-    // Assert that there is a PDF view mode available on nodes by default.
-    $this->assertFieldByName('display_modes_custom[pdf]');
-
     // Visit our page node and ensure the link is available.
     $this->drupalGet($this->node->toUrl());
     $this->assertLink($random_text);
     $this->assertLinkByHref('/entityprint/node/1');
+
+    // Ensure we're using the full view mode and not the PDF view mode.
+    $this->drupalGet('/entityprint/node/1/debug');
+    $this->assertRaw('node--view-mode-full');
+    $this->assertNoRaw('node--view-mode-pdf');
+
+    // Configure the PDF view mode.
+    $this->drupalPostForm('admin/structure/types/manage/page/display', [
+      'display_modes_custom[pdf]' => 1,
+    ], 'Save');
+    $this->drupalPostForm('admin/structure/types/manage/page/display/pdf', [
+      'fields[entity_print_view][empty_cell]' => $random_text,
+      'fields[entity_print_view][type]' => 'visible',
+    ], 'Save');
+
+    // Ensure the PDF view mode is now in use.
+    $this->drupalGet('/entityprint/node/1/debug');
+    $this->assertRaw('node--view-mode-pdf');
+    $this->assertNoRaw('node--view-mode-full');
 
     // Load the EntityViewDisplay and ensure the settings are in the correct
     // place.

@@ -33,6 +33,23 @@ interface PdfBuilderInterface {
   public function getEntityRenderedAsPdf(ContentEntityInterface $entity, PdfEngineInterface $pdf_engine, $force_download = FALSE, $use_default_css = TRUE);
 
   /**
+   * Render any content entity as a PDF.
+   *
+   * @param array $entities
+   *   An array of content entities to render, 1 per page.
+   * @param \Drupal\entity_print\Plugin\PdfEngineInterface $pdf_engine
+   *   The plugin id of the PDF engine to use.
+   * @param bool $force_download
+   *   (optional) TRUE to try and force the PDF to be downloaded rather than opened.
+   * @param bool $use_default_css
+   *   (optional) TRUE if you want the default CSS included, otherwise FALSE.
+   *
+   * @return string
+   *   FALSE or the PDF content will be sent to the browser.
+   */
+  public function getMultipleEntitiesRenderedAsPdf(array $entities, PdfEngineInterface $pdf_engine, $force_download = FALSE, $use_default_css = TRUE);
+
+  /**
    * Get a HTML version of the entity as used for the PDF rendering.
    *
    * @param \Drupal\Core\Entity\ContentEntityInterface $entity

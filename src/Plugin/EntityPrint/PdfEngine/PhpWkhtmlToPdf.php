@@ -87,7 +87,6 @@ class PhpWkhtmlToPdf extends PdfEngineBase {
     if (!$this->pdf->send($filename)) {
       throw new PdfEngineException(sprintf('Failed to generate PDF: %s', $this->pdf->getError()));
     }
-    return TRUE;
   }
 
   /**

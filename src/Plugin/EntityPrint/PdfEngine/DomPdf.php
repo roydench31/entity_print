@@ -35,6 +35,13 @@ class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
   protected $pdf;
 
   /**
+   * Keep track of HTML pages as they're added.
+   *
+   * @var string
+   */
+  protected $html = '';
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, Request $request) {
@@ -98,8 +105,10 @@ class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
    * {@inheritdoc}
    */
   public function addPage($content) {
-    $html = (string) $content;
-    $this->pdf->loadHtml($html);
+    // We must keep adding to previously added HTML as loadHtml() replaces the
+    // entire document.
+    $this->html .= (string) $content;
+    $this->pdf->loadHtml($this->html);
   }
 
   /**
@@ -114,8 +123,11 @@ class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
       throw new PdfEngineException(sprintf('Failed to generate PDF: %s', $errors));
     }
 
+    // The Dompdf library internally adds the .pdf extension so we remove it
+    // from our filename here.
+    $filename = preg_replace('/\.pdf$/i', '', $filename);
+
     $this->pdf->stream($filename);
-    return TRUE;
   }
 
   /**
