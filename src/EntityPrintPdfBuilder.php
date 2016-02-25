@@ -226,7 +226,12 @@ class EntityPrintPdfBuilder implements PdfBuilderInterface {
     $rendered_css = $this->cssRenderer->render($css_assets);
     $render['#entity_print_css'] = $this->renderer->render($rendered_css);
 
-    return (string) $this->renderer->render($render);
+    $html = (string) $this->renderer->render($render);
+
+    // Allow other modules to alter the generated HTML.
+    $this->moduleHandler->alter('entity_print_generate_html', $html);
+
+    return $html;
   }
 
   /**
