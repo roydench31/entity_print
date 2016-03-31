@@ -48,7 +48,7 @@ class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->pdf = new DompdfLib($this->configuration);
     $this->pdf
-      ->setBaseHost($request->getHost())
+      ->setBaseHost($request->getHttpHost())
       ->setProtocol($request->getScheme() . '://');
   }
 
