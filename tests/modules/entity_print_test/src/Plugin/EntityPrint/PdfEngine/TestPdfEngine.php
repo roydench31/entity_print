@@ -36,7 +36,7 @@ class TestPdfEngine extends PdfEngineBase {
    */
   public function send($filename = NULL) {
     // Echo the response and then flush, just like a PDF implementation would.
-    echo 'Using testpdfengine';
+    echo 'Using testpdfengine - ' . $this->configuration['test_engine_suffix'];
     echo $this->html;
     flush();
   }
@@ -53,6 +53,12 @@ class TestPdfEngine extends PdfEngineBase {
       '#default_value' => $this->configuration['test_engine_setting'],
       '#description' => $this->t('Test setting'),
     ];
+    $form['test_engine_suffix'] = [
+      '#title' => $this->t('Suffix'),
+      '#type' => 'textfield',
+      '#default_value' => $this->configuration['test_engine_suffix'],
+      '#description' => $this->t('Suffix'),
+    ];
     return $form;
   }
 
@@ -61,6 +67,7 @@ class TestPdfEngine extends PdfEngineBase {
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     $this->configuration['test_engine_setting'] = $form_state->getValue('test_engine_setting');
+    $this->configuration['test_engine_suffix'] = $form_state->getValue('test_engine_suffix');
   }
 
 
@@ -79,6 +86,7 @@ class TestPdfEngine extends PdfEngineBase {
   public function defaultConfiguration() {
     return [
       'test_engine_setting' => '',
+      'test_engine_suffix' => '',
     ];
   }
 

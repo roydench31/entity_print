@@ -60,6 +60,14 @@ class PdfEngine extends ConfigEntityBase implements PdfEngineInterface {
   /**
    * {@inheritdoc}
    */
+  public function setSettings(array $settings) {
+    $this->settings = $settings;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getPdfEnginePluginCollection() {
     if (!$this->pdfEnginePluginCollection) {
       $this->pdfEnginePluginCollection = new DefaultSingleLazyPluginCollection($this->getPdfEnginePluginManager(), $this->id, $this->settings);

@@ -10,9 +10,19 @@ namespace Drupal\entity_print\Plugin;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
+use Drupal\entity_print\Event\PdfEngineEvents;
 use Drupal\entity_print\PdfEngineException;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\GenericEvent;
 
 class EntityPrintPluginManager extends DefaultPluginManager {
+
+  /**
+   * The event dispatcher.
+   *
+   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
+   */
+  protected $dispatcher;
 
   /**
    * Constructs a EntityPrintPluginManager object.
@@ -25,10 +35,11 @@ class EntityPrintPluginManager extends DefaultPluginManager {
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler to invoke the alter hook with.
    */
-  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
+  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, EventDispatcherInterface $dispatcher) {
     parent::__construct('Plugin/EntityPrint/PdfEngine', $namespaces, $module_handler, 'Drupal\entity_print\Plugin\PdfEngineInterface', 'Drupal\entity_print\Annotation\PdfEngine');
     $this->alterInfo('entity_print_pdf_engine');
     $this->setCacheBackend($cache_backend, 'entity_print_pdf_engines');
+    $this->dispatcher = $dispatcher;
   }
 
   /**
@@ -65,7 +76,12 @@ class EntityPrintPluginManager extends DefaultPluginManager {
     if (!$entity = $storage->load($plugin_id)) {
       $entity = $storage->create(['id' => $plugin_id]);
     }
-    return $entity->getSettings();
+    $configuration = $entity->getSettings();
+    $event = new GenericEvent(PdfEngineEvents::CONFIGURATION_ALTER, ['configuration' => $configuration, 'config' => $entity]);
+    $this->dispatcher->dispatch(PdfEngineEvents::CONFIGURATION_ALTER, $event);
+    $configuration = $event->getArgument('configuration');
+
+    return $configuration;
   }
 
 }

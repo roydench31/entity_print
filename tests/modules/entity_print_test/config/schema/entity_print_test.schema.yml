@@ -5,3 +5,6 @@ entity_print_pdf_engine.testpdfengine:
     test_engine_setting:
       type: string
       label: 'Test setting'
+    test_engine_suffix:
+      type: string
+      label: 'Test suffix'

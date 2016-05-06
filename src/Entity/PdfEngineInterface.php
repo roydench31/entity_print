@@ -30,4 +30,12 @@ interface PdfEngineInterface extends ConfigEntityInterface, EntityWithPluginColl
    */
   public function getSettings();
 
+  /**
+   * Sets the PDF engine settings.
+   *
+   * @return $this
+   *   The config entity.
+   */
+  public function setSettings(array $settings);
+
 }

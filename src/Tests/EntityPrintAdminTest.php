@@ -85,12 +85,12 @@ class EntityPrintAdminTest extends WebTestBase {
 
     // Assert the expected settings were stored.
     $this->assertEqual('testpdfengine', $config_entity->id());
-    $this->assertEqual(['test_engine_setting' => 'testvalue'], $config_entity->getSettings());
+    $this->assertEqual(['test_engine_setting' => 'testvalue', 'test_engine_suffix' => 'overridden'], $config_entity->getSettings());
     $this->assertEqual('entity_print_test', $config_entity->getDependencies()['module'][0]);
 
     // Assert that the testpdfengine is actually used.
     $this->drupalGet('/entityprint/node/1');
-    $this->assertText('Using testpdfengine');
+    $this->assertText('Using testpdfengine - overridden');
   }
 
   /**

@@ -14,6 +14,7 @@ use Drupal\entity_print\PdfEngineException;
 use Drupal\entity_print\Plugin\PdfEngineBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Dompdf\Adapter\CPDF;
 
 /**
  * @PdfEngine(
@@ -78,6 +79,7 @@ class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
     return [
       'enable_html5_parser' => TRUE,
       'enable_remote' => TRUE,
+      'default_paper_size' => 'letter',
     ];
   }
 
@@ -85,6 +87,16 @@ class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+    $paper_sizes = array_combine(array_keys(CPDF::$PAPER_SIZES), array_map(function($value) {
+      return ucfirst($value);
+    }, array_keys(CPDF::$PAPER_SIZES)));
+    $form['default_paper_size'] = [
+      '#title' => $this->t('Paper Size'),
+      '#type' => 'select',
+      '#options' => $paper_sizes,
+      '#default_value' => $this->configuration['default_paper_size'],
+      '#description' => $this->t('The page size to print the PDF to.'),
+    ];
     $form['enable_html5_parser'] = [
       '#title' => $this->t('Enable HTML5 Parser'),
       '#type' => 'checkbox',

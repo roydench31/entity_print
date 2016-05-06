@@ -27,6 +27,9 @@ entity_print_pdf_engine.dompdf:
   type: mapping
   label: 'Dompdf specific settings'
   mapping:
+    default_paper_size:
+      type: string
+      label: 'Default Paper Size'
     enable_html5_parser:
       type: boolean
       label: 'Enable HTML5 parsing'
