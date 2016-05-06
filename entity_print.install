@@ -23,3 +23,34 @@ function entity_print_install() {
     ))->save();
   }
 }
+
+/**
+ * Implements hook_requirements().
+ */
+function entity_print_requirements($phase) {
+  $requirements = [];
+  if ($phase !== 'runtime') {
+    return $requirements;
+  }
+
+  $definitions = \Drupal::service('plugin.manager.entity_print.pdf_engine')->getDefinitions();
+  $has_one_engine = FALSE;
+  foreach ($definitions as $plugin_id => $definition) {
+    /** @var \Drupal\entity_print\Plugin\PdfEngineInterface $class */
+    $class = $definition['class'];
+    if ($class::dependenciesAvailable()) {
+      $has_one_engine = TRUE;
+    }
+  }
+
+  if (!$has_one_engine) {
+    $requirements['entity_print_pdf_engine_available'] = [
+      'title' => t('PDF Engine available'),
+      'description' => t('At least one valid PDF engine must be available to use Entity Print. See the <a href=":docs">documentation</a>', [
+        ':docs' => 'https://www.drupal.org/node/2706755',
+      ]),
+      'severity' => REQUIREMENT_ERROR,
+    ];
+  }
+  return $requirements;
+}

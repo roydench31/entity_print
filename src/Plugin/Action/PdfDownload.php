@@ -8,12 +8,15 @@
 namespace Drupal\entity_print\Plugin\Action;
 
 use Drupal\Component\Plugin\PluginManagerInterface;
+use Drupal\Component\Render\FormattableMarkup;
+use Drupal\Component\Utility\Xss;
 use Drupal\Core\Access\AccessManagerInterface;
 use Drupal\Core\Action\ActionBase;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\entity_print\PdfBuilderInterface;
+use Drupal\entity_print\PdfEngineException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -108,18 +111,33 @@ class PdfDownload extends ActionBase implements ContainerFactoryPluginInterface 
    * {@inheritdoc}
    */
   public function execute($entity = NULL) {
-    (new StreamedResponse(function() use ($entity) {
+    $this->sendResponse((function() use ($entity) {
       $this->pdfBuilder->getEntityRenderedAsPdf($entity, $this->getPdfEngine(), TRUE);
-    }))->send();
+    }));
   }
 
   /**
    * {@inheritdoc}
    */
   public function executeMultiple(array $entities) {
-    (new StreamedResponse(function() use ($entities) {
+    $this->sendResponse((function() use ($entities) {
       $this->pdfBuilder->getMultipleEntitiesRenderedAsPdf($entities, $this->getPdfEngine(), TRUE);
-    }))->send();
+    }));
+  }
+
+  /**
+   * Sends the response using a stream and catches any errors.
+   *
+   * @param callable $callback
+   *   The callable responding for rendering the content.
+   */
+  protected function sendResponse(callable $callback) {
+    try {
+      (new StreamedResponse($callback))->send();
+    }
+    catch (PdfEngineException $e) {
+      drupal_set_message(new FormattableMarkup(Xss::filter($e->getMessage()), []), 'error');
+    }
   }
 
   /**

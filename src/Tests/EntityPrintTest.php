@@ -112,6 +112,14 @@ class EntityPrintTest extends WebTestBase {
     $this->drupalLogin($account);
     $this->drupalGet('entityprint/node/' . $this->node->id() . '/debug');
     $this->assertResponse(403, 'User with neither permission cannot view the PDF.');
+
+    // Invalid entity type causes access denied.
+    $this->drupalGet('entityprint/invalid/' . $this->node->id() . '/debug');
+    $this->assertResponse(403, 'Invalid entity type triggers access denied.');
+
+    // Invalid entity id also triggers access denied.
+    $this->drupalGet('entityprint/node/invalid-entity-id/debug');
+    $this->assertResponse(403, 'Invalid entity id triggers access denied.');
   }
 
 }
