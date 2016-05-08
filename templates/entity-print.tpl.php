@@ -13,6 +13,7 @@
 
 <html>
 <head>
+  <meta charset="UTF-8">
   <title>PDF</title>
   <?php print drupal_get_css($entity_print_css);?>
 </head>
