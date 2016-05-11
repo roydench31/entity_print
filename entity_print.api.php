@@ -2,9 +2,9 @@
 
 /**
  * @file
- * This file provides not working code and exists only to provide examples of
- * using the Entity Print API's.
+ * This file exists only to provide examples of using the Entity Print API's.
  *
+ * The code provided in this file does not work.
  * For further documentation see: https://www.drupal.org/node/2430561
  */
 
@@ -12,12 +12,13 @@
  * This hook is provided to allow modules to add their own CSS files.
  *
  * Note, you can also manage the CSS files from your theme.
- * @see https://www.drupal.org/node/2430561#from-your-theme
  *
  * @param string $entity_type
  *   The entity type of the entity we're rendering.
  * @param object $entity
  *   The entity we're rending.
+ *
+ * @see https://www.drupal.org/node/2430561#from-your-theme
  */
 function hook_entity_print_css($entity_type, $entity) {
   // An example of adding two stylesheets for any commerce_order entity.
@@ -38,7 +39,7 @@ function hook_entity_print_css($entity_type, $entity) {
  *   The pdf object.
  * @param string $entity_type
  *   The entity type of the entity we're rendering.
- * @param $entity
+ * @param object $entity
  *   The entity we're rending.
  */
 function hook_entity_print_pdf_alter(WkHtmlToPdf $pdf, $entity_type, $entity) {

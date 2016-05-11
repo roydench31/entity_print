@@ -2,9 +2,9 @@
 
 /**
  * @file
- * This file provides not working code and exists only to provide examples of
- * using the Entity Print Views API's.
+ * This file provides examples of using the Entity Print Views API's.
  *
+ * The code provided in this file does not work.
  * For further documentation see: https://www.drupal.org/node/2430561
  */
 
@@ -12,10 +12,11 @@
  * This hook is provided to allow modules to add their own CSS files.
  *
  * Note, you can also manage the CSS files from your theme.
- * @see https://www.drupal.org/node/2430561#from-your-theme
  *
  * @param object $view
  *   The view object.
+ *
+ * @see https://www.drupal.org/node/2430561#from-your-theme
  */
 function hook_entity_print_views_css($view) {
   if ($view->name === 'some_view') {

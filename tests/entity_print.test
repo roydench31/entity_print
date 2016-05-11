@@ -119,4 +119,5 @@ class EntityPrintTest extends DrupalWebTestCase {
     $this->drupalGet('entityprint/node/' . $this->node->nid . '/debug');
     $this->assertResponse(403, 'User with neither permission cannot view the PDF.');
   }
+
 }

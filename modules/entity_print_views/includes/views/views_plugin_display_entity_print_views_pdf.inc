@@ -10,7 +10,7 @@ class views_plugin_display_entity_print_views_pdf extends views_plugin_display_p
   /**
    * {@inheritdoc}
    */
-  function execute() {
+  public function execute() {
 
     $library = libraries_load('phpwkhtmltopdf');
     if (!empty($library['loaded'])) {

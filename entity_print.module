@@ -10,7 +10,7 @@ define('ENTITY_PRINT_CSS_GROUP', 'entity_print');
 /**
  * Implements hook_entity_print().
  */
-function entity_print_menu()  {
+function entity_print_menu() {
   $items['entityprint/%/%'] = array(
     'title' => 'Print PDF',
     'page callback' => 'entity_print_entity_to_pdf',
@@ -105,7 +105,7 @@ function entity_print_entity_to_pdf($entity_type, $entity_id) {
       $entity = reset($entities);
       $html = _entity_print_get_generated_html($entity_type, $entity);
 
-      // Add a HTML file, a HTML string or a page from a URL
+      // Add a HTML file, a HTML string or a page from a URL.
       $pdf->addPage($html);
 
       // Allow other modules to alter the generated PDF object.
@@ -143,6 +143,7 @@ function entity_print_entity_debug($entity_type, $entity_id) {
  *   The entity type.
  * @param object $entity
  *   The entity we're rendering.
+ *
  * @return string
  *   The generate HTML.
  *
@@ -186,7 +187,7 @@ function _entity_print_get_generated_html($entity_type, $entity) {
  *   The entity type to add the css for.
  * @param object $entity
  *   The entity object.
- * @param $entity_info
+ * @param array $entity_info
  *   The entity info from entity_get_info().
  *
  * @return array
@@ -284,16 +285,16 @@ function entity_print_permission() {
 
   // Create a permission for every entity type and bundle.
   $entities = entity_get_info();
-  foreach($entities as $entity_key => $entity_info) {
+  foreach ($entities as $entity_key => $entity_info) {
     $permissions['entity print access type ' . $entity_key] = array(
       'title' => t('%entity_label: Use entity print for all bundles', array(
-        '%entity_label' => $entity_info['label'])
-      ),
+        '%entity_label' => $entity_info['label'],
+      )),
       'description' => t('Allow a user to use entity print to view the generated PDF for all %entity_label bundles.', array(
         '%entity_label' => $entity_info['label'],
       )),
     );
-    foreach($entity_info['bundles'] as $bundle_key => $entity_bundle) {
+    foreach ($entity_info['bundles'] as $bundle_key => $entity_bundle) {
       $permissions['entity print access bundle ' . $bundle_key] = array(
         'title' => t('%entity_label (%entity_bundle_label): Use entity print', array(
           '%entity_label' => $entity_info['label'],

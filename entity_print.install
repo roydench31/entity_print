@@ -15,13 +15,13 @@ function entity_print_update_7001() {
   $loaded_roles = array();
 
   // Load roles by name to get the rid and the role name.
-  foreach($roles as $role) {
+  foreach ($roles as $role) {
     $loaded_roles[] = user_role_load_by_name($role);
   }
 
   // Prepare permission array.
   $rid_permissions = array();
-  foreach($loaded_roles as $loaded_role) {
+  foreach ($loaded_roles as $loaded_role) {
     $rid_permissions[] = array(
       'rid' => $loaded_role->rid,
       'permissions' => user_role_permissions(array($loaded_role->rid => $loaded_role->name)),
@@ -29,9 +29,9 @@ function entity_print_update_7001() {
   }
 
   // Set / unset permissions.
-  foreach($rid_permissions as $rid_permission) {
+  foreach ($rid_permissions as $rid_permission) {
     $permissions = reset($rid_permission['permissions']);
-    if(array_key_exists('entity print access', $permissions)) {
+    if (array_key_exists('entity print access', $permissions)) {
       user_role_change_permissions($rid_permission['rid'], array(
         'entity print access' => FALSE,
         'bypass entity print access' => TRUE,
