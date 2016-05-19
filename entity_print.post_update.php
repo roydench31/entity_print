@@ -7,11 +7,12 @@ use Drupal\entity_print\Entity\PdfEngine;
  */
 function entity_print_post_update_new_dompdf_configuration() {
   /** @var \Drupal\entity_print\Entity\PdfEngine $engine_config */
-  $engine_config = PdfEngine::load('dompdf');
-  $settings = $engine_config->getSettings();
-  $settings['default_paper_size'] = 'letter';
-  $engine_config->setSettings($settings);
-  $engine_config->save();
+  if ($engine_config = PdfEngine::load('dompdf')) {
+    $settings = $engine_config->getSettings();
+    $settings['default_paper_size'] = 'letter';
+    $engine_config->setSettings($settings);
+    $engine_config->save();
+  }
 }
 
 /**
