@@ -25,7 +25,7 @@ use Dompdf\Adapter\CPDF;
  * To use this implementation you will need the DomPDF library, simply run
  *
  * @code
- *     composer require "dompdf/dompdf:0.7.0-beta3"
+ *     composer require "dompdf/dompdf 0.7.0-beta3"
  * @endcode
  */
 class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
@@ -69,7 +69,7 @@ class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
    * {@inheritdoc}
    */
   public static function getInstallationInstructions() {
-    return t('Please install with: @command', ['@command' => 'composer require "dompdf/dompdf:0.7.0-beta3"']);
+    return t('Please install with: @command', ['@command' => 'composer require "dompdf/dompdf 0.7.0-beta3"']);
   }
 
   /**
