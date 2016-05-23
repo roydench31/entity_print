@@ -76,7 +76,17 @@ function entity_print_form_entity_view_display_edit_form_alter(&$form, FormState
     '#default_value' => $display->getThirdPartySetting('entity_print', 'label', t('View PDF')),
   ];
 
+  $form['#validate'][] = 'entity_print_form_entity_view_display_edit_form_validate';
   $form['actions']['submit']['#submit'][] = 'entity_print_form_entity_view_display_edit_form_submit';
+}
+
+/**
+ * Entity display form validation handler.
+ */
+function entity_print_form_entity_view_display_edit_form_validate(&$form, FormStateInterface $form_state) {
+  if (empty($form_state->getValue(['fields', 'entity_print_view', 'empty_cell']))) {
+    $form_state->setErrorByName('fields][entity_print_view][empty_cell', t('The Entity Print fields settings have not been saved. Please enter a non-empty value for the Entity Print field.'));
+  }
 }
 
 /**
