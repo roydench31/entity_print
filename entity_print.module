@@ -33,8 +33,8 @@ function entity_print_theme($existing, $type, $theme, $path) {
  * Implements hook_entity_extra_field_info_alter().
  */
 function entity_print_entity_extra_field_info_alter(&$info) {
-  foreach ($info as $entity_type => &$entity_info) {
-    foreach ($entity_info as $bundle => &$bundle_info) {
+  foreach ($info as &$entity_info) {
+    foreach ($entity_info as &$bundle_info) {
       $bundle_info['display']['entity_print_view'] = [
         'label' => t('Entity Print'),
         'description' => t('Provides a link to view the PDF version of the entity'),

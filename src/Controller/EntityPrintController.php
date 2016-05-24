@@ -90,7 +90,7 @@ class EntityPrintController extends ControllerBase {
       return new RedirectResponse($entity->toUrl()->toString());
     }
 
-    return (new StreamedResponse(function() use ($entity, $entity_type, $entity_id, $pdf_engine, $config) {
+    return (new StreamedResponse(function() use ($entity, $pdf_engine, $config) {
       // The PDF is sent straight to the browser.
       $this->pdfBuilder->getEntityRenderedAsPdf($entity, $pdf_engine, $config->get('force_download'), $config->get('default_css'));
     }))->send();

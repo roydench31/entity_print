@@ -110,21 +110,21 @@ class SettingsForm extends ConfigFormBase {
     ];
     $form['entity_print']['default_css'] = [
       '#type' => 'checkbox',
-      '#title' => t('Enable Default CSS'),
-      '#description' => t('Provides some very basic font and padding styles.'),
+      '#title' => $this->t('Enable Default CSS'),
+      '#description' => $this->t('Provides some very basic font and padding styles.'),
       '#default_value' => $config->get('default_css'),
     ];
     $form['entity_print']['force_download'] = [
       '#type' => 'checkbox',
-      '#title' => t('Force Download'),
-      '#description' => t('This option will attempt to force the browser to download the PDF with a filename from the node title.'),
+      '#title' => $this->t('Force Download'),
+      '#description' => $this->t('This option will attempt to force the browser to download the PDF with a filename from the node title.'),
       '#default_value' => $config->get('force_download'),
     ];
 
     $form['entity_print']['pdf_engine'] = [
       '#type' => 'select',
-      '#title' => t('Pdf Engine'),
-      '#description' => 'Select the PDF engine to render the PDF',
+      '#title' => $this->t('Pdf Engine'),
+      '#description' => $this->t('Select the PDF engine to render the PDF'),
       '#options' => $pdf_engines,
       '#default_value' => $config->get('pdf_engine'),
       '#empty_option' => $this->t('- None -'),
@@ -175,7 +175,7 @@ class SettingsForm extends ConfigFormBase {
     $plugin = $this->pluginManager->createInstance($plugin_id);
     $form = [
       '#type' => 'fieldset',
-      '#title' => t('@engine Settings', ['@engine' => $plugin->getPluginDefinition()['label']]),
+      '#title' => $this->t('@engine Settings', ['@engine' => $plugin->getPluginDefinition()['label']]),
     ];
     return $form + $plugin->buildConfigurationForm([], $form_state);
   }
