@@ -1,16 +1,11 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\entity_print\Plugin\EntityPrintPluginManager
- */
-
 namespace Drupal\entity_print\Plugin;
 
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
-use Drupal\entity_print\Event\PdfEngineEvents;
+use Drupal\entity_print\Event\PdfEvents;
 use Drupal\entity_print\PdfEngineException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
@@ -77,8 +72,8 @@ class EntityPrintPluginManager extends DefaultPluginManager {
       $entity = $storage->create(['id' => $plugin_id]);
     }
     $configuration = $entity->getSettings();
-    $event = new GenericEvent(PdfEngineEvents::CONFIGURATION_ALTER, ['configuration' => $configuration, 'config' => $entity]);
-    $this->dispatcher->dispatch(PdfEngineEvents::CONFIGURATION_ALTER, $event);
+    $event = new GenericEvent(PdfEvents::CONFIGURATION_ALTER, ['configuration' => $configuration, 'config' => $entity]);
+    $this->dispatcher->dispatch(PdfEvents::CONFIGURATION_ALTER, $event);
     $configuration = $event->getArgument('configuration');
 
     return $configuration;

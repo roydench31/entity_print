@@ -22,12 +22,14 @@ class EntityPrintTest extends UnitTestCase {
    * @dataProvider generateFilenameDataProvider
    */
   public function testGenerateFilename($entity_label, $expected_filename) {
-    $force_download = $use_css = TRUE;
     $entity = $this->getMockEntity($entity_label);
-    $pdf_engine = $this->getMockPdfEngine($force_download, $expected_filename);
+    $pdf_builder = $this->getMockPdfBuilder();
 
-    $pdf_builder = $this->getMockPdfBuilder($entity, TRUE);
-    $pdf_builder->getEntityRenderedAsPdf($entity, $pdf_engine, $force_download, $use_css);
+    $reflection = new \ReflectionClass($pdf_builder);
+    $method = $reflection->getMethod('generateFilename');
+    $method->setAccessible(true);
+
+    $this->assertEquals($expected_filename, $method->invoke($pdf_builder, $entity));
   }
 
   /**
@@ -51,52 +53,13 @@ class EntityPrintTest extends UnitTestCase {
    * @return \Drupal\entity_print\EntityPrintPdfBuilder
    *   The entity pdf builder mock.
    */
-  protected function getMockPdfBuilder($entity, $use_css) {
-    $module_handler = $this->getMock('Drupal\Core\Extension\ModuleHandlerInterface');
-    $module_handler
-      ->expects($this->once())
-      ->method('alter');
-
+  protected function getMockPdfBuilder() {
     $pdf_builder = $this->getMockBuilder('Drupal\entity_print\EntityPrintPdfBuilder')
       ->disableOriginalConstructor()
-      ->setMethods(['getHtml'])
+      ->setMethods([])
       ->getMock();
-    $pdf_builder
-      ->expects($this->once())
-      ->method('getHtml')
-      ->with($entity, $use_css, TRUE)
-      ->willReturn('<custom> html');
-
-    // Some reflection magic to replace the module handler.
-    $reflection = new \ReflectionClass($pdf_builder);
-    $property = $reflection->getProperty('moduleHandler');
-    $property->setAccessible(true);
-    $property->setValue($pdf_builder, $module_handler);
 
     return $pdf_builder;
-  }
-
-  /**
-   * Get a mock pdf engine.
-   *
-   * @param bool $force_download
-   *   Whether to force the pdf download.
-   * @param string $filename
-   *   The PDF filename.
-   *
-   * @return \PHPUnit_Framework_MockObject_MockObject
-   *   The mock pdf engine,
-   */
-  protected function getMockPdfEngine($force_download, $filename = 'myfile.pdf') {
-    $pdf_engine = $this->getMock('Drupal\entity_print\Plugin\PdfEngineInterface');
-    $pdf_engine
-      ->expects($this->once())
-      ->method('addPage');
-    $pdf_engine
-      ->expects($this->once())
-      ->method('send')
-      ->with($force_download ? $filename : NULL);
-    return $pdf_engine;
   }
 
   /**
@@ -109,10 +72,10 @@ class EntityPrintTest extends UnitTestCase {
    *   The content entity mock.
    */
   protected function getMockEntity($entity_label = '') {
-    $entity = $this->getMock('Drupal\Core\Entity\ContentEntityInterface');
+    $entity = $this->getMock('Drupal\Core\Entity\EntityInterface');
     if ($entity_label) {
       $entity
-        ->expects($this->once())
+        ->expects($this->any())
         ->method('label')
         ->willReturn($entity_label);
     }

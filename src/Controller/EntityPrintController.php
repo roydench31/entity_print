@@ -109,8 +109,14 @@ class EntityPrintController extends ControllerBase {
    */
   public function viewPdfDebug($entity_type, $entity_id) {
     $entity = $this->entityTypeManager->getStorage($entity_type)->load($entity_id);
-    $use_default_css = $this->config('entity_print.settings')->get('default_css');
-    return new Response($this->pdfBuilder->getEntityRenderedAsHtml($entity, $use_default_css, $this->config('system.performance')->get('css.preprocess')));
+    try {
+      $use_default_css = $this->config('entity_print.settings')->get('default_css');
+      return new Response($this->pdfBuilder->getEntityRenderedAsHtml($entity, $use_default_css, $this->config('system.performance')->get('css.preprocess')));
+    }
+    catch (PdfEngineException $e) {
+      drupal_set_message(new FormattableMarkup('Error generating PDF: ' . Xss::filter($e->getMessage()), []), 'error');
+      return new RedirectResponse($entity->toUrl()->toString());
+    }
   }
 
   /**

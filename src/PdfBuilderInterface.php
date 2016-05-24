@@ -7,7 +7,7 @@
 
 namespace Drupal\entity_print;
 
-use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\entity_print\Plugin\PdfEngineInterface;
 
 /**
@@ -18,7 +18,7 @@ interface PdfBuilderInterface {
   /**
    * Render any content entity as a PDF.
    *
-   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The content entity to render.
    * @param \Drupal\entity_print\Plugin\PdfEngineInterface $pdf_engine
    *   The plugin id of the PDF engine to use.
@@ -30,7 +30,7 @@ interface PdfBuilderInterface {
    * @return string
    *   FALSE or the PDF content will be sent to the browser.
    */
-  public function getEntityRenderedAsPdf(ContentEntityInterface $entity, PdfEngineInterface $pdf_engine, $force_download = FALSE, $use_default_css = TRUE);
+  public function getEntityRenderedAsPdf(EntityInterface $entity, PdfEngineInterface $pdf_engine, $force_download = FALSE, $use_default_css = TRUE);
 
   /**
    * Render any content entity as a PDF.
@@ -52,7 +52,7 @@ interface PdfBuilderInterface {
   /**
    * Get a HTML version of the entity as used for the PDF rendering.
    *
-   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The content entity to render.
    * @param bool $use_default_css
    *   TRUE if you want the default CSS included, otherwise FALSE.
@@ -62,5 +62,5 @@ interface PdfBuilderInterface {
    * @return string
    *   The rendered HTML for this entity, the same as what is used for the PDF.
    */
-  public function getEntityRenderedAsHtml(ContentEntityInterface $entity, $use_default_css = TRUE, $optimize_css = TRUE);
+  public function getEntityRenderedAsHtml(EntityInterface $entity, $use_default_css = TRUE, $optimize_css = TRUE);
 }

@@ -5,7 +5,6 @@
  * Print any entity.
  */
 
-use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -103,46 +102,4 @@ function entity_print_form_entity_view_display_edit_form_submit(&$form, FormStat
     $display->setThirdPartySetting('entity_print', 'label', $value);
     $display->save();
   }
-}
-
-/**
- * Implements hook_entity_print_generate_html_alter().
- *
- * This is a temporary workaround for a core issue.
- * @see https://drupal.org/node/1494670
- */
-function entity_print_entity_print_generate_html_alter(&$html_string) {
-
-  // We only apply the fix to PHP Wkhtmltopdf because the other implementations
-  // allow us to specify a base url.
-  if (\Drupal::config('entity_print.settings')->get('pdf_engine') !== 'phpwkhtmltopdf') {
-    return;
-  }
-
-  $html5 = new HTML5();
-  $document = $html5->loadHTML($html_string);
-
-  // Define a function that will convert root relative uris into absolute urls.
-  $transform = function($tag, $attribute) use ($document) {
-    $base_url = \Drupal::request()->getSchemeAndHttpHost();
-    foreach ($document->getElementsByTagName($tag) as $node) {
-      $attribute_value = $node->getAttribute($attribute);
-
-      // Handle protocol agnostic URLs as well.
-      if (Unicode::substr($attribute_value, 0, 2) === '//') {
-        $node->setAttribute($attribute, $base_url . Unicode::substr($attribute_value, 1));
-      }
-      elseif (Unicode::substr($attribute_value, 0, 1) === '/') {
-        $node->setAttribute($attribute, $base_url . $attribute_value);
-      }
-    }
-  };
-
-  // Transform stylesheets, links and images.
-  $transform('link', 'href');
-  $transform('a', 'href');
-  $transform('img', 'src');
-
-  // Overwrite the HTML.
-  $html_string = $html5->saveHTML($document);
 }

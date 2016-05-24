@@ -2,7 +2,9 @@
 
 namespace Drupal\entity_print_test\EventSubscriber;
 
-use Drupal\entity_print\Event\PdfEngineEvents;
+use Drupal\entity_print\Event\PdfCssAlterEvent;
+use Drupal\entity_print\Event\PdfEvents;
+use Drupal\entity_print\Event\PreSendPdfEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -24,11 +26,21 @@ class TestEngineConfigurationAlter implements EventSubscriberInterface {
   }
 
   /**
+   * Alter the CSS renderable array and add our CSS.
+   * @param \Drupal\entity_print\Event\PdfCssAlterEvent $event
+   *   The event object.
+   */
+  public function alterCss(PdfCssAlterEvent $event) {
+    $event->getBuild()['#attached']['library'][] = 'entity_print_test_theme/module';
+  }
+
+  /**
    * {@inheritdoc}
    */
   public static function getSubscribedEvents() {
     return [
-      PdfEngineEvents::CONFIGURATION_ALTER => 'alterConfiguration'
+      PdfEvents::CONFIGURATION_ALTER => 'alterConfiguration',
+      PdfEvents::CSS_ALTER => 'alterCss',
     ];
   }
 
