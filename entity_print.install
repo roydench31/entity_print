@@ -54,3 +54,17 @@ function entity_print_requirements($phase) {
   }
   return $requirements;
 }
+
+/**
+ * Upgrade the permissions inline with the more granular permissions.
+ */
+function entity_print_update_8101() {
+  $roles = user_roles();
+  foreach ($roles as $role) {
+    if ($role->hasPermission('entity print access')) {
+      $role->grantPermission('bypass entity print access');
+      $role->revokePermission('entity print access');
+      $role->save();
+    }
+  }
+}

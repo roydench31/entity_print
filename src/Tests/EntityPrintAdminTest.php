@@ -43,7 +43,7 @@ class EntityPrintAdminTest extends WebTestBase {
     ));
     $this->node = $this->drupalCreateNode();
 
-    $account = $this->drupalCreateUser(['entity print access', 'administer entity print', 'access content', 'administer content types', 'administer node display']);
+    $account = $this->drupalCreateUser(['bypass entity print access', 'administer entity print', 'access content', 'administer content types', 'administer node display']);
     $this->drupalLogin($account);
   }
 

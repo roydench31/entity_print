@@ -4,7 +4,6 @@ entity_print.view:
     _controller: '\Drupal\entity_print\Controller\EntityPrintController::viewPdf'
     _title: 'Entity Print'
   requirements:
-    _permission: 'entity print access'
     _custom_access: '\Drupal\entity_print\Controller\EntityPrintController::checkAccess'
 
 entity_print.view.debug:
@@ -13,7 +12,6 @@ entity_print.view.debug:
     _controller: '\Drupal\entity_print\Controller\EntityPrintController::viewPdfDebug'
     _title: 'Entity Print Debug'
   requirements:
-    _permission: 'entity print access'
     _custom_access: '\Drupal\entity_print\Controller\EntityPrintController::checkAccess'
 
 entity_print.settings:

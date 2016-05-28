@@ -2,7 +2,6 @@
 
 /**
  * @file
- * Contains \Drupal\entity_print\Controller\EntityPrintController
  */
 
 namespace Drupal\entity_print\Controller;
@@ -12,6 +11,7 @@ use Drupal\Component\Utility\Xss;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Render\HtmlResponse;
 use Drupal\entity_print\PdfBuilderInterface;
 use Drupal\entity_print\PdfEngineException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -141,9 +141,30 @@ class EntityPrintController extends ControllerBase {
       return AccessResult::forbidden();
     }
 
-    if (AccessResult::allowedIfHasPermission($account, 'entity print access')->isAllowed() && $entity = $this->entityTypeManager->getStorage($entity_type)->load($entity_id)) {
-      return $entity->access('view', $account, TRUE);
+    // Unable to find the entity requested.
+    if (!$entity = $this->entityTypeManager->getStorage($entity_type)->load($entity_id)) {
+      return AccessResult::forbidden();
     }
+
+    // Check if the user has the permission "bypass entity print access".
+    $access_result = AccessResult::allowedIfHasPermission($account, 'bypass entity print access');
+    if ($access_result->isAllowed()) {
+      return $entity->access('view', $account, TRUE);
+      return $access_result->andIf($entity->access('view', $account, TRUE));
+    }
+
+    // Check if the user is allowed to view all bundles of the entity type.
+    $access_result = AccessResult::allowedIfHasPermission($account, 'entity print access type ' . $entity_type);
+    if ($access_result->isAllowed()) {
+      return $access_result->andIf($entity->access('view', $account, TRUE));
+    }
+
+    // Check if the user is allowed to view that bundle type.
+    $access_result = AccessResult::allowedIfHasPermission($account, 'entity print access bundle ' . $entity->bundle());
+    if ($access_result->isAllowed()) {
+      return $access_result->andIf($entity->access('view', $account, TRUE));
+    }
+
     return AccessResult::forbidden();
   }
 
