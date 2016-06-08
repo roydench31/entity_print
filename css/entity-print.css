@@ -5,3 +5,8 @@ body {
 .page {
   padding: 20px;
 }
+
+.page img {
+  max-width: 100%;
+  height: auto;
+}
