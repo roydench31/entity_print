@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\entity_print\Plugin\PdfEngineBase
+ * Contains \Drupal\entity_print\Plugin\PrintEngineBase.
  */
 
 namespace Drupal\entity_print\Plugin;
@@ -11,16 +11,16 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\PluginBase;
 
 /**
- * The PdfEngineBase class.
+ * The PrintEngineBase class.
  */
-abstract class PdfEngineBase extends PluginBase implements PdfEngineInterface {
+abstract class PrintEngineBase extends PluginBase implements PrintEngineInterface {
 
   /**
-   * The PDF library object.
+   * The Print library object.
    *
    * @var object
    */
-  protected $pdf;
+  protected $print;
 
   /**
    * {@inheritdoc}

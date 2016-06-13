@@ -4,7 +4,7 @@ namespace Drupal\entity_print\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 
-class PdfHtmlAlterEvent extends Event {
+class PrintHtmlAlterEvent extends Event {
 
   /**
    * The HTML string.
@@ -21,7 +21,7 @@ class PdfHtmlAlterEvent extends Event {
   protected $entities;
 
   /**
-   * PdfHtmlAlterEvent constructor.
+   * PrintHtmlAlterEvent constructor.
    *
    * @param string $html
    *   The generated HTML.

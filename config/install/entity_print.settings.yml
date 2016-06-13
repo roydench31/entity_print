@@ -1,3 +1,4 @@
 default_css: true
 force_download: true
-pdf_engine: dompdf
+print_engines:
+  pdf_engine: dompdf

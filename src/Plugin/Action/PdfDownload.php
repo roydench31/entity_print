@@ -15,8 +15,8 @@ use Drupal\Core\Action\ActionBase;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\entity_print\PdfBuilderInterface;
-use Drupal\entity_print\PdfEngineException;
+use Drupal\entity_print\PrintBuilderInterface;
+use Drupal\entity_print\PrintEngineException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  * Downloads the PDF for an entity.
  *
  * @Action(
- *   id = "entity_print_download_action",
+ *   id = "entity_print_pdf_download_action",
  *   label = @Translation("Download PDF"),
  *   type = "node"
  * )
@@ -42,11 +42,11 @@ class PdfDownload extends ActionBase implements ContainerFactoryPluginInterface 
   protected $accessManager;
 
   /**
-   * The PDF builder service.
+   * The Print builder service.
    *
-   * @var \Drupal\entity_print\PdfBuilderInterface
+   * @var \Drupal\entity_print\PrintBuilderInterface
    */
-  protected $pdfBuilder;
+  protected $printBuilder;
 
   /**
    * The Entity Print plugin manager.
@@ -63,19 +63,19 @@ class PdfDownload extends ActionBase implements ContainerFactoryPluginInterface 
   protected $entityPrintConfig;
 
   /**
-   * The PDF engine implementation.
+   * The Print engine implementation.
    *
-   * @var \Drupal\entity_print\Plugin\PdfEngineInterface
+   * @var \Drupal\entity_print\Plugin\PrintEngineInterface
    */
-  protected $pdfEngine;
+  protected $printEngine;
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, AccessManagerInterface $access_manager, PdfBuilderInterface $pdf_builder, PluginManagerInterface $plugin_manager, ImmutableConfig $entity_print_config) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, AccessManagerInterface $access_manager, PrintBuilderInterface $print_builder, PluginManagerInterface $plugin_manager, ImmutableConfig $entity_print_config) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->accessManager = $access_manager;
-    $this->pdfBuilder = $pdf_builder;
+    $this->printBuilder = $print_builder;
     $this->pluginManager = $plugin_manager;
     $this->entityPrintConfig = $entity_print_config;
   }
@@ -89,8 +89,8 @@ class PdfDownload extends ActionBase implements ContainerFactoryPluginInterface 
       $plugin_id,
       $plugin_definition,
       $container->get('access_manager'),
-      $container->get('entity_print.pdf_manager'),
-      $container->get('plugin.manager.entity_print.pdf_engine'),
+      $container->get('entity_print.print_manager'),
+      $container->get('plugin.manager.entity_print.print_engine'),
       $container->get('config.factory')->get('entity_print.settings')
     );
   }
@@ -112,7 +112,7 @@ class PdfDownload extends ActionBase implements ContainerFactoryPluginInterface 
    */
   public function execute($entity = NULL) {
     $this->sendResponse((function() use ($entity) {
-      $this->pdfBuilder->getEntityRenderedAsPdf($entity, $this->getPdfEngine(), TRUE);
+      $this->printBuilder->printSingle($entity, $this->getPrintEngine(), TRUE);
     }));
   }
 
@@ -121,7 +121,7 @@ class PdfDownload extends ActionBase implements ContainerFactoryPluginInterface 
    */
   public function executeMultiple(array $entities) {
     $this->sendResponse((function() use ($entities) {
-      $this->pdfBuilder->getMultipleEntitiesRenderedAsPdf($entities, $this->getPdfEngine(), TRUE);
+      $this->printBuilder->printMultiple($entities, $this->getPrintEngine(), TRUE);
     }));
   }
 
@@ -135,22 +135,22 @@ class PdfDownload extends ActionBase implements ContainerFactoryPluginInterface 
     try {
       (new StreamedResponse($callback))->send();
     }
-    catch (PdfEngineException $e) {
+    catch (PrintEngineException $e) {
       drupal_set_message(new FormattableMarkup(Xss::filter($e->getMessage()), []), 'error');
     }
   }
 
   /**
-   * Gets the PDF engine implementation.
+   * Gets the Print engine implementation.
    *
-   * @return \Drupal\entity_print\Plugin\PdfEngineInterface
-   *   The PDF Engine implementation.
+   * @return \Drupal\entity_print\Plugin\PrintEngineInterface
+   *   The Print Engine implementation.
    */
-  protected function getPdfEngine() {
-    if (!isset($this->pdfEngine)) {
-      $this->pdfEngine = $this->pluginManager->createInstance($this->entityPrintConfig->get('pdf_engine'));
+  protected function getPrintEngine() {
+    if (!isset($this->printEngine)) {
+      $this->printEngine = $this->pluginManager->createInstance($this->entityPrintConfig->get('print_engines.pdf_engine'));
     }
-    return $this->pdfEngine;
+    return $this->printEngine;
   }
 
 }

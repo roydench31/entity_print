@@ -2,14 +2,14 @@
 
 /**
  * @file
- * Contains \Drupal\entity_print_test\Plugin\EntityPrint\PdfEngine\NotAvailablePdfEngine
+ * Contains \Drupal\entity_print_test\Plugin\EntityPrint\PrintEngine\NotAvailablePrintEngine
  */
 
-namespace Drupal\entity_print_test\Plugin\EntityPrint\PdfEngine;
+namespace Drupal\entity_print_test\Plugin\EntityPrint\PrintEngine;
 
-use Drupal\entity_print\Plugin\PdfEngineBase;
+use Drupal\entity_print\Plugin\PrintEngineBase;
 
-class NotAvailablePdfEngine extends PdfEngineBase {
+class NotAvailablePrintEngine extends PrintEngineBase {
 
   /**
    * {@inheritdoc}

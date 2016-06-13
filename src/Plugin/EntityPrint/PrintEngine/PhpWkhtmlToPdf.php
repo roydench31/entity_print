@@ -2,20 +2,21 @@
 
 /**
  * @file
- * Contains \Drupal\entity_print\Plugin\EntityPrint\PdfEngine\PhpWkhtmlToPdf
+ * Contains \Drupal\entity_print\Plugin\EntityPrint\PrintEngine\PhpWkhtmlToPdf
  */
 
-namespace Drupal\entity_print\Plugin\EntityPrint\PdfEngine;
+namespace Drupal\entity_print\Plugin\EntityPrint\PrintEngine;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\entity_print\PdfEngineException;
-use Drupal\entity_print\Plugin\PdfEngineBase;
+use Drupal\entity_print\PrintEngineException;
+use Drupal\entity_print\Plugin\PrintEngineBase;
 use mikehaertl\wkhtmlto\Pdf;
 
 /**
- * @PdfEngine(
+ * @PrintEngine(
  *   id = "phpwkhtmltopdf",
- *   label = @Translation("Php Wkhtmltopdf")
+ *   label = @Translation("Php Wkhtmltopdf"),
+ *   export_type = "pdf"
  * )
  *
  * To use this implementation you will need the DomPDF library, simply run:
@@ -24,19 +25,19 @@ use mikehaertl\wkhtmlto\Pdf;
  *     composer require "mikehaertl/phpwkhtmltopdf ~2.1"
  * @endcode
  */
-class PhpWkhtmlToPdf extends PdfEngineBase {
+class PhpWkhtmlToPdf extends PrintEngineBase {
 
   /**
    * @var \mikehaertl\wkhtmlto\Pdf
    */
-  protected $pdf;
+  protected $print;
 
   /**
    * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->pdf = new Pdf(['binary' => $this->configuration['binary_location']]);
+    $this->print = new Pdf(['binary' => $this->configuration['binary_location']]);
   }
 
   /**
@@ -84,8 +85,8 @@ class PhpWkhtmlToPdf extends PdfEngineBase {
    * {@inheritdoc}
    */
   public function send($filename = NULL) {
-    if (!$this->pdf->send($filename)) {
-      throw new PdfEngineException(sprintf('Failed to generate PDF: %s', $this->pdf->getError()));
+    if (!$this->print->send($filename)) {
+      throw new PrintEngineException(sprintf('Failed to generate PDF: %s', $this->print->getError()));
     }
   }
 
@@ -93,7 +94,7 @@ class PhpWkhtmlToPdf extends PdfEngineBase {
    * {@inheritdoc}
    */
   public function addPage($content) {
-    $this->pdf->addPage($content);
+    $this->print->addPage($content);
   }
 
   /**

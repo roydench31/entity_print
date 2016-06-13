@@ -5,8 +5,8 @@ namespace Drupal\entity_print\Plugin;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
-use Drupal\entity_print\Event\PdfEvents;
-use Drupal\entity_print\PdfEngineException;
+use Drupal\entity_print\Event\PrintEvents;
+use Drupal\entity_print\PrintEngineException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -31,9 +31,9 @@ class EntityPrintPluginManager extends DefaultPluginManager {
    *   The module handler to invoke the alter hook with.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, EventDispatcherInterface $dispatcher) {
-    parent::__construct('Plugin/EntityPrint/PdfEngine', $namespaces, $module_handler, 'Drupal\entity_print\Plugin\PdfEngineInterface', 'Drupal\entity_print\Annotation\PdfEngine');
-    $this->alterInfo('entity_print_pdf_engine');
-    $this->setCacheBackend($cache_backend, 'entity_print_pdf_engines');
+    parent::__construct('Plugin/EntityPrint/PrintEngine', $namespaces, $module_handler, 'Drupal\entity_print\Plugin\PrintEngineInterface', 'Drupal\entity_print\Annotation\PrintEngine');
+    $this->alterInfo('entity_print_print_engine');
+    $this->setCacheBackend($cache_backend, 'entity_print_print_engines');
     $this->dispatcher = $dispatcher;
   }
 
@@ -41,16 +41,16 @@ class EntityPrintPluginManager extends DefaultPluginManager {
    * {@inheritdoc}
    */
   public function createInstance($plugin_id, array $configuration = []) {
-    $configuration = array_merge($this->getPdfEngineSettings($plugin_id), $configuration);
+    $configuration = array_merge($this->getPrintEngineSettings($plugin_id), $configuration);
 
-    /** @var \Drupal\entity_print\Plugin\PdfEngineInterface $class */
+    /** @var \Drupal\entity_print\Plugin\PrintEngineInterface $class */
     $definition = $this->getDefinition($plugin_id);
     $class = $definition['class'];
 
     // Throw an exception if someone tries to use a plugin that doesn't have all
     // of its dependencies met.
     if (!$class::dependenciesAvailable()) {
-      throw new PdfEngineException(sprintf('Missing dependencies. %s', $class::getInstallationInstructions()));
+      throw new PrintEngineException(sprintf('Missing dependencies. %s', $class::getInstallationInstructions()));
     }
 
     return parent::createInstance($plugin_id, $configuration);
@@ -63,17 +63,17 @@ class EntityPrintPluginManager extends DefaultPluginManager {
    *   The plugin id.
    *
    * @return array
-   *   An array of PDF engine settings for this plugin.
+   *   An array of Print engine settings for this plugin.
    */
-  protected function getPdfEngineSettings($plugin_id) {
-    /** @var \Drupal\entity_print\Entity\PdfEngineInterface $storage */
-    $storage = \Drupal::entityTypeManager()->getStorage('pdf_engine');
+  protected function getPrintEngineSettings($plugin_id) {
+    /** @var \Drupal\entity_print\Entity\PrintEngineInterface $storage */
+    $storage = \Drupal::entityTypeManager()->getStorage('print_engine');
     if (!$entity = $storage->load($plugin_id)) {
       $entity = $storage->create(['id' => $plugin_id]);
     }
     $configuration = $entity->getSettings();
-    $event = new GenericEvent(PdfEvents::CONFIGURATION_ALTER, ['configuration' => $configuration, 'config' => $entity]);
-    $this->dispatcher->dispatch(PdfEvents::CONFIGURATION_ALTER, $event);
+    $event = new GenericEvent(PrintEvents::CONFIGURATION_ALTER, ['configuration' => $configuration, 'config' => $entity]);
+    $this->dispatcher->dispatch(PrintEvents::CONFIGURATION_ALTER, $event);
     $configuration = $event->getArgument('configuration');
 
     return $configuration;

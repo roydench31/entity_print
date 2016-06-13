@@ -1,23 +1,19 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\entity_print_test\Plugin\EntityPrint\PdfEngine\TestPdfEngine
- */
-
-namespace Drupal\entity_print_test\Plugin\EntityPrint\PdfEngine;
+namespace Drupal\entity_print_test\Plugin\EntityPrint\PrintEngine;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\entity_print\PdfEngineException;
-use Drupal\entity_print\Plugin\PdfEngineBase;
+use Drupal\entity_print\PrintEngineException;
+use Drupal\entity_print\Plugin\PrintEngineBase;
 
 /**
- * @PdfEngine(
- *   id = "testpdfengine",
- *   label= @Translation("Test PDF Engine")
+ * @PrintEngine(
+ *   id = "testprintengine",
+ *   label = @Translation("Test Print Engine"),
+ *   export_type = "pdf"
  * )
  */
-class TestPdfEngine extends PdfEngineBase {
+class TestPrintEngine extends PrintEngineBase {
 
   /**
    * @var string
@@ -35,8 +31,8 @@ class TestPdfEngine extends PdfEngineBase {
    * {@inheritdoc}
    */
   public function send($filename = NULL) {
-    // Echo the response and then flush, just like a PDF implementation would.
-    echo 'Using testpdfengine - ' . $this->configuration['test_engine_suffix'];
+    // Echo the response and then flush, just like a Prin implementation would.
+    echo 'Using testprintengine - ' . $this->configuration['test_engine_suffix'];
     echo $this->html;
     flush();
   }

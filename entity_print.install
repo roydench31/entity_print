@@ -33,10 +33,10 @@ function entity_print_requirements($phase) {
     return $requirements;
   }
 
-  $definitions = \Drupal::service('plugin.manager.entity_print.pdf_engine')->getDefinitions();
+  $definitions = \Drupal::service('plugin.manager.entity_print.print_engine')->getDefinitions();
   $has_one_engine = FALSE;
   foreach ($definitions as $definition) {
-    /** @var \Drupal\entity_print\Plugin\PdfEngineInterface $class */
+    /** @var \Drupal\entity_print\Plugin\PrintEngineInterface $class */
     $class = $definition['class'];
     if ($class::dependenciesAvailable()) {
       $has_one_engine = TRUE;

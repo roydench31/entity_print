@@ -3,7 +3,7 @@
 namespace Drupal\entity_print\Renderer;
 
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\entity_print\PdfEngineException;
+use Drupal\entity_print\PrintEngineException;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
@@ -36,7 +36,7 @@ class RendererFactory implements RendererFactoryInterface {
       }
     }
 
-    throw new PdfEngineException(sprintf('Rendering not yet supported for "%s". Entity Print context "%s"', is_object($item) ? get_class($item) : $item, $context));
+    throw new PrintEngineException(sprintf('Rendering not yet supported for "%s". Entity Print context "%s"', is_object($item) ? get_class($item) : $item, $context));
   }
 
 }

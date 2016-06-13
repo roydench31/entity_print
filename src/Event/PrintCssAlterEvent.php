@@ -4,7 +4,7 @@ namespace Drupal\entity_print\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 
-class PdfCssAlterEvent extends Event {
+class PrintCssAlterEvent extends Event {
 
   /**
    * The renderable array.
@@ -21,7 +21,7 @@ class PdfCssAlterEvent extends Event {
   protected $entities;
 
   /**
-   * PdfCssAlterEvent constructor.
+   * PrintCssAlterEvent constructor.
    *
    * @param array $build
    *   The renderable array.

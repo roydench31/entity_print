@@ -1,13 +1,13 @@
 <?php
 
-use Drupal\entity_print\Entity\PdfEngine;
+use Drupal\entity_print\Entity\PrintEngine;
 
 /**
  * Sets the new default configuration for dompdf.
  */
 function entity_print_post_update_new_dompdf_configuration() {
-  /** @var \Drupal\entity_print\Entity\PdfEngine $engine_config */
-  if ($engine_config = PdfEngine::load('dompdf')) {
+  /** @var \Drupal\entity_print\Entity\PrintEngine $engine_config */
+  if ($engine_config = PrintEngine::load('dompdf')) {
     $settings = $engine_config->getSettings();
     $settings['default_paper_size'] = 'letter';
     $engine_config->setSettings($settings);
@@ -20,11 +20,11 @@ function entity_print_post_update_new_dompdf_configuration() {
  */
 function entity_print_post_update_migrate_config() {
   $config = \Drupal::configFactory()->getEditable('entity_print.settings');
-  if ($plugin_id = $config->get('pdf_engine')) {
+  if ($plugin_id = $config->get('print_engine')) {
     /** @var \Drupal\entity_print\Plugin\EntityPrintPluginManager $plugin_manager */
-    $plugin_manager = \Drupal::service('plugin.manager.entity_print.pdf_engine');
+    $plugin_manager = \Drupal::service('plugin.manager.entity_print.print_engine');
     $definition = $plugin_manager->getDefinition($plugin_id);
-    /** @var \Drupal\entity_print\Plugin\PdfEngineInterface $class */
+    /** @var \Drupal\entity_print\Plugin\PrintEngineInterface $class */
     $class = $definition['class'];
 
     if ($class::dependenciesAvailable()) {
@@ -39,7 +39,7 @@ function entity_print_post_update_migrate_config() {
       }
       // Create the new config entity.
       \Drupal::entityTypeManager()
-        ->getStorage('pdf_engine')
+        ->getStorage('print_engine')
         ->create($values)
         ->save();
 

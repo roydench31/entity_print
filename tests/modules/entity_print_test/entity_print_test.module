@@ -22,7 +22,7 @@ function entity_print_test_entity_print_pdf_engine_alter(&$definitions) {
   $disabled_engines = ['dompdf', 'phpwkhtmltopdf'];
   foreach ($disabled_engines as $id) {
     if (isset($definitions[$id]['class'])) {
-      $definitions[$id]['class'] = 'Drupal\entity_print_test\Plugin\EntityPrint\PdfEngine\NotAvailablePdfEngine';
+      $definitions[$id]['class'] = 'Drupal\entity_print_test\Plugin\EntityPrint\PrintEngine\NotAvailablePrintEngine';
     }
   }
 }

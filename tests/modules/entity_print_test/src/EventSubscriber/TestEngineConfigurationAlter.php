@@ -2,9 +2,9 @@
 
 namespace Drupal\entity_print_test\EventSubscriber;
 
-use Drupal\entity_print\Event\PdfCssAlterEvent;
-use Drupal\entity_print\Event\PdfEvents;
-use Drupal\entity_print\Event\PreSendPdfEvent;
+use Drupal\entity_print\Event\PrintCssAlterEvent;
+use Drupal\entity_print\Event\PrintEvents;
+use Drupal\entity_print\Event\PreSendPrintEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
@@ -20,17 +20,17 @@ class TestEngineConfigurationAlter implements EventSubscriberInterface {
    *   The event object.
    */
   public function alterConfiguration(GenericEvent $event) {
-    if ($event->getArgument('config')->id() === 'testpdfengine') {
+    if ($event->getArgument('config')->id() === 'testprintengine') {
       $event->setArgument('configuration', ['test_engine_suffix' => 'overridden'] + $event->getArgument('configuration'));
     }
   }
 
   /**
    * Alter the CSS renderable array and add our CSS.
-   * @param \Drupal\entity_print\Event\PdfCssAlterEvent $event
+   * @param \Drupal\entity_print\Event\PrintCssAlterEvent $event
    *   The event object.
    */
-  public function alterCss(PdfCssAlterEvent $event) {
+  public function alterCss(PrintCssAlterEvent $event) {
     $event->getBuild()['#attached']['library'][] = 'entity_print_test_theme/module';
   }
 
@@ -39,8 +39,8 @@ class TestEngineConfigurationAlter implements EventSubscriberInterface {
    */
   public static function getSubscribedEvents() {
     return [
-      PdfEvents::CONFIGURATION_ALTER => 'alterConfiguration',
-      PdfEvents::CSS_ALTER => 'alterCss',
+      PrintEvents::CONFIGURATION_ALTER => 'alterConfiguration',
+      PrintEvents::CSS_ALTER => 'alterCss',
     ];
   }
 

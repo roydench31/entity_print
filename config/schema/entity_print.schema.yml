@@ -7,23 +7,27 @@ entity_print.settings:
       label: 'Enable the default CSS.'
     force_download:
       type: boolean
-      label: 'Force download of PDF'
-    pdf_engine:
-      type: string
-      label: 'The plugin id of the PDF engine to use.'
+      label: 'Force download of Print'
+    print_engines:
+      type: mapping
+      label: 'The plugin id of the Print engine to use.'
+      mapping:
+        pdf_engine:
+          type: string
+          label: 'The plugin id of the PDF engine to use.'
 
-entity_print.pdf_engine.*:
+entity_print.print_engine.*:
   type: config_entity
-  label: 'PDF Engine'
+  label: 'Print Engine'
   mapping:
     id:
       type: string
-      label: 'PDF Engine Id'
+      label: 'Print Engine Id'
     settings:
-      type: entity_print_pdf_engine.[%parent.id]
-      label: 'Settings for the PDF Engine.'
+      type: entity_print_print_engine.[%parent.id]
+      label: 'Settings for the Print Engine.'
 
-entity_print_pdf_engine.dompdf:
+entity_print_print_engine.dompdf:
   type: mapping
   label: 'Dompdf specific settings'
   mapping:
@@ -37,7 +41,7 @@ entity_print_pdf_engine.dompdf:
       type: boolean
       label: 'Enable remote urls'
 
-entity_print_pdf_engine.phpwkhtmltopdf:
+entity_print_print_engine.phpwkhtmltopdf:
   type: mapping
   label: 'PHP Wkhtmltopdf'
   type: mapping
@@ -55,6 +59,6 @@ core.entity_view_display.*.*.*.third_party.entity_print:
       type: string
       label: 'Label for view link'
 
-action.configuration.entity_print_download_action:
+action.configuration.entity_print_pdf_download_action:
   type: action_configuration_default
   label: 'Download entities as a PDF'

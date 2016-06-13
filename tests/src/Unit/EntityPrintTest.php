@@ -10,7 +10,7 @@ namespace Drupal\Tests\entity_print\Unit;
 use Drupal\Tests\UnitTestCase;
 
 /**
- * @coversDefaultClass \Drupal\entity_print\EntityPrintPdfBuilder
+ * @coversDefaultClass \Drupal\entity_print\PrintBuilder
  * @group entity_print
  */
 class EntityPrintTest extends UnitTestCase {
@@ -23,13 +23,13 @@ class EntityPrintTest extends UnitTestCase {
    */
   public function testGenerateFilename($entity_label, $expected_filename) {
     $entity = $this->getMockEntity($entity_label);
-    $pdf_builder = $this->getMockPdfBuilder();
+    $print_builder = $this->getMockPrintBuilder();
 
-    $reflection = new \ReflectionClass($pdf_builder);
+    $reflection = new \ReflectionClass($print_builder);
     $method = $reflection->getMethod('generateFilename');
-    $method->setAccessible(true);
+    $method->setAccessible(TRUE);
 
-    $this->assertEquals($expected_filename, $method->invoke($pdf_builder, $entity));
+    $this->assertEquals($expected_filename, $method->invoke($print_builder, $entity));
   }
 
   /**
@@ -50,16 +50,16 @@ class EntityPrintTest extends UnitTestCase {
   /**
    * Get a mock pdf builder.
    *
-   * @return \Drupal\entity_print\EntityPrintPdfBuilder
+   * @return \Drupal\entity_print\PrintBuilder
    *   The entity pdf builder mock.
    */
-  protected function getMockPdfBuilder() {
-    $pdf_builder = $this->getMockBuilder('Drupal\entity_print\EntityPrintPdfBuilder')
+  protected function getMockPrintBuilder() {
+    $print_builder = $this->getMockBuilder('Drupal\entity_print\PrintBuilder')
       ->disableOriginalConstructor()
       ->setMethods([])
       ->getMock();
 
-    return $pdf_builder;
+    return $print_builder;
   }
 
   /**

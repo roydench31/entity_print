@@ -1,9 +1,9 @@
 services:
-  plugin.manager.entity_print.pdf_engine:
+  plugin.manager.entity_print.print_engine:
     class: Drupal\entity_print\Plugin\EntityPrintPluginManager
     arguments: ['@container.namespaces', '@cache.discovery', '@module_handler', '@event_dispatcher']
-  entity_print.pdf_manager:
-    class: Drupal\entity_print\EntityPrintPdfBuilder
+  entity_print.print_manager:
+    class: Drupal\entity_print\PrintBuilder
     arguments: ['@entity_print.renderer_factory', '@event_dispatcher']
   entity_print.renderer_factory:
     class: Drupal\entity_print\Renderer\RendererFactory

@@ -1,22 +1,17 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\entity_print\Entity\PdfEngine.
- */
-
 namespace Drupal\entity_print\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 use Drupal\Core\Plugin\DefaultSingleLazyPluginCollection;
 
 /**
- * Defines the Pdf Engine specific configuration.
+ * Defines the Print Engine specific configuration.
  *
  * @ConfigEntityType(
- *   id = "pdf_engine",
- *   label = @Translation("PDF Engine"),
- *   config_prefix = "pdf_engine",
+ *   id = "print_engine",
+ *   label = @Translation("Print Engine"),
+ *   config_prefix = "print_engine",
  *   entity_keys = {
  *     "id" = "id"
  *   },
@@ -27,24 +22,24 @@ use Drupal\Core\Plugin\DefaultSingleLazyPluginCollection;
  *   }
  * )
  */
-class PdfEngine extends ConfigEntityBase implements PdfEngineInterface {
+class PrintEngine extends ConfigEntityBase implements PrintEngineInterface {
 
   /**
-   * The plugin collection for one PDF engine.
+   * The plugin collection for one Print engine.
    *
    * @var \Drupal\Core\Plugin\DefaultSingleLazyPluginCollection
    */
-  protected $pdfEnginePluginCollection;
+  protected $printEnginePluginCollection;
 
   /**
-   * An array of plugin settings for this specific PDF engine.
+   * An array of plugin settings for this specific Print engine.
    *
    * @var array
    */
   protected $settings = [];
 
   /**
-   * The id of the Pdf engine plugin.
+   * The id of the Print engine plugin.
    *
    * @var string
    */
@@ -68,18 +63,18 @@ class PdfEngine extends ConfigEntityBase implements PdfEngineInterface {
   /**
    * {@inheritdoc}
    */
-  public function getPdfEnginePluginCollection() {
-    if (!$this->pdfEnginePluginCollection) {
-      $this->pdfEnginePluginCollection = new DefaultSingleLazyPluginCollection($this->getPdfEnginePluginManager(), $this->id, $this->settings);
+  public function getPrintEnginePluginCollection() {
+    if (!$this->printEnginePluginCollection) {
+      $this->printEnginePluginCollection = new DefaultSingleLazyPluginCollection($this->getPrintEnginePluginManager(), $this->id, $this->settings);
     }
-    return $this->pdfEnginePluginCollection;
+    return $this->printEnginePluginCollection;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getPluginCollections() {
-    return ['settings' => $this->getPdfEnginePluginCollection()];
+    return ['settings' => $this->getPrintEnginePluginCollection()];
   }
 
   /**
@@ -88,8 +83,8 @@ class PdfEngine extends ConfigEntityBase implements PdfEngineInterface {
    * @return \Drupal\entity_print\Plugin\EntityPrintPluginManager
    *   The plugin manager instance.
    */
-  protected function getPdfEnginePluginManager() {
-    return \Drupal::service('plugin.manager.entity_print.pdf_engine');
+  protected function getPrintEnginePluginManager() {
+    return \Drupal::service('plugin.manager.entity_print.print_engine');
   }
 
 }

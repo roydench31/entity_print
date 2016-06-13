@@ -10,9 +10,9 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\InfoParserInterface;
 use Drupal\Core\Extension\ThemeHandlerInterface;
 use Drupal\Core\Render\RendererInterface;
-use Drupal\entity_print\Event\PdfCssAlterEvent;
-use Drupal\entity_print\Event\PdfEvents;
-use Drupal\entity_print\Event\PdfHtmlAlterEvent;
+use Drupal\entity_print\Event\PrintCssAlterEvent;
+use Drupal\entity_print\Event\PrintEvents;
+use Drupal\entity_print\Event\PrintHtmlAlterEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ContentEntityRenderer extends RendererBase {
@@ -88,7 +88,7 @@ class ContentEntityRenderer extends RendererBase {
       $render = $this->addCss($render, $entity);
     }
 
-    $this->dispatcher->dispatch(PdfEvents::CSS_ALTER, new PdfCssAlterEvent($render, $entities));
+    $this->dispatcher->dispatch(PrintEvents::CSS_ALTER, new PrintCssAlterEvent($render, $entities));
     $css_assets = $this->assetResolver->getCssAssets(AttachedAssets::createFromRenderArray($render), $optimize_css);
     $rendered_css = $this->cssRenderer->render($css_assets);
     $render['#entity_print_css'] = $this->renderer->render($rendered_css);
@@ -96,7 +96,7 @@ class ContentEntityRenderer extends RendererBase {
     $html = (string) $this->renderer->render($render);
 
     // Allow other modules to alter the generated HTML.
-    $this->dispatcher->dispatch(PdfEvents::POST_RENDER, new PdfHtmlAlterEvent($html, $entities));
+    $this->dispatcher->dispatch(PrintEvents::POST_RENDER, new PrintHtmlAlterEvent($html, $entities));
 
     return $html;
   }

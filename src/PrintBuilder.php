@@ -3,17 +3,17 @@
 namespace Drupal\entity_print;
 
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\entity_print\Event\PdfEvents;
-use Drupal\entity_print\Event\PreSendPdfEvent;
-use Drupal\entity_print\Event\PreSendPdfMultipleEvent;
-use Drupal\entity_print\Plugin\PdfEngineInterface;
+use Drupal\entity_print\Event\PrintEvents;
+use Drupal\entity_print\Event\PreSendPrintEvent;
+use Drupal\entity_print\Event\PreSendPrintMultipleEvent;
+use Drupal\entity_print\Plugin\PrintEngineInterface;
 use Drupal\entity_print\Renderer\RendererFactoryInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class EntityPrintPdfBuilder implements PdfBuilderInterface {
+class PrintBuilder implements PrintBuilderInterface {
 
   /**
-   * The PDF Renderer factory.
+   * The Print Renderer factory.
    *
    * @var \Drupal\entity_print\Renderer\RendererFactoryInterface
    */
@@ -27,7 +27,7 @@ class EntityPrintPdfBuilder implements PdfBuilderInterface {
   protected $dispatcher;
 
   /**
-   * Constructs a new EntityPrintPdfBuilder.
+   * Constructs a new EntityPrintPrintBuilder.
    *
    * @param \Drupal\entity_print\Renderer\RendererFactoryInterface $renderer_factory
    *   The Renderer factory.
@@ -42,39 +42,39 @@ class EntityPrintPdfBuilder implements PdfBuilderInterface {
   /**
    * {@inheritdoc}
    */
-  public function getEntityRenderedAsPdf(EntityInterface $entity, PdfEngineInterface $pdf_engine, $force_download = FALSE, $use_default_css = TRUE) {
-    $pdf_engine->addPage($this->rendererFactory->create($entity)->getHtml($entity, $use_default_css, TRUE));
+  public function printSingle(EntityInterface $entity, PrintEngineInterface $print_engine, $force_download = FALSE, $use_default_css = TRUE) {
+    $print_engine->addPage($this->rendererFactory->create($entity)->getHtml($entity, $use_default_css, TRUE));
 
-    // Allow other modules to alter the generated PDF object.
-    $this->dispatcher->dispatch(PdfEvents::PRE_SEND, new PreSendPdfEvent($pdf_engine, $entity));
+    // Allow other modules to alter the generated Print object.
+    $this->dispatcher->dispatch(PrintEvents::PRE_SEND, new PreSendPrintEvent($print_engine, $entity));
 
     // If we're forcing a download we need a filename otherwise it's just sent
     // straight to the browser.
     $filename = $force_download ? $this->generateFilename($entity) : NULL;
 
-    return $pdf_engine->send($filename);
+    return $print_engine->send($filename);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getMultipleEntitiesRenderedAsPdf(array $entities, PdfEngineInterface $pdf_engine, $force_download = FALSE, $use_default_css = TRUE) {
-    $pdf_engine->addPage($this->rendererFactory->create($entities)->getHtmlMultiple($entities, $use_default_css, TRUE));
+  public function printMultiple(array $entities, PrintEngineInterface $print_engine, $force_download = FALSE, $use_default_css = TRUE) {
+    $print_engine->addPage($this->rendererFactory->create($entities)->getHtmlMultiple($entities, $use_default_css, TRUE));
 
-    // Allow other modules to alter the generated PDF object.
-    $this->dispatcher->dispatch(PdfEvents::PRE_SEND_MULTIPLE, new PreSendPdfMultipleEvent($pdf_engine, $entities));
+    // Allow other modules to alter the generated Print object.
+    $this->dispatcher->dispatch(PrintEvents::PRE_SEND_MULTIPLE, new PreSendPrintMultipleEvent($print_engine, $entities));
 
     // If we're forcing a download we need a filename otherwise it's just sent
     // straight to the browser.
     $filename = $force_download ? $this->generateMultiFilename($entities) : NULL;
 
-    return $pdf_engine->send($filename);
+    return $print_engine->send($filename);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getEntityRenderedAsHtml(EntityInterface $entity, $use_default_css = TRUE, $optimize_css = TRUE) {
+  public function printHtml(EntityInterface $entity, $use_default_css = TRUE, $optimize_css = TRUE) {
     return $this->rendererFactory->create($entity)->getHtml($entity, $use_default_css, $optimize_css);
   }
 
@@ -84,7 +84,7 @@ class EntityPrintPdfBuilder implements PdfBuilderInterface {
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   The content entity to generate the filename.
    * @param bool $with_extension
-   *   Allow us to exclude the PDF file extension when generating the filename.
+   *   Allow us to exclude the Print file extension when generating the filename.
    *
    * @return string
    *   The cleaned filename from the entity label.
@@ -96,6 +96,7 @@ class EntityPrintPdfBuilder implements PdfBuilderInterface {
     if (!$filename) {
       $filename = $entity->getEntityTypeId();
     }
+    // @TODO abstract the .pdf extension.
     return $with_extension ? $filename . '.pdf' : $filename;
   }
 

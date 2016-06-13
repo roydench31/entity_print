@@ -4,8 +4,8 @@ namespace Drupal\entity_print\EventSubscriber;
 
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\entity_print\Event\PdfEvents;
-use Drupal\entity_print\Event\PdfHtmlAlterEvent;
+use Drupal\entity_print\Event\PrintEvents;
+use Drupal\entity_print\Event\PrintHtmlAlterEvent;
 use Masterminds\HTML5;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -48,13 +48,13 @@ class PostRenderSubscriber implements EventSubscriberInterface {
    * This is a temporary workaround for a core issue.
    * @see https://drupal.org/node/1494670
    *
-   * @param \Drupal\entity_print\Event\PdfHtmlAlterEvent $event
+   * @param \Drupal\entity_print\Event\PrintHtmlAlterEvent $event
    *   The event object.
    */
-  public function postRender(PdfHtmlAlterEvent $event) {
+  public function postRender(PrintHtmlAlterEvent $event) {
     // We only apply the fix to PHP Wkhtmltopdf because the other implementations
     // allow us to specify a base url.
-    if ($this->configFactory->get('pdf_engine') !== 'phpwkhtmltopdf') {
+    if ($this->configFactory->get('print_engine') !== 'phpwkhtmltopdf') {
       return;
     }
 
@@ -91,7 +91,7 @@ class PostRenderSubscriber implements EventSubscriberInterface {
    * {@inheritdoc}
    */
   public static function getSubscribedEvents() {
-    return [PdfEvents::POST_RENDER => 'postRender'];
+    return [PrintEvents::POST_RENDER => 'postRender'];
   }
 
 }

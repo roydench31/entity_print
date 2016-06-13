@@ -1,9 +1,5 @@
 <?php
 
-/**
- * @file
- */
-
 namespace Drupal\entity_print\Controller;
 
 use Drupal\Component\Render\FormattableMarkup;
@@ -12,8 +8,8 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Render\HtmlResponse;
-use Drupal\entity_print\PdfBuilderInterface;
-use Drupal\entity_print\PdfEngineException;
+use Drupal\entity_print\PrintBuilderInterface;
+use Drupal\entity_print\PrintEngineException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,18 +19,18 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class EntityPrintController extends ControllerBase {
 
   /**
-   * The plugin manager for our PDF engines.
+   * The plugin manager for our Print engines.
    *
    * @var \Drupal\entity_print\Plugin\EntityPrintPluginManager
    */
   protected $pluginManager;
 
   /**
-   * The PDF builder.
+   * The Print builder.
    *
-   * @var \Drupal\entity_print\PdfBuilderInterface
+   * @var \Drupal\entity_print\PrintBuilderInterface
    */
-  protected $pdfBuilder;
+  protected $printBuilder;
 
   /**
    * The Entity Type manager.
@@ -46,9 +42,9 @@ class EntityPrintController extends ControllerBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct(EntityPrintPluginManager $plugin_manager, PdfBuilderInterface $pdf_builder, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(EntityPrintPluginManager $plugin_manager, PrintBuilderInterface $print_builder, EntityTypeManagerInterface $entity_type_manager) {
     $this->pluginManager = $plugin_manager;
-    $this->pdfBuilder = $pdf_builder;
+    $this->printBuilder = $print_builder;
     $this->entityTypeManager = $entity_type_manager;
   }
 
@@ -57,47 +53,50 @@ class EntityPrintController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('plugin.manager.entity_print.pdf_engine'),
-      $container->get('entity_print.pdf_manager'),
+      $container->get('plugin.manager.entity_print.print_engine'),
+      $container->get('entity_print.print_manager'),
       $container->get('entity_type.manager')
     );
   }
 
   /**
-   * Output an entity as a PDF.
+   * Print an entity to the selected format.
    *
+   * @param string $export_type
+   *   The export type.
    * @param string $entity_type
    *   The entity type.
    * @param int $entity_id
    *   The entity id.
    *
    * @return \Symfony\Component\HttpFoundation\Response
-   *   The response object on error otherwise the PDF is sent.
+   *   The response object on error otherwise the Print is sent.
    */
-  public function viewPdf($entity_type, $entity_id) {
-    // Create the PDF engine plugin.
+  public function viewPrint($export_type, $entity_type, $entity_id) {
+    // Create the Print engine plugin.
     $config = $this->config('entity_print.settings');
     $entity = $this->entityTypeManager->getStorage($entity_type)->load($entity_id);
+    $config_engine = 'print_engines.' . $export_type . '_engine';
 
     try {
-      $pdf_engine = $this->pluginManager->createInstance($config->get('pdf_engine'));
+      $print_engine = $this->pluginManager->createInstance($config->get($config_engine));
     }
-    catch (PdfEngineException $e) {
+    catch (PrintEngineException $e) {
       // Build a safe markup string using Xss::filter() so that the instructions
       // for installing dependencies can contain quotes.
-      drupal_set_message(new FormattableMarkup('Error generating PDF: ' . Xss::filter($e->getMessage()), []), 'error');
+      drupal_set_message(new FormattableMarkup('Error generating Print: ' . Xss::filter($e->getMessage()), []), 'error');
 
       return new RedirectResponse($entity->toUrl()->toString());
     }
 
-    return (new StreamedResponse(function() use ($entity, $pdf_engine, $config) {
-      // The PDF is sent straight to the browser.
-      $this->pdfBuilder->getEntityRenderedAsPdf($entity, $pdf_engine, $config->get('force_download'), $config->get('default_css'));
+    return (new StreamedResponse(function() use ($entity, $print_engine, $config) {
+      // The Print is sent straight to the browser.
+      $this->printBuilder->printSingle($entity, $print_engine, $config->get('force_download'), $config->get('default_css'));
     }))->send();
   }
 
   /**
-   * A debug callback for styling up the PDF.
+   * A debug callback for styling up the Print.
    *
    * @param string $entity_type
    *   The entity type.
@@ -107,14 +106,14 @@ class EntityPrintController extends ControllerBase {
    * @return \Symfony\Component\HttpFoundation\Response
    *   The response object.
    */
-  public function viewPdfDebug($entity_type, $entity_id) {
+  public function viewPrintDebug($entity_type, $entity_id) {
     $entity = $this->entityTypeManager->getStorage($entity_type)->load($entity_id);
     try {
       $use_default_css = $this->config('entity_print.settings')->get('default_css');
-      return new Response($this->pdfBuilder->getEntityRenderedAsHtml($entity, $use_default_css, $this->config('system.performance')->get('css.preprocess')));
+      return new Response($this->printBuilder->printHtml($entity, $use_default_css, $this->config('system.performance')->get('css.preprocess')));
     }
-    catch (PdfEngineException $e) {
-      drupal_set_message(new FormattableMarkup('Error generating PDF: ' . Xss::filter($e->getMessage()), []), 'error');
+    catch (PrintEngineException $e) {
+      drupal_set_message(new FormattableMarkup('Error generating Print: ' . Xss::filter($e->getMessage()), []), 'error');
       return new RedirectResponse($entity->toUrl()->toString());
     }
   }
@@ -125,6 +124,8 @@ class EntityPrintController extends ControllerBase {
    * We need to validate that the user is allowed to access this entity also the
    * print version.
    *
+   * @param string $export_type
+   *   The export type.
    * @param string $entity_type
    *   The entity type.
    * @param int $entity_id
@@ -133,7 +134,7 @@ class EntityPrintController extends ControllerBase {
    * @return bool
    *   TRUE if they have access otherwise FALSE.
    */
-  public function checkAccess($entity_type, $entity_id) {
+  public function checkAccess($export_type, $entity_type, $entity_id) {
     $account = $this->currentUser();
 
     // Invalid storage type.

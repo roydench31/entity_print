@@ -2,24 +2,25 @@
 
 /**
  * @file
- * Contains \Drupal\entity_print\Plugin\EntityPrint\PdfEngine\DomPdf.
+ * Contains \Drupal\entity_print\Plugin\EntityPrint\PrintEngine\DomPdf.
  */
 
-namespace Drupal\entity_print\Plugin\EntityPrint\PdfEngine;
+namespace Drupal\entity_print\Plugin\EntityPrint\PrintEngine;
 
 use Dompdf\Dompdf as DompdfLib;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\entity_print\PdfEngineException;
-use Drupal\entity_print\Plugin\PdfEngineBase;
+use Drupal\entity_print\PrintEngineException;
+use Drupal\entity_print\Plugin\PrintEngineBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Dompdf\Adapter\CPDF;
 
 /**
- * @PdfEngine(
+ * @PrintEngine(
  *   id = "dompdf",
- *   label = @Translation("Dompdf")
+ *   label = @Translation("Dompdf"),
+ *   export_type = "pdf"
  * )
  *
  * To use this implementation you will need the DomPDF library, simply run
@@ -28,12 +29,12 @@ use Dompdf\Adapter\CPDF;
  *     composer require "dompdf/dompdf 0.7.0-beta3"
  * @endcode
  */
-class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
+class DomPdf extends PrintEngineBase implements ContainerFactoryPluginInterface {
 
   /**
    * @var \Dompdf\Dompdf
    */
-  protected $pdf;
+  protected $print;
 
   /**
    * Keep track of HTML pages as they're added.
@@ -47,8 +48,8 @@ class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, Request $request) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->pdf = new DompdfLib($this->configuration);
-    $this->pdf
+    $this->print = new DompdfLib($this->configuration);
+    $this->print
       ->setBaseHost($request->getHttpHost())
       ->setProtocol($request->getScheme() . '://');
   }
@@ -120,26 +121,26 @@ class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
     // We must keep adding to previously added HTML as loadHtml() replaces the
     // entire document.
     $this->html .= (string) $content;
-    $this->pdf->loadHtml($this->html);
+    $this->print->loadHtml($this->html);
   }
 
   /**
    * {@inheritdoc}
    */
   public function send($filename = NULL) {
-    $this->pdf->render();
+    $this->print->render();
 
     // Dompdf doesn't have a return value for send so just check the error
     // global it provides.
     if ($errors = $this->getError()) {
-      throw new PdfEngineException(sprintf('Failed to generate PDF: %s', $errors));
+      throw new PrintEngineException(sprintf('Failed to generate PDF: %s', $errors));
     }
 
     // The Dompdf library internally adds the .pdf extension so we remove it
     // from our filename here.
     $filename = preg_replace('/\.pdf$/i', '', $filename);
 
-    $this->pdf->stream($filename);
+    $this->print->stream($filename);
   }
 
   /**
