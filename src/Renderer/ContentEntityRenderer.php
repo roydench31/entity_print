@@ -35,7 +35,7 @@ class ContentEntityRenderer extends RendererBase {
   public function getHtml(EntityInterface $entity, $use_default_css, $optimize_css) {
     $render_controller = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId());
     $render = [
-      '#theme' => 'entity_print__' . $entity->getEntityTypeId() . '__' . $entity->id(),
+      '#theme' => 'entity_print__' . $entity->getEntityTypeId() . '__' . $entity->bundle() . '__' . $this->getViewMode($entity) . '__' . $entity->id(),
       '#entity' => $entity,
       '#entity_array' => $render_controller->view($entity, $this->getViewMode($entity)),
       '#attached' => [],
