@@ -153,7 +153,6 @@ class EntityPrintController extends ControllerBase {
     // Check if the user has the permission "bypass entity print access".
     $access_result = AccessResult::allowedIfHasPermission($account, 'bypass entity print access');
     if ($access_result->isAllowed()) {
-      return $entity->access('view', $account, TRUE);
       return $access_result->andIf($entity->access('view', $account, TRUE));
     }
 
