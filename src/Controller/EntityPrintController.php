@@ -135,6 +135,10 @@ class EntityPrintController extends ControllerBase {
    *   TRUE if they have access otherwise FALSE.
    */
   public function checkAccess($export_type, $entity_type, $entity_id) {
+    if (empty($entity_id)) {
+      return AccessResult::forbidden();
+    }
+
     $account = $this->currentUser();
 
     // Invalid storage type.
