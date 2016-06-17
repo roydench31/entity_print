@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\entity_print\Tests\EntityPrintAdminTest
- */
-
 namespace Drupal\entity_print\Tests;
 
 use Drupal\Core\Entity\Entity\EntityViewDisplay;

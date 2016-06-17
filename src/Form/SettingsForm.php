@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\entity_print\Form\SettingsForm.
- */
-
 namespace Drupal\entity_print\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;

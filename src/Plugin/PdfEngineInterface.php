@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\entity_print\Plugin\PdfEngineInterface
- */
-
 namespace Drupal\entity_print\Plugin;
 
 use Drupal\Component\Plugin\PluginInspectionInterface;

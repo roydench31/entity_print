@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\entity_print\Entity\PdfEngine.
- */
-
 namespace Drupal\entity_print\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\entity_print\PdfBuilderInterface
- */
-
 namespace Drupal\entity_print;
 
 use Drupal\Core\Entity\EntityInterface;

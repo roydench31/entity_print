@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\entity_print_test\Plugin\EntityPrint\PdfEngine\TestPdfEngine
- */
-
 namespace Drupal\entity_print_test\Plugin\EntityPrint\PdfEngine;
 
 use Drupal\Core\Form\FormStateInterface;

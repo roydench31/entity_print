@@ -1,8 +1,4 @@
 <?php
-/**
- * @file
- * Contains \Drupal\entity_print\Entity\PdfEngineInterface.
- */
 
 namespace Drupal\entity_print\Entity;
 

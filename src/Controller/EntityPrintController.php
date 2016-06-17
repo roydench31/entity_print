@@ -1,9 +1,5 @@
 <?php
 
-/**
- * @file
- */
-
 namespace Drupal\entity_print\Controller;
 
 use Drupal\Component\Render\FormattableMarkup;

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\entity_print\Annotation\PdfEngine.
- */
-
 namespace Drupal\entity_print\Annotation;
 
 use Drupal\Component\Annotation\Plugin;
