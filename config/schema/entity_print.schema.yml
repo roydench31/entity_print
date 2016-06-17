@@ -10,7 +10,7 @@ entity_print.settings:
       label: 'Force download of Print'
     print_engines:
       type: mapping
-      label: 'The plugin id of the Print engine to use.'
+      label: 'All in-use print engines.'
       mapping:
         pdf_engine:
           type: string

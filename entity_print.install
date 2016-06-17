@@ -56,6 +56,41 @@ function entity_print_requirements($phase) {
 }
 
 /**
+ * Upgrade from the 1.x to the 2.x branch.
+ */
+function entity_print_update_8102() {
+  // Install the new entity definitions.
+  \Drupal::entityDefinitionUpdateManager()
+    ->installEntityType(\Drupal::entityTypeManager()->getDefinition('print_engine'));
+
+  $config = \Drupal::configFactory()->getEditable('entity_print.settings');
+  $engine = $config->get('pdf_engine');
+  $config
+    ->set('print_engines.pdf_engine', $engine)
+    ->clear('pdf_engine')
+    ->save();
+
+  // Copy settings across for the selected PDF engine and delete the old object.
+  if ($old_config = \Drupal::configFactory()->getEditable('entity_print.pdf_engine.' . $engine)) {
+    $new_config = \Drupal::configFactory()->getEditable('entity_print.print_engine.' . $engine);
+    $new_config
+      ->setData($old_config->getRawData())
+      ->save();
+    $old_config->delete();
+  }
+
+  // Update the VBO action.
+  $old_config = \Drupal::configFactory()->getEditable('system.action.entity_print_download_action');
+  $new_config = \Drupal::configFactory()->getEditable('system.action.entity_print_pdf_download_action');
+  $new_config
+    ->setData($old_config->getRawData())
+    ->set('id', 'entity_print_pdf_download_action')
+    ->set('plugin', 'entity_print_pdf_download_action')
+    ->save();
+  $old_config->delete();
+}
+
+/**
  * Upgrade the permissions inline with the more granular permissions.
  */
 function entity_print_update_8101() {
