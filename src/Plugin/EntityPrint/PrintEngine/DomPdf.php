@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\entity_print\Plugin\EntityPrint\PrintEngine\DomPdf.
- */
-
 namespace Drupal\entity_print\Plugin\EntityPrint\PrintEngine;
 
 use Dompdf\Dompdf as DompdfLib;

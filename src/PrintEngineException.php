@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\entity_print\PrintEngineException
- */
-
 namespace Drupal\entity_print;
 
 /**

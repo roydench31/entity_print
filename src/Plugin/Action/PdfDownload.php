@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\entity_print\Plugin\Action\PdfDownload
- */
-
 namespace Drupal\entity_print\Plugin\Action;
 
 use Drupal\Component\Plugin\PluginManagerInterface;

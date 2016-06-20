@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\entity_print\Plugin\EntityPrint\PrintEngine\PhpWkhtmlToPdf
- */
-
 namespace Drupal\entity_print\Plugin\EntityPrint\PrintEngine;
 
 use Drupal\Core\Form\FormStateInterface;

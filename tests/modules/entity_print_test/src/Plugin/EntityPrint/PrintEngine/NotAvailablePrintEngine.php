@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\entity_print_test\Plugin\EntityPrint\PrintEngine\NotAvailablePrintEngine
- */
-
 namespace Drupal\entity_print_test\Plugin\EntityPrint\PrintEngine;
 
 use Drupal\entity_print\Plugin\PrintEngineBase;
