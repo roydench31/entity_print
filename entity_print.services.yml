@@ -2,6 +2,9 @@ services:
   plugin.manager.entity_print.print_engine:
     class: Drupal\entity_print\Plugin\EntityPrintPluginManager
     arguments: ['@container.namespaces', '@cache.discovery', '@module_handler', '@event_dispatcher']
+  plugin.manager.entity_print.export_type:
+    class: Drupal\entity_print\Plugin\ExportTypeManager
+    arguments: ['@cache.discovery', '@module_handler', '@theme_handler']
   entity_print.print_manager:
     class: Drupal\entity_print\PrintBuilder
     arguments: ['@entity_print.renderer_factory', '@event_dispatcher']

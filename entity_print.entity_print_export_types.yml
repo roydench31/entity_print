@@ -1,0 +1,6 @@
+pdf:
+  label: PDF
+epub:
+  label: EPub
+worddoc:
+  label: Word Document
