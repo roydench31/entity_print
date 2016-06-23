@@ -9,12 +9,10 @@ entity_print.settings:
       type: boolean
       label: 'Force download of Print'
     print_engines:
-      type: mapping
+      type: sequence
       label: 'All in-use print engines.'
-      mapping:
-        pdf_engine:
-          type: string
-          label: 'The plugin id of the PDF engine to use.'
+      sequence:
+        type: string
 
 entity_print.print_engine.*:
   type: config_entity

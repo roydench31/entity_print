@@ -6,6 +6,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\entity_print\Plugin\EntityPrintPluginManager;
+use Drupal\entity_print\Plugin\ExportTypeManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\Core\Form\FormStateInterface;
@@ -30,6 +31,13 @@ class SettingsForm extends ConfigFormBase {
   protected $storage;
 
   /**
+   * The export type manager.
+   *
+   * @var \Drupal\entity_print\Plugin\ExportTypeManager
+   */
+  protected $exportTypeManager;
+
+  /**
    * Constructs a \Drupal\system\ConfigFormBase object.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
@@ -39,9 +47,10 @@ class SettingsForm extends ConfigFormBase {
    * @param \Drupal\Core\Entity\EntityStorageInterface $entity_storage
    *   The config storage.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, EntityPrintPluginManager $plugin_manager, EntityStorageInterface $entity_storage) {
+  public function __construct(ConfigFactoryInterface $config_factory, EntityPrintPluginManager $plugin_manager, ExportTypeManager $export_type_manager, EntityStorageInterface $entity_storage) {
     parent::__construct($config_factory);
     $this->pluginManager = $plugin_manager;
+    $this->exportTypeManager = $export_type_manager;
     $this->storage = $entity_storage;
   }
 
@@ -52,6 +61,7 @@ class SettingsForm extends ConfigFormBase {
     return new static(
       $container->get('config.factory'),
       $container->get('plugin.manager.entity_print.print_engine'),
+      $container->get('plugin.manager.entity_print.export_type'),
       $container->get('entity_type.manager')->getStorage('print_engine')
     );
   }
@@ -76,19 +86,19 @@ class SettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, Request $request = NULL) {
-    $disabled_engines = [];
     $print_engines = [];
     foreach ($this->pluginManager->getDefinitions() as $plugin_id => $definition) {
       /** @var \Drupal\entity_print\Plugin\PrintEngineInterface $class */
       $class = $definition['class'];
-      $export_type = $definition['export_type'];
-
       if ($class::dependenciesAvailable()) {
-        $print_engines[$export_type][$plugin_id] = $definition['label'];
+        $print_engines[$definition['export_type']][$plugin_id] = $definition['label'];
       }
-      else {
-        $disabled_engines[$export_type][$plugin_id] = $definition['label'];
+    }
 
+    // Show a notification for each disabled print engine.
+    foreach ($this->pluginManager->getDisabledDefinitions() as $export_plugin_id => $disabled_engines) {
+      foreach ($disabled_engines as $plugin_id => $definition) {
+        $class = $definition['class'];
         // Show the user which Print engines are disabled, but only for
         // the page load not on AJAX requests.
         if (!$request->isXmlHttpRequest()) {
@@ -105,6 +115,8 @@ class SettingsForm extends ConfigFormBase {
       '#type' => 'fieldset',
       '#title' => $this->t('Entity Print Config'),
     ];
+
+    // Global settings.
     $form['entity_print']['default_css'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Enable Default CSS'),
@@ -118,45 +130,53 @@ class SettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('force_download'),
     ];
 
-    // @TODO, allow other print engines to be configured.
-    $form['entity_print']['pdf_engine'] = [
-      '#type' => 'select',
-      '#title' => $this->t('PDF Engine'),
-      '#description' => $this->t('Select the PDF engine to render the Print'),
-      '#options' => !empty($print_engines['pdf']) ? $print_engines['pdf'] : [],
-      '#default_value' => $config->get('print_engines.pdf_engine'),
-      '#empty_option' => $this->t('- None -'),
-      '#ajax' => [
-        'callback' => '::ajaxPdfPluginFormCallback',
-        'wrapper' => 'pdf-engine-config',
-        'effect' => 'fade',
-      ],
-    ];
-    $form['entity_print']['pdf_engine_config'] = [
-      '#type' => 'container',
-      '#id' => 'pdf-engine-config',
-    ];
+    foreach ($this->exportTypeManager->getDefinitions() as $export_type => $definition) {
+      $selected_plugin_id = $config->get('print_engines.' . $export_type .  '_engine');
+      $form['entity_print'][$export_type] = [
+        '#type' => 'select',
+        '#title' => $definition['label'],
+        '#description' => $this->t('Select the default %label engine for printing.', ['%label' => $definition['label']]),
+        '#options' => !empty($print_engines[$export_type]) ? $print_engines[$export_type] : [],
+        '#default_value' => $selected_plugin_id,
+        '#empty_option' => $this->t('- None -'),
+        '#ajax' => [
+          'callback' => '::ajaxPluginFormCallback',
+          'wrapper' => $export_type . '-config',
+          'effect' => 'fade',
+        ],
+      ];
+      $form['entity_print'][$export_type . '_config'] = [
+        '#type' => 'container',
+        '#id' => $export_type . '-config',
+      ];
+
+      if ($this->pluginManager->isPrintEngineEnabled($selected_plugin_id)) {
+        $form['entity_print'][$export_type . '_config'][$selected_plugin_id] = $this->getPluginForm($selected_plugin_id, $form_state);
+      }
+    }
 
     // If we have a print_engine in the form_state then use that otherwise, fall
     // back to what was saved as this is a fresh form. Check explicitly for NULL
     // in case they selected the None option which is false'y.
-    $pdf_plugin_id = !is_null($form_state->getValue('pdf_engine')) ? $form_state->getValue('pdf_engine') : $config->get('print_engines.pdf_engine');
+    if ($export_type = $form_state->getTriggeringElement()['#name']) {
+      $plugin_id = !is_null($form_state->getValue($export_type)) ? $form_state->getValue($export_type) : $config->get('print_engines.' . $export_type . '_engine');
 
-    // If we have a plugin id and the plugin hasn't since been disabled then we
-    // load the config for the plugin.
-    // @TODO, support all print engine types.
-    if ($pdf_plugin_id && !in_array($pdf_plugin_id, array_keys($disabled_engines['pdf']), TRUE)) {
-      $form['entity_print']['pdf_engine_config'][$pdf_plugin_id] = $this->getPluginForm($pdf_plugin_id, $form_state);
+      // If we have a plugin id and the plugin hasn't been disabled then we load
+      // the config form for the plugin.
+      if ($this->pluginManager->isPrintEngineEnabled($plugin_id)) {
+        $form['entity_print'][$export_type . '_config'][$plugin_id] = $this->getPluginForm($plugin_id, $form_state);
+      }
     }
 
     return parent::buildForm($form, $form_state);
   }
 
   /**
-   * Ajax form callback.
+   * Ajax plugin form callback.
    */
-  public function ajaxPdfPluginFormCallback(&$form, FormStateInterface $form_state) {
-    return $form['entity_print']['pdf_engine_config'];
+  public function ajaxPluginFormCallback(&$form, FormStateInterface $form_state) {
+    $export_type = $form_state->getTriggeringElement()['#name'];
+    return $form['entity_print'][$export_type. '_config'];
   }
 
   /**
@@ -185,13 +205,15 @@ class SettingsForm extends ConfigFormBase {
   public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);
 
-    if ($plugin_id = $form_state->getValue('pdf_engine')) {
-      // Load the config entity, submit the relevant plugin form and then save
-      // it.
-      $entity = $this->loadConfigEntity($plugin_id);
-      /** @var \Drupal\entity_print\Plugin\PrintEngineInterface $plugin */
-      $plugin = $entity->getPrintEnginePluginCollection()->get($entity->id());
-      $plugin->validateConfigurationForm($form, $form_state);
+    foreach ($this->exportTypeManager->getDefinitions() as $export_type => $definition) {
+      if ($plugin_id = $form_state->getValue($export_type)) {
+        // Load the config entity, submit the relevant plugin form and then save
+        // it.
+        $entity = $this->loadConfigEntity($plugin_id);
+        /** @var \Drupal\entity_print\Plugin\PrintEngineInterface $plugin */
+        $plugin = $entity->getPrintEnginePluginCollection()->get($entity->id());
+        $plugin->validateConfigurationForm($form, $form_state);
+      }
     }
   }
 
@@ -199,22 +221,25 @@ class SettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    if ($plugin_id = $form_state->getValue('pdf_engine')) {
-      // Load the config entity, submit the relevant plugin form and then save
-      // it.
-      $entity = $this->loadConfigEntity($plugin_id);
-      /** @var \Drupal\entity_print\Plugin\PrintEngineInterface $plugin */
-      $plugin = $entity->getPrintEnginePluginCollection()->get($entity->id());
-      $plugin->submitConfigurationForm($form, $form_state);
-      $entity->save();
+    $config = $this->config('entity_print.settings');
+    foreach ($this->exportTypeManager->getDefinitions() as $export_type => $definition) {
+      if ($plugin_id = $form_state->getValue($export_type)) {
+        $entity = $this->loadConfigEntity($plugin_id);
+        /** @var \Drupal\entity_print\Plugin\PrintEngineInterface $plugin */
+        $plugin = $entity->getPrintEnginePluginCollection()->get($entity->id());
+        $plugin->submitConfigurationForm($form, $form_state);
+        $entity->save();
+      }
+
+      // Save the plugin as the default for this engine type.
+      $config->set('print_engines.' . $export_type . '_engine', $plugin_id);
     }
 
     // Save the global settings.
     $values = $form_state->getValues();
-    $this->config('entity_print.settings')
+    $config
       ->set('default_css', $values['default_css'])
       ->set('force_download', $values['force_download'])
-      ->set('print_engines.pdf_engine', $values['pdf_engine'])
       ->save();
   }
 

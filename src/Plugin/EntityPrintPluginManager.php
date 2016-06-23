@@ -20,6 +20,13 @@ class EntityPrintPluginManager extends DefaultPluginManager {
   protected $dispatcher;
 
   /**
+   * An array of disabled print engines.
+   *
+   * @var array
+   */
+  protected $disabledPrintEngines;
+
+  /**
    * Constructs a EntityPrintPluginManager object.
    *
    * @param \Traversable $namespaces
@@ -54,6 +61,50 @@ class EntityPrintPluginManager extends DefaultPluginManager {
     }
 
     return parent::createInstance($plugin_id, $configuration);
+  }
+
+  /**
+   * Checks if a plugin is enabled based on its dependencies.
+   *
+   * @param string $plugin_id
+   *   The plugin id to check
+   *
+   * @return bool
+   *   TRUE if the plugin is disabled otherwise FALSE.
+   */
+  public function isPrintEngineEnabled($plugin_id) {
+    if (!$plugin_id) {
+      return FALSE;
+    }
+
+    $plugin_definition = $this->getDefinition($plugin_id);
+    $disabled_definitions = $this->getDisabledDefinitions($plugin_definition['export_type']);
+    return !in_array($plugin_id, array_keys($disabled_definitions), TRUE);
+  }
+
+  /**
+   * Gets all disabled print engine definitions.
+   *
+   * @param string $filter_export_type
+   *   (optional) The export type you want to filter by.
+   *
+   * @return array
+   *   An array of disabled print engine definitions keyed by export type.
+   */
+  public function getDisabledDefinitions($filter_export_type = NULL) {
+    if (is_null($this->disabledPrintEngines)) {
+      $this->disabledPrintEngines = [];
+      foreach ($this->getDefinitions() as $plugin_id => $definition) {
+        /** @var \Drupal\entity_print\Plugin\PrintEngineInterface $class */
+        $class = $definition['class'];
+        $export_type = $definition['export_type'];
+
+        if (!$class::dependenciesAvailable()) {
+          $this->disabledPrintEngines[$export_type][$plugin_id] = $definition;
+        }
+      }
+    }
+    return $filter_export_type ? $this->disabledPrintEngines[$filter_export_type] : $this->disabledPrintEngines;
   }
 
   /**

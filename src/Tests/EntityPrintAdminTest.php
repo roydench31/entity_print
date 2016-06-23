@@ -64,12 +64,12 @@ class EntityPrintAdminTest extends WebTestBase {
     $this->drupalPostForm(NULL, [], 'Save configuration');
 
     // Assert the intial config values.
-    $this->drupalPostAjaxForm(NULL, ['pdf_engine' => 'testprintengine'], 'pdf_engine');
+    $this->drupalPostAjaxForm(NULL, ['pdf' => 'testprintengine'], 'pdf');
     $this->assertFieldByName('test_engine_setting', 'initial value');
 
     // Ensure the plugin gets the chance to validate the form.
     $this->drupalPostForm(NULL, [
-      'pdf_engine' => 'testprintengine',
+      'pdf' => 'testprintengine',
       'test_engine_setting' => 'rejected',
     ], 'Save configuration');
     $this->assertText('Setting has an invalid value');
@@ -77,7 +77,7 @@ class EntityPrintAdminTest extends WebTestBase {
     $this->drupalPostForm(NULL, [
       'default_css' => 0,
       'force_download' => 0,
-      'pdf_engine' => 'testprintengine',
+      'pdf' => 'testprintengine',
       'test_engine_setting' => 'testvalue',
     ], 'Save configuration');
 

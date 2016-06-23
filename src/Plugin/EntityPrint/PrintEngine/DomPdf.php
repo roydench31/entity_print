@@ -153,7 +153,7 @@ class DomPdf extends PrintEngineBase implements ContainerFactoryPluginInterface 
    * {@inheritdoc}
    */
   public static function dependenciesAvailable() {
-    return class_exists('Dompdf\Dompdf');
+    return class_exists('Dompdf\Dompdf') && !drupal_valid_test_ua();
   }
 
 }
