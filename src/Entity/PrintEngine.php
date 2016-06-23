@@ -80,7 +80,7 @@ class PrintEngine extends ConfigEntityBase implements PrintEngineInterface {
   /**
    * Gets the plugin manager.
    *
-   * @return \Drupal\entity_print\Plugin\EntityPrintPluginManager
+   * @return \Drupal\entity_print\Plugin\EntityPrintPluginManagerInterface
    *   The plugin manager instance.
    */
   protected function getPrintEnginePluginManager() {

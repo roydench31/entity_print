@@ -13,7 +13,7 @@ use Drupal\entity_print\PrintEngineException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Drupal\entity_print\Plugin\EntityPrintPluginManager;
+use Drupal\entity_print\Plugin\EntityPrintPluginManagerInterface;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class EntityPrintController extends ControllerBase {
@@ -21,7 +21,7 @@ class EntityPrintController extends ControllerBase {
   /**
    * The plugin manager for our Print engines.
    *
-   * @var \Drupal\entity_print\Plugin\EntityPrintPluginManager
+   * @var \Drupal\entity_print\Plugin\EntityPrintPluginManagerInterface
    */
   protected $pluginManager;
 
@@ -42,7 +42,7 @@ class EntityPrintController extends ControllerBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct(EntityPrintPluginManager $plugin_manager, PrintBuilderInterface $print_builder, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(EntityPrintPluginManagerInterface $plugin_manager, PrintBuilderInterface $print_builder, EntityTypeManagerInterface $entity_type_manager) {
     $this->pluginManager = $plugin_manager;
     $this->printBuilder = $print_builder;
     $this->entityTypeManager = $entity_type_manager;

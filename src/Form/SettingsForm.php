@@ -5,7 +5,7 @@ namespace Drupal\entity_print\Form;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Form\ConfigFormBase;
-use Drupal\entity_print\Plugin\EntityPrintPluginManager;
+use Drupal\entity_print\Plugin\EntityPrintPluginManagerInterface;
 use Drupal\entity_print\Plugin\ExportTypeManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +19,7 @@ class SettingsForm extends ConfigFormBase {
   /**
    * The Print engine plugin manager.
    *
-   * @var \Drupal\entity_print\Plugin\EntityPrintPluginManager
+   * @var \Drupal\entity_print\Plugin\EntityPrintPluginManagerInterface
    */
   protected $pluginManager;
 
@@ -42,12 +42,12 @@ class SettingsForm extends ConfigFormBase {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The factory for configuration objects.
-   * @param \Drupal\entity_print\Plugin\EntityPrintPluginManager $plugin_manager
+   * @param \Drupal\entity_print\Plugin\EntityPrintPluginManagerInterface $plugin_manager
    *   The plugin manager object.
    * @param \Drupal\Core\Entity\EntityStorageInterface $entity_storage
    *   The config storage.
    */
-  public function __construct(ConfigFactoryInterface $config_factory, EntityPrintPluginManager $plugin_manager, ExportTypeManager $export_type_manager, EntityStorageInterface $entity_storage) {
+  public function __construct(ConfigFactoryInterface $config_factory, EntityPrintPluginManagerInterface $plugin_manager, ExportTypeManager $export_type_manager, EntityStorageInterface $entity_storage) {
     parent::__construct($config_factory);
     $this->pluginManager = $plugin_manager;
     $this->exportTypeManager = $export_type_manager;

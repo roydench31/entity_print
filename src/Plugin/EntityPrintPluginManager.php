@@ -10,7 +10,7 @@ use Drupal\entity_print\PrintEngineException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 
-class EntityPrintPluginManager extends DefaultPluginManager {
+class EntityPrintPluginManager extends DefaultPluginManager implements EntityPrintPluginManagerInterface {
 
   /**
    * The event dispatcher.
@@ -64,13 +64,7 @@ class EntityPrintPluginManager extends DefaultPluginManager {
   }
 
   /**
-   * Checks if a plugin is enabled based on its dependencies.
-   *
-   * @param string $plugin_id
-   *   The plugin id to check
-   *
-   * @return bool
-   *   TRUE if the plugin is disabled otherwise FALSE.
+   * {@inheritdoc}
    */
   public function isPrintEngineEnabled($plugin_id) {
     if (!$plugin_id) {
@@ -83,13 +77,7 @@ class EntityPrintPluginManager extends DefaultPluginManager {
   }
 
   /**
-   * Gets all disabled print engine definitions.
-   *
-   * @param string $filter_export_type
-   *   (optional) The export type you want to filter by.
-   *
-   * @return array
-   *   An array of disabled print engine definitions keyed by export type.
+   * {@inheritdoc}
    */
   public function getDisabledDefinitions($filter_export_type = NULL) {
     if (is_null($this->disabledPrintEngines)) {

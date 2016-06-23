@@ -21,7 +21,7 @@ function entity_print_post_update_new_dompdf_configuration() {
 function entity_print_post_update_migrate_config() {
   $config = \Drupal::configFactory()->getEditable('entity_print.settings');
   if ($plugin_id = $config->get('print_engine')) {
-    /** @var \Drupal\entity_print\Plugin\EntityPrintPluginManager $plugin_manager */
+    /** @var \Drupal\entity_print\Plugin\EntityPrintPluginManagerInterface $plugin_manager */
     $plugin_manager = \Drupal::service('plugin.manager.entity_print.print_engine');
     $definition = $plugin_manager->getDefinition($plugin_id);
     /** @var \Drupal\entity_print\Plugin\PrintEngineInterface $class */
