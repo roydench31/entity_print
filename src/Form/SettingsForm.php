@@ -96,7 +96,7 @@ class SettingsForm extends ConfigFormBase {
     }
 
     // Show a notification for each disabled print engine.
-    foreach ($this->pluginManager->getDisabledDefinitions() as $export_plugin_id => $disabled_engines) {
+    foreach ($this->pluginManager->getDisabledDefinitions() as $disabled_engines) {
       foreach ($disabled_engines as $plugin_id => $definition) {
         $class = $definition['class'];
         // Show the user which Print engines are disabled, but only for
@@ -131,7 +131,10 @@ class SettingsForm extends ConfigFormBase {
     ];
 
     foreach ($this->exportTypeManager->getDefinitions() as $export_type => $definition) {
-      $selected_plugin_id = $config->get('print_engines.' . $export_type .  '_engine');
+      // If we have a print_engine in the form_state then use that otherwise, fall
+      // back to what was saved as this is a fresh form. Check explicitly for NULL
+      // in case they selected the None option which is false'y.
+      $selected_plugin_id = !is_null($form_state->getValue($export_type)) ? $form_state->getValue($export_type) : $config->get('print_engines.' . $export_type . '_engine');
       $form['entity_print'][$export_type] = [
         '#type' => 'select',
         '#title' => $definition['label'],
@@ -152,19 +155,6 @@ class SettingsForm extends ConfigFormBase {
 
       if ($this->pluginManager->isPrintEngineEnabled($selected_plugin_id)) {
         $form['entity_print'][$export_type . '_config'][$selected_plugin_id] = $this->getPluginForm($selected_plugin_id, $form_state);
-      }
-    }
-
-    // If we have a print_engine in the form_state then use that otherwise, fall
-    // back to what was saved as this is a fresh form. Check explicitly for NULL
-    // in case they selected the None option which is false'y.
-    if ($export_type = $form_state->getTriggeringElement()['#name']) {
-      $plugin_id = !is_null($form_state->getValue($export_type)) ? $form_state->getValue($export_type) : $config->get('print_engines.' . $export_type . '_engine');
-
-      // If we have a plugin id and the plugin hasn't been disabled then we load
-      // the config form for the plugin.
-      if ($this->pluginManager->isPrintEngineEnabled($plugin_id)) {
-        $form['entity_print'][$export_type . '_config'][$plugin_id] = $this->getPluginForm($plugin_id, $form_state);
       }
     }
 
@@ -241,6 +231,8 @@ class SettingsForm extends ConfigFormBase {
       ->set('default_css', $values['default_css'])
       ->set('force_download', $values['force_download'])
       ->save();
+
+    drupal_set_message($this->t('Configuration saved.'));
   }
 
   /**

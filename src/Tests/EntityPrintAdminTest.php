@@ -65,11 +65,14 @@ class EntityPrintAdminTest extends WebTestBase {
 
     // Assert the intial config values.
     $this->drupalPostAjaxForm(NULL, ['pdf' => 'testprintengine'], 'pdf');
+    $this->drupalPostAjaxForm(NULL, ['worddoc' => 'test_word_print_engine', 'pdf' => 'testprintengine'], 'worddoc');
     $this->assertFieldByName('test_engine_setting', 'initial value');
+    $this->assertFieldByName('test_word_setting', 'my-default');
 
     // Ensure the plugin gets the chance to validate the form.
     $this->drupalPostForm(NULL, [
       'pdf' => 'testprintengine',
+      'worddoc' => 'test_word_print_engine',
       'test_engine_setting' => 'rejected',
     ], 'Save configuration');
     $this->assertText('Setting has an invalid value');
@@ -78,21 +81,26 @@ class EntityPrintAdminTest extends WebTestBase {
       'default_css' => 0,
       'force_download' => 0,
       'pdf' => 'testprintengine',
+      'worddoc' => 'test_word_print_engine',
+      'test_word_setting' => 'test word setting',
       'test_engine_setting' => 'testvalue',
     ], 'Save configuration');
 
     /** @var \Drupal\entity_print\Entity\PrintEngineInterface $config_entity */
     $config_entity = \Drupal::entityTypeManager()->getStorage('print_engine')->load('testprintengine');
-
     // Assert the expected settings were stored.
     $this->assertEqual('testprintengine', $config_entity->id());
     $this->assertEqual(['test_engine_setting' => 'testvalue', 'test_engine_suffix' => 'overridden'], $config_entity->getSettings());
     $this->assertEqual('entity_print_test', $config_entity->getDependencies()['module'][0]);
 
+    $config_entity = \Drupal::entityTypeManager()->getStorage('print_engine')->load('test_word_print_engine');
+    $this->assertEqual(['test_word_setting' => 'test word setting'], $config_entity->getSettings());
+
     // Assert that the testprintengine is actually used.
     $this->drupalGet('/entityprint/pdf/node/1');
     $this->assertText('Using testprintengine - overridden');
   }
+
 
   /**
    * Test the view PDF extra field and the configurable text.

@@ -104,6 +104,11 @@ class EntityPrintPluginManager extends DefaultPluginManager {
         }
       }
     }
+    // If we're trying to filter the disabled engines but there are none
+    // return an empty array.
+    if ($filter_export_type && empty($this->disabledPrintEngines[$filter_export_type])) {
+      return [];
+    }
     return $filter_export_type ? $this->disabledPrintEngines[$filter_export_type] : $this->disabledPrintEngines;
   }
 

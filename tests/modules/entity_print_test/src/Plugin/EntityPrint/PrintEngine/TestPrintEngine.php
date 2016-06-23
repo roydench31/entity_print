@@ -31,7 +31,7 @@ class TestPrintEngine extends PrintEngineBase {
    * {@inheritdoc}
    */
   public function send($filename = NULL) {
-    // Echo the response and then flush, just like a Prin implementation would.
+    // Echo the response and then flush, just like a Print implementation would.
     echo 'Using testprintengine - ' . $this->configuration['test_engine_suffix'];
     echo $this->html;
     flush();
