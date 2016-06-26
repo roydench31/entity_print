@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\entity_print\Kernel;
 
-use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Controller\NodePreviewController;
 use Drupal\node\Entity\Node;
@@ -52,14 +51,6 @@ class NodePreviewTest extends KernelTestBase {
     // Deliberately we are not saving the node, so the node misses the ID.
     $node = Node::create(['type' => 'whatever', 'title' => 'Buzz']);
     $node->in_preview = TRUE;
-
-    $display = EntityViewDisplay::create([
-      'targetEntityType' => 'node',
-      'bundle' => 'whatever',
-      'mode' => 'default',
-      'status' => TRUE,
-    ])->setComponent('entity_print_view');
-    $display->save();
 
     $controller = NodePreviewController::create($this->container);
     $build = $controller->view($node);

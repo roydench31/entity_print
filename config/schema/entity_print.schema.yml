@@ -50,12 +50,11 @@ entity_print_print_engine.phpwkhtmltopdf:
 
 # Add schema for our extra field settings.
 core.entity_view_display.*.*.*.third_party.entity_print:
-  type: mapping
+  type: sequence
   label: 'Schema for Entity Print third party settings'
-  mapping:
-    label:
-      type: string
-      label: 'Label for view link'
+  sequence:
+    type: string
+    label: 'Entity print settings for each export type'
 
 action.configuration.entity_print_pdf_download_action:
   type: action_configuration_default

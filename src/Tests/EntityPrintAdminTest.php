@@ -121,8 +121,8 @@ class EntityPrintAdminTest extends WebTestBase {
     // Save the default display with custom text.
     $random_text = $this->randomMachineName();
     $this->drupalPostForm('admin/structure/types/manage/page/display', [
-      'fields[entity_print_view][empty_cell]' => $random_text,
-      'fields[entity_print_view][type]' => 'visible',
+      'fields[entity_print_view_pdf][empty_cell]' => $random_text,
+      'fields[entity_print_view_pdf][type]' => 'visible',
     ], 'Save');
 
     // Visit our page node and ensure the link is available.
@@ -140,8 +140,8 @@ class EntityPrintAdminTest extends WebTestBase {
       'display_modes_custom[pdf]' => 1,
     ], 'Save');
     $this->drupalPostForm('admin/structure/types/manage/page/display/pdf', [
-      'fields[entity_print_view][empty_cell]' => $random_text,
-      'fields[entity_print_view][type]' => 'visible',
+      'fields[entity_print_view_pdf][empty_cell]' => $random_text,
+      'fields[entity_print_view_pdf][type]' => 'visible',
     ], 'Save');
 
     // Ensure the PDF view mode is now in use.
@@ -154,7 +154,7 @@ class EntityPrintAdminTest extends WebTestBase {
     /** @var \Drupal\Core\Entity\Entity\EntityViewDisplay $display */
     $display = EntityViewDisplay::load('node.page.default');
 
-    $this->assertIdentical($random_text, $display->getThirdPartySetting('entity_print', 'label'));
+    $this->assertIdentical($random_text, $display->getThirdPartySetting('entity_print', 'pdf_label'));
   }
 
 }
