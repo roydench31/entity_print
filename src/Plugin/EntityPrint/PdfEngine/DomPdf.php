@@ -134,7 +134,9 @@ class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
     // from our filename here.
     $filename = preg_replace('/\.pdf$/i', '', $filename);
 
-    $this->pdf->stream($filename);
+    // If the filename received here is NULL, force open in the browser
+    // otherwise attempt to have it downloaded.
+    $this->pdf->stream($filename, array('Attachment' => (bool) $filename));
   }
 
   /**
