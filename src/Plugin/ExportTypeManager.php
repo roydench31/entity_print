@@ -26,6 +26,15 @@ class ExportTypeManager extends DefaultPluginManager implements ExportTypeManage
   protected $themeHandler;
 
   /**
+   * Provides default values for plugins.
+   *
+   * @var array
+   */
+  protected $defaults = [
+    'class' => '\Drupal\entity_print\Plugin\EntityPrint\ExportType\DefaultExportType',
+  ];
+
+  /**
    * Constructs a new export type manager.
    *
    * @param \Drupal\Core\Cache\CacheBackendInterface $cache_backend
