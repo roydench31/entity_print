@@ -54,7 +54,7 @@ class PostRenderSubscriber implements EventSubscriberInterface {
   public function postRender(PdfHtmlAlterEvent $event) {
     // We only apply the fix to PHP Wkhtmltopdf because the other implementations
     // allow us to specify a base url.
-    if ($this->configFactory->get('pdf_engine') !== 'phpwkhtmltopdf') {
+    if ($this->configFactory->get('entity_print.settings')->get('pdf_engine') !== 'phpwkhtmltopdf') {
       return;
     }
 
