@@ -28,6 +28,28 @@ class EntityPrintTest extends UnitTestCase {
   }
 
   /**
+   * Test multiple file generation.
+   *
+   * @covers ::generateMultiFilename
+   * @dataProvider generateMultipleFilenameDataProvider
+   */
+  public function testGenerateMultipleFilename($entity_labels, $expected_filename) {
+    $entities = [];
+
+    foreach ($entity_labels as $entity_label) {
+      $entities[] = $this->getMockEntity($entity_label);
+    }
+
+    $pdf_builder = $this->getMockPdfBuilder();
+
+    $reflection = new \ReflectionClass($pdf_builder);
+    $method = $reflection->getMethod('generateMultiFilename');
+    $method->setAccessible(true);
+
+    $this->assertEquals($expected_filename, $method->invoke($pdf_builder, $entities));
+  }
+
+  /**
    * Get the data for testing filename generation.
    *
    * @return array
@@ -39,6 +61,19 @@ class EntityPrintTest extends UnitTestCase {
       ['Random Node Title', 'Random Node Title.pdf'],
       ['Title -=with special chars&*#', 'Title with special chars.pdf'],
       ['Title 5 with Nums 2', 'Title 5 with Nums 2.pdf'],
+    ];
+  }
+
+  /**
+   * Data provider for multiple filename generation.
+   *
+   * @return array
+   *   An array of data rows for testing filename generation.
+   */
+  public function generateMultipleFilenameDataProvider() {
+    return [
+      [['Node Title1', 'Node Title2', 'Node Title3'], 'Node Title1-Node Title2-Node Title3.pdf'],
+      [['Title1 -=with special chars&*#', 'Title2 -=with special chars&*#', 'Title3 -=with special chars&*#'], 'Title1 with special chars-Title2 with special chars-Title3 with special chars.pdf'],
     ];
   }
 

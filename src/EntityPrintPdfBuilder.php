@@ -105,13 +105,18 @@ class EntityPrintPdfBuilder implements PdfBuilderInterface {
    *
    * @return string
    *   The filename to use.
+   * @param bool $with_extension
+   *   Allow us to exclude the PDF file extension when generating the filename.
+   *
    */
-  protected function generateMultiFilename(array $entities) {
+  protected function generateMultiFilename(array $entities, $with_extension = TRUE) {
     $filename = '';
     foreach ($entities as $entity) {
       $filename .= $this->generateFilename($entity, FALSE) . '-';
     }
-    return rtrim($filename, '-');
+    $filename = rtrim($filename, '-');
+
+    return $with_extension ? $filename . '.pdf' : $filename;
   }
 
 }
