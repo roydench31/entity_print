@@ -3,5 +3,4 @@ description: 'Allows any Drupal entity to be converted to a PDF'
 type: module
 core: 8.x
 package: Entity Print
-version: VERSION
 configure: entity_print.settings

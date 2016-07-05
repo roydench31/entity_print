@@ -3,6 +3,7 @@
 namespace Drupal\entity_print\Plugin;
 
 use Drupal\Core\Cache\CacheBackendInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
 use Drupal\entity_print\Event\PrintEvents;
@@ -27,6 +28,13 @@ class EntityPrintPluginManager extends DefaultPluginManager implements EntityPri
   protected $disabledPrintEngines;
 
   /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
    * Constructs a EntityPrintPluginManager object.
    *
    * @param \Traversable $namespaces
@@ -36,12 +44,17 @@ class EntityPrintPluginManager extends DefaultPluginManager implements EntityPri
    *   Cache backend instance to use.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler to invoke the alter hook with.
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
+   *   The event dispatcher.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory.
    */
-  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, EventDispatcherInterface $dispatcher) {
+  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, EventDispatcherInterface $dispatcher, ConfigFactoryInterface $config_factory) {
     parent::__construct('Plugin/EntityPrint/PrintEngine', $namespaces, $module_handler, 'Drupal\entity_print\Plugin\PrintEngineInterface', 'Drupal\entity_print\Annotation\PrintEngine');
     $this->alterInfo('entity_print_print_engine');
     $this->setCacheBackend($cache_backend, 'entity_print_print_engines');
     $this->dispatcher = $dispatcher;
+    $this->configFactory = $config_factory;
   }
 
   /**
@@ -66,12 +79,27 @@ class EntityPrintPluginManager extends DefaultPluginManager implements EntityPri
   /**
    * {@inheritdoc}
    */
+  public function createSelectedInstance($export_type) {
+    $config = $this->configFactory->get('entity_print.settings');
+    $config_engine = 'print_engines.' . $export_type . '_engine';
+
+    return $this->createInstance($config->get($config_engine));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function isPrintEngineEnabled($plugin_id) {
     if (!$plugin_id) {
       return FALSE;
     }
 
-    $plugin_definition = $this->getDefinition($plugin_id);
+    // If the plugin definition has gone, it obviously isn't enabled.
+    $plugin_definition = $this->getDefinition($plugin_id, FALSE);
+    if (!$plugin_definition) {
+      return FALSE;
+    }
+
     $disabled_definitions = $this->getDisabledDefinitions($plugin_definition['export_type']);
     return !in_array($plugin_id, array_keys($disabled_definitions), TRUE);
   }
@@ -79,25 +107,20 @@ class EntityPrintPluginManager extends DefaultPluginManager implements EntityPri
   /**
    * {@inheritdoc}
    */
-  public function getDisabledDefinitions($filter_export_type = NULL) {
-    if (is_null($this->disabledPrintEngines)) {
-      $this->disabledPrintEngines = [];
+  public function getDisabledDefinitions($filter_export_type) {
+    if (!isset($this->disabledPrintEngines[$filter_export_type])) {
+      $this->disabledPrintEngines[$filter_export_type] = [];
+
       foreach ($this->getDefinitions() as $plugin_id => $definition) {
         /** @var \Drupal\entity_print\Plugin\PrintEngineInterface $class */
         $class = $definition['class'];
-        $export_type = $definition['export_type'];
-
-        if (!$class::dependenciesAvailable()) {
-          $this->disabledPrintEngines[$export_type][$plugin_id] = $definition;
+        if ($definition['export_type'] === $filter_export_type && !$class::dependenciesAvailable()) {
+          $this->disabledPrintEngines[$filter_export_type][$plugin_id] = $definition;
         }
       }
     }
-    // If we're trying to filter the disabled engines but there are none
-    // return an empty array.
-    if ($filter_export_type && empty($this->disabledPrintEngines[$filter_export_type])) {
-      return [];
-    }
-    return $filter_export_type ? $this->disabledPrintEngines[$filter_export_type] : $this->disabledPrintEngines;
+
+    return $this->disabledPrintEngines[$filter_export_type];
   }
 
   /**

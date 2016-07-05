@@ -62,4 +62,16 @@ class ExportTypeManager extends DefaultPluginManager implements ExportTypeManage
     return $this->discovery;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getFormOptions() {
+    $export_types = [];
+    $definitions = $this->getDefinitions();
+    foreach ($definitions as $export_type => $definition) {
+      $export_types[$export_type] = $definition['label'];
+    }
+    return $export_types;
+  }
+
 }

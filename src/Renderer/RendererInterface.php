@@ -37,7 +37,20 @@ interface RendererInterface {
    *   The generated HTML.
    *
    * @throws \Exception
+   *
+   * @TODO, Consider removing this method entirely in 2.x.
+   * @see https://www.drupal.org/node/2760197
    */
   public function getHtmlMultiple($entities, $use_default_css, $optimize_css);
+
+  /**
+   * Get the filename for the entity we're printing *without* the extension.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity for which to generate the filename from.
+   * @return string
+   *   The generate file name for this entity.
+   */
+  public function getFilename(EntityInterface $entity);
 
 }

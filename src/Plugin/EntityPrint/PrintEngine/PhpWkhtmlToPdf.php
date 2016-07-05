@@ -96,7 +96,7 @@ class PhpWkhtmlToPdf extends PrintEngineBase {
    * {@inheritdoc}
    */
   public static function dependenciesAvailable() {
-    return class_exists('mikehaertl\wkhtmlto\Pdf');
+    return class_exists('mikehaertl\wkhtmlto\Pdf') && !drupal_valid_test_ua();
   }
 
 }

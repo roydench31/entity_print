@@ -96,8 +96,8 @@ class SettingsForm extends ConfigFormBase {
     }
 
     // Show a notification for each disabled print engine.
-    foreach ($this->pluginManager->getDisabledDefinitions() as $disabled_engines) {
-      foreach ($disabled_engines as $plugin_id => $definition) {
+    foreach (array_keys($this->exportTypeManager->getDefinitions()) as $export_type) {
+      foreach ($this->pluginManager->getDisabledDefinitions($export_type) as $plugin_id => $definition) {
         $class = $definition['class'];
         // Show the user which Print engines are disabled, but only for
         // the page load not on AJAX requests.

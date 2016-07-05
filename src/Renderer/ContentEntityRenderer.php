@@ -4,15 +4,11 @@ namespace Drupal\entity_print\Renderer;
 
 use Drupal\Core\Asset\AssetCollectionRendererInterface;
 use Drupal\Core\Asset\AssetResolverInterface;
-use Drupal\Core\Asset\AttachedAssets;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\InfoParserInterface;
 use Drupal\Core\Extension\ThemeHandlerInterface;
 use Drupal\Core\Render\RendererInterface;
-use Drupal\entity_print\Event\PrintCssAlterEvent;
-use Drupal\entity_print\Event\PrintEvents;
-use Drupal\entity_print\Event\PrintHtmlAlterEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ContentEntityRenderer extends RendererBase {
@@ -63,42 +59,16 @@ class ContentEntityRenderer extends RendererBase {
   }
 
   /**
-   * Generate the HTML for the PDF.
-   *
-   * @param array $render
-   *   The renderable array for our Entity Print theme hook.
-   * @param array $entities
-   *   An array of entities that we're rendering.
-   * @param bool $use_default_css
-   *   TRUE if we're including the default CSS otherwise FALSE.
-   * @param bool $optimize_css
-   *   TRUE if we want to compress the CSS otherwise FALSE.
-   *
-   * @return string
-   *   The HTML rendered string.
+   * {@inheritdoc}
    */
-  protected function generateHtml(array $render, array $entities, $use_default_css, $optimize_css) {
-    // Inject some generic CSS across all templates.
-    if ($use_default_css) {
-      $render['#attached']['library'][] = 'entity_print/default';
+  public function getFilename(EntityInterface $entity) {
+    $filename = $this->sanitizeFilename($entity->label());
+    // If for some bizarre reason there isn't a valid character in the entity
+    // title or the entity doesn't provide a label then we use the entity type.
+    if (!$filename) {
+      $filename = $entity->getEntityTypeId();
     }
-
-    foreach ($entities as $entity) {
-      // Inject CSS from the theme info files and then render the CSS.
-      $render = $this->addCss($render, $entity);
-    }
-
-    $this->dispatcher->dispatch(PrintEvents::CSS_ALTER, new PrintCssAlterEvent($render, $entities));
-    $css_assets = $this->assetResolver->getCssAssets(AttachedAssets::createFromRenderArray($render), $optimize_css);
-    $rendered_css = $this->cssRenderer->render($css_assets);
-    $render['#entity_print_css'] = $this->renderer->render($rendered_css);
-
-    $html = (string) $this->renderer->render($render);
-
-    // Allow other modules to alter the generated HTML.
-    $this->dispatcher->dispatch(PrintEvents::POST_RENDER, new PrintHtmlAlterEvent($html, $entities));
-
-    return $html;
+    return $filename;
   }
 
   /**

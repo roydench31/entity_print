@@ -149,7 +149,6 @@ class EntityPrintTest extends WebTestBase {
     // Invalid export type also triggers access denied.
     $this->drupalGet('entityprint/invalid/node/' . $this->node->id() . '/debug');
     $this->assertResponse(403, 'Invalid entity id triggers access denied.');
-
   }
 
 }

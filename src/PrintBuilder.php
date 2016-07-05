@@ -8,6 +8,7 @@ use Drupal\entity_print\Event\PreSendPrintEvent;
 use Drupal\entity_print\Event\PreSendPrintMultipleEvent;
 use Drupal\entity_print\Plugin\PrintEngineInterface;
 use Drupal\entity_print\Renderer\RendererFactoryInterface;
+use Drupal\entity_print\Renderer\RendererInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class PrintBuilder implements PrintBuilderInterface {
@@ -43,14 +44,16 @@ class PrintBuilder implements PrintBuilderInterface {
    * {@inheritdoc}
    */
   public function printSingle(EntityInterface $entity, PrintEngineInterface $print_engine, $force_download = FALSE, $use_default_css = TRUE) {
-    $print_engine->addPage($this->rendererFactory->create($entity)->getHtml($entity, $use_default_css, TRUE));
+    $renderer = $this->rendererFactory->create($entity);
+    $print_engine->addPage($renderer->getHtml($entity, $use_default_css, TRUE));
 
     // Allow other modules to alter the generated Print object.
     $this->dispatcher->dispatch(PrintEvents::PRE_SEND, new PreSendPrintEvent($print_engine, $entity));
 
     // If we're forcing a download we need a filename otherwise it's just sent
     // straight to the browser.
-    $filename = $force_download ? $this->generateFilename($entity) : NULL;
+    // @TODO, abstract the file extension. https://www.drupal.org/node/2760203.
+    $filename = $force_download ? $renderer->getFilename($entity) . '.pdf' : NULL;
 
     return $print_engine->send($filename);
   }
@@ -59,14 +62,15 @@ class PrintBuilder implements PrintBuilderInterface {
    * {@inheritdoc}
    */
   public function printMultiple(array $entities, PrintEngineInterface $print_engine, $force_download = FALSE, $use_default_css = TRUE) {
-    $print_engine->addPage($this->rendererFactory->create($entities)->getHtmlMultiple($entities, $use_default_css, TRUE));
+    $renderer = $this->rendererFactory->create($entities);
+    $print_engine->addPage($renderer->getHtmlMultiple($entities, $use_default_css, TRUE));
 
     // Allow other modules to alter the generated Print object.
     $this->dispatcher->dispatch(PrintEvents::PRE_SEND_MULTIPLE, new PreSendPrintMultipleEvent($print_engine, $entities));
 
     // If we're forcing a download we need a filename otherwise it's just sent
     // straight to the browser.
-    $filename = $force_download ? $this->generateMultiFilename($entities) : NULL;
+    $filename = $force_download ? $this->generateMultiFilename($entities, $renderer) : NULL;
 
     return $print_engine->send($filename);
   }
@@ -79,40 +83,21 @@ class PrintBuilder implements PrintBuilderInterface {
   }
 
   /**
-   * Generate a filename from the entity.
+   * Generate a filename when you have multiple entities.
    *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   The content entity to generate the filename.
-   * @param bool $with_extension
-   *   Allow us to exclude the Print file extension when generating the filename.
-   *
-   * @return string
-   *   The cleaned filename from the entity label.
-   */
-  protected function generateFilename(EntityInterface $entity, $with_extension = TRUE) {
-    $filename = preg_replace("/[^A-Za-z0-9 ]/", '', $entity->label());
-    // If for some bizarre reason there isn't a valid character in the entity
-    // title or the entity doesn't provide a label then we use the entity type.
-    if (!$filename) {
-      $filename = $entity->getEntityTypeId();
-    }
-    // @TODO abstract the .pdf extension.
-    return $with_extension ? $filename . '.pdf' : $filename;
-  }
-
-  /**
    * @param array $entities
    *   An array of entities to derive the filename for.
    *
    * @return string
    *   The filename to use.
    */
-  protected function generateMultiFilename(array $entities) {
-    $filename = '';
+  protected function generateMultiFilename(array $entities, RendererInterface $renderer) {
+    $filenames = [];
     foreach ($entities as $entity) {
-      $filename .= $this->generateFilename($entity, FALSE) . '-';
+      $filenames[] = $renderer->getFilename($entity);
     }
-    return rtrim($filename, '-');
+    // @TODO, abstract out export type.
+    return implode('-', $filenames) . '.pdf';
   }
 
 }

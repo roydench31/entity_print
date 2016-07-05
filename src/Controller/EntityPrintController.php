@@ -76,10 +76,9 @@ class EntityPrintController extends ControllerBase {
     // Create the Print engine plugin.
     $config = $this->config('entity_print.settings');
     $entity = $this->entityTypeManager->getStorage($entity_type)->load($entity_id);
-    $config_engine = 'print_engines.' . $export_type . '_engine';
 
     try {
-      $print_engine = $this->pluginManager->createInstance($config->get($config_engine));
+      $print_engine = $this->pluginManager->createSelectedInstance($export_type);
     }
     catch (PrintEngineException $e) {
       // Build a safe markup string using Xss::filter() so that the instructions
@@ -105,6 +104,8 @@ class EntityPrintController extends ControllerBase {
    *
    * @return \Symfony\Component\HttpFoundation\Response
    *   The response object.
+   *
+   * @TODO, improve permissions in https://www.drupal.org/node/2759553
    */
   public function viewPrintDebug($entity_type, $entity_id) {
     $entity = $this->entityTypeManager->getStorage($entity_type)->load($entity_id);
