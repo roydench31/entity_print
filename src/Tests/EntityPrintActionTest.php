@@ -52,7 +52,7 @@ class EntityPrintActionTest extends WebTestBase {
     $this->drupalPostForm('/admin/content', [
       'action' => 'entity_print_pdf_download_action',
       'node_bulk_form[0]' => 1,
-    ], 'Apply');
+    ], 'Apply to selected items');
     $this->assertText('Using testprintengine');
   }
 
