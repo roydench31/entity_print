@@ -46,7 +46,7 @@ class PdfDownload extends ActionBase implements ContainerFactoryPluginInterface 
   /**
    * The Entity Print plugin manager.
    *
-   * @var \Drupal\Component\Plugin\PluginManagerInterface
+   * @var \Drupal\entity_print\Plugin\EntityPrintPluginManagerInterface
    */
   protected $pluginManager;
 
@@ -107,46 +107,21 @@ class PdfDownload extends ActionBase implements ContainerFactoryPluginInterface 
    * {@inheritdoc}
    */
   public function execute($entity = NULL) {
-    $this->sendResponse((function() use ($entity) {
-      $this->printBuilder->printSingle($entity, $this->getPrintEngine(), TRUE);
-    }));
+    $this->executeMultiple([$entity]);
   }
 
   /**
    * {@inheritdoc}
    */
   public function executeMultiple(array $entities) {
-    $this->sendResponse((function() use ($entities) {
-      $this->printBuilder->printMultiple($entities, $this->getPrintEngine(), TRUE);
-    }));
-  }
-
-  /**
-   * Sends the response using a stream and catches any errors.
-   *
-   * @param callable $callback
-   *   The callable responding for rendering the content.
-   */
-  protected function sendResponse(callable $callback) {
     try {
-      (new StreamedResponse($callback))->send();
+      (new StreamedResponse(function() use ($entities) {
+        $this->printBuilder->deliverPrintable($entities, $this->pluginManager->createSelectedInstance('pdf'), TRUE);
+      }))->send();
     }
     catch (PrintEngineException $e) {
       drupal_set_message(new FormattableMarkup(Xss::filter($e->getMessage()), []), 'error');
     }
-  }
-
-  /**
-   * Gets the Print engine implementation.
-   *
-   * @return \Drupal\entity_print\Plugin\PrintEngineInterface
-   *   The Print Engine implementation.
-   */
-  protected function getPrintEngine() {
-    if (!isset($this->printEngine)) {
-      $this->printEngine = $this->pluginManager->createInstance($this->entityPrintConfig->get('print_engines.pdf_engine'));
-    }
-    return $this->printEngine;
   }
 
 }

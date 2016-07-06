@@ -11,21 +11,21 @@ use Drupal\entity_print\Plugin\PrintEngineInterface;
 class PreSendPrintEvent extends PrintEventBase {
 
   /**
-   * @var \Drupal\Core\Entity\EntityInterface
+   * @var \Drupal\Core\Entity\EntityInterface[]
    */
-  protected $entity;
+  protected $entities;
 
   /**
    * PreSendPrintEvent constructor.
    *
    * @param \Drupal\entity_print\Plugin\PrintEngineInterface $print_engine
    *   The Print Engine.
-   * @param \Drupal\Core\Entity\EntityInterface $entity
+   * @param \Drupal\Core\Entity\EntityInterface[] $entities
    *   The entity to print.
    */
-  public function __construct(PrintEngineInterface $print_engine, EntityInterface $entity) {
+  public function __construct(PrintEngineInterface $print_engine, array $entities) {
     parent::__construct($print_engine);
-    $this->entity = $entity;
+    $this->entities = $entities;
   }
 
   /**
@@ -34,8 +34,8 @@ class PreSendPrintEvent extends PrintEventBase {
    * @return \Drupal\Core\Entity\EntityInterface
    *   The content entity.
    */
-  public function getEntity() {
-    return $this->entity;
+  public function getEntities() {
+    return $this->entities;
   }
 
 }

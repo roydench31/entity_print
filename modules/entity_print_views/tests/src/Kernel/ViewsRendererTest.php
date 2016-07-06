@@ -43,12 +43,12 @@ class ViewsRendererTest extends KernelTestBase {
     $view = Views::getView('my_test_view');
     $view->setDisplay('page_1');
     $renderer = $this->container->get('entity_print.renderer.view');
-    $this->assertSame('My Test view', $renderer->getFilename($view->storage));
+    $this->assertSame('My Test view', $renderer->getFilename([$view->storage]));
 
     $view = Views::getView('my_test_view');
     $view->setDisplay('block_1');
     $renderer = $this->container->get('entity_print.renderer.view');
-    $this->assertSame('My Test view block', $renderer->getFilename($view->storage));
+    $this->assertSame('My Test view block', $renderer->getFilename([$view->storage]));
   }
 
 }

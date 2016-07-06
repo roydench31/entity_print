@@ -28,47 +28,20 @@ class ContentEntityRenderer extends RendererBase {
   /**
    * {@inheritdoc}
    */
-  public function getHtml(EntityInterface $entity, $use_default_css, $optimize_css) {
+  protected function render(EntityInterface $entity) {
     $render_controller = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId());
-    $render = [
-      '#theme' => 'entity_print__' . $entity->getEntityTypeId() . '__' . $entity->id(),
-      '#entity' => $entity,
-      '#entity_array' => $render_controller->view($entity, $this->getViewMode($entity)),
-      '#attached' => [],
-    ];
-
-    return $this->generateHtml($render, [$entity], $use_default_css, $optimize_css);
+    return $render_controller->view($entity, $this->getViewMode($entity));
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getHtmlMultiple($entities, $use_default_css, $optimize_css) {
-    $first_entity = reset($entities);
-    $render_controller = $this->entityTypeManager->getViewBuilder($first_entity->getEntityTypeId());
-
-    // @TODO, maybe we should implement a different theme function?
-    $render = [
-      '#theme' => 'entity_print__' . $first_entity->getEntityTypeId(),
-      '#entity' => $entities,
-      '#entity_array' => $render_controller->viewMultiple($entities, $this->getViewMode($first_entity)),
-      '#attached' => [],
-    ];
-
-    return $this->generateHtml($render, $entities, $use_default_css, $optimize_css);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getFilename(EntityInterface $entity) {
-    $filename = $this->sanitizeFilename($entity->label());
-    // If for some bizarre reason there isn't a valid character in the entity
-    // title or the entity doesn't provide a label then we use the entity type.
-    if (!$filename) {
-      $filename = $entity->getEntityTypeId();
+  public function getFilename(array $entities) {
+    $filenames = [];
+    foreach ($entities as $entity) {
+      $filenames[] = $this->sanitizeFilename($entity->label());
     }
-    return $filename;
+    return implode('-', $filenames);
   }
 
   /**

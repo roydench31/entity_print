@@ -71,10 +71,21 @@ abstract class RendererBase implements RendererInterface {
   }
 
   /**
+   * Gets the renderable for this entity.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity we're rendering.
+   *
+   * @return array
+   *   The renderable array for the entity.
+   */
+  protected abstract function render(EntityInterface $entity);
+
+  /**
    * Generate the HTML for the PDF.
    *
-   * @param array $render
-   *   The renderable array for our Entity Print theme hook.
+   * @param array $renderable_entities
+   *   The renderable array for our entities.
    * @param array $entities
    *   An array of entities that we're rendering.
    * @param bool $use_default_css
@@ -85,7 +96,23 @@ abstract class RendererBase implements RendererInterface {
    * @return string
    *   The HTML rendered string.
    */
-  protected function generateHtml(array $render, array $entities, $use_default_css, $optimize_css) {
+  public function generateHtml(array $entities, $use_default_css, $optimize_css) {
+    if (empty($entities)) {
+      throw new \InvalidArgumentException('You must pass at least 1 entity');
+    }
+
+    $renderable = [];
+    foreach ($entities as $entity) {
+      $renderable[] = $this->render($entity);
+    }
+
+    $first_entity = reset($entities);
+    $render = [
+      '#theme' => 'entity_print__' . $first_entity->getEntityTypeId(),
+      '#content' => $renderable,
+      '#attached' => [],
+    ];
+
     // Inject some generic CSS across all templates.
     if ($use_default_css) {
       $render['#attached']['library'][] = 'entity_print/default';
@@ -147,51 +174,35 @@ abstract class RendererBase implements RendererInterface {
    *   An array of stylesheets to be used for this template.
    */
   protected function addCss($render, EntityInterface $entity) {
-    $theme = $this->themeHandler->getDefault();
-    $theme_path = $this->getThemePath($theme);
+    $theme = $this->themeHandler->getTheme($this->themeHandler->getDefault());
+    $theme_info = $this->infoParser->parse($theme->getPathname());
 
-    /** @var \Drupal\Core\Extension\InfoParser $parser */
-    $theme_info = $this->infoParser->parse("$theme_path/$theme.info.yml");
+    if (!isset($theme_info['entity_print'])) {
+      return $render;
+    }
 
-    // Parse out the CSS from the theme info.
-    if (isset($theme_info['entity_print'])) {
+    // See if we have the special "all" key which is added to every PDF.
+    if (isset($theme_info['entity_print']['all'])) {
+      $render['#attached']['library'][] = $theme_info['entity_print']['all'];
+      unset($theme_info['entity_print']['all']);
+    }
 
-      // See if we have the special "all" key which is added to every PDF.
-      if (isset($theme_info['entity_print']['all'])) {
-        $render['#attached']['library'][] = $theme_info['entity_print']['all'];
-        unset($theme_info['entity_print']['all']);
+    foreach ($theme_info['entity_print'] as $key => $value) {
+      // If the entity type doesn't match just skip.
+      if ($key !== $entity->getEntityTypeId()) {
+        continue;
       }
 
-      foreach ($theme_info['entity_print'] as $key => $value) {
-        // If the entity type doesn't match just skip.
-        if ($key !== $entity->getEntityTypeId()) {
-          continue;
-        }
-
-        // Parse our css files per entity type and bundle.
-        foreach ($value as $css_bundle => $css) {
-          // If it's magic key "all" add it otherwise check the bundle.
-          if ($css_bundle === 'all' || $entity->bundle() === $css_bundle) {
-            $render['#attached']['library'][] = $css;
-          }
+      // Parse our css files per entity type and bundle.
+      foreach ($value as $css_bundle => $css) {
+        // If it's magic key "all" add it otherwise check the bundle.
+        if ($css_bundle === 'all' || $entity->bundle() === $css_bundle) {
+          $render['#attached']['library'][] = $css;
         }
       }
     }
 
     return $render;
-  }
-
-  /**
-   * Get the path to a theme.
-   *
-   * @param string $theme
-   *   The name of the theme.
-   *
-   * @return string
-   *   The Drupal path to the theme.
-   */
-  protected function getThemePath($theme) {
-    return drupal_get_path('theme', $theme);
   }
 
 }

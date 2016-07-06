@@ -13,10 +13,10 @@ class ViewRenderer extends RendererBase {
   /**
    * {@inheritdoc}
    */
-  public function getHtml(EntityInterface $view, $use_default_css, $optimize_css) {
+  protected function render(EntityInterface $view) {
     /** @var \Drupal\views\Entity\View $view */
     $executable = $view->getExecutable();
-    $html = $executable->render();
+    $render = $executable->render();
 
     // We must remove ourselves from all areas otherwise it will cause an
     // infinite loop when rendering.
@@ -25,33 +25,20 @@ class ViewRenderer extends RendererBase {
       unset($handlers['area_entity_print_views']);
     }
 
-    $html['#pre_render'][] = [static::class, 'preRender'];
-    $render = [
-      '#theme' => 'entity_print__' . $view->getEntityTypeId() . '__' . $view->id(),
-      '#entity' => $view,
-      '#entity_array' => $html,
-      '#attached' => [],
-    ];
+    $render['#pre_render'][] = [static::class, 'preRender'];
 
-    return $this->generateHtml($render, [$view], $use_default_css, $optimize_css);
+    return $render;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getHtmlMultiple($entities, $use_default_css, $optimize_css) {
-    $output = '';
-    foreach ($entities as $entity) {
-      $output .= $this->getHtml($entity, $use_default_css, $optimize_css);
+  public function getFilename(array $views) {
+    $filenames = [];
+    foreach ($views as $view) {
+      $filenames[] = $this->sanitizeFilename($view->getExecutable()->getTitle());
     }
-    return $output;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getFilename(EntityInterface $view) {
-    return $this->sanitizeFilename($view->getExecutable()->getTitle());
+    return implode('-', $filenames);
   }
 
   /**

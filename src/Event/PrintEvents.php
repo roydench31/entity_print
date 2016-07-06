@@ -33,19 +33,6 @@ final class PrintEvents {
   const PRE_SEND = 'entity_print.print_engine.pre_send';
 
   /**
-   * The name of the event fired when rendering multiple entities onto one Print.
-   *
-   * This event fires from the Views plugin when downloading multiple Print's at
-   * once.
-   *
-   * @Event
-   *
-   * @see \Drupal\entity_print\Event\PreSendPrintMultipleEvent
-   * @see \Drupal\entity_print\Plugin\Action\PrintDownload
-   */
-  const PRE_SEND_MULTIPLE = 'entity_print.print_engine.pre_send_multiple';
-
-  /**
    * Name of the event fired when building CSS assets.
    *
    * This event allows custom code to add their own CSS assets. Note the
