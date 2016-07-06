@@ -96,6 +96,7 @@ class PdfDownload extends ActionBase implements ContainerFactoryPluginInterface 
   public function access($object, AccountInterface $account = NULL, $return_as_object = FALSE) {
     /** @var \Drupal\node\NodeInterface $object */
     $route_params = [
+      'export_type' => 'pdf',
       'entity_id' => $object->id(),
       'entity_type' => $object->getEntityTypeId(),
     ];
