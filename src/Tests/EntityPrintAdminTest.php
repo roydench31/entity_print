@@ -86,7 +86,7 @@ class EntityPrintAdminTest extends WebTestBase {
       'test_engine_setting' => 'testvalue',
     ], 'Save configuration');
 
-    /** @var \Drupal\entity_print\Entity\PrintEngineInterface $config_entity */
+    /** @var \Drupal\entity_print\Entity\PrintEngineStorageInterface $config_entity */
     $config_entity = \Drupal::entityTypeManager()->getStorage('print_engine')->load('testprintengine');
     // Assert the expected settings were stored.
     $this->assertEqual('testprintengine', $config_entity->id());

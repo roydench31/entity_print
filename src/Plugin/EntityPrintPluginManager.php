@@ -133,7 +133,7 @@ class EntityPrintPluginManager extends DefaultPluginManager implements EntityPri
    *   An array of Print engine settings for this plugin.
    */
   protected function getPrintEngineSettings($plugin_id) {
-    /** @var \Drupal\entity_print\Entity\PrintEngineInterface $storage */
+    /** @var \Drupal\entity_print\Entity\PrintEngineStorageInterface $storage */
     $storage = \Drupal::entityTypeManager()->getStorage('print_engine');
     if (!$entity = $storage->load($plugin_id)) {
       $entity = $storage->create(['id' => $plugin_id]);

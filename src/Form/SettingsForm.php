@@ -241,7 +241,7 @@ class SettingsForm extends ConfigFormBase {
    * @param string $plugin_id
    *   The Print engine plugin id.
    *
-   * @return \Drupal\entity_print\Entity\PrintEngine
+   * @return \Drupal\entity_print\Entity\PrintEngineStorage
    *   The loaded config object backing the plugin.
    */
   protected function loadConfigEntity($plugin_id) {

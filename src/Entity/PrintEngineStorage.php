@@ -22,7 +22,7 @@ use Drupal\Core\Plugin\DefaultSingleLazyPluginCollection;
  *   }
  * )
  */
-class PrintEngine extends ConfigEntityBase implements PrintEngineInterface {
+class PrintEngineStorage extends ConfigEntityBase implements PrintEngineStorageInterface {
 
   /**
    * The plugin collection for one Print engine.

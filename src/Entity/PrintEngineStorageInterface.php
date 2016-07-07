@@ -8,7 +8,7 @@ use Drupal\Core\Config\Entity\ConfigEntityInterface;
 /**
  * An interface for our config entity storage for Print engines.
  */
-interface PrintEngineInterface extends ConfigEntityInterface, EntityWithPluginCollectionInterface {
+interface PrintEngineStorageInterface extends ConfigEntityInterface, EntityWithPluginCollectionInterface {
 
   /**
    * Gets a single lazy plugin collection.
