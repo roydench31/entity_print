@@ -9,6 +9,14 @@ use Drupal\Core\Plugin\PluginFormInterface;
 interface PrintEngineInterface extends PluginInspectionInterface, PluginFormInterface, ConfigurablePluginInterface {
 
   /**
+   * Gets the export type.
+   *
+   * @return \Drupal\entity_print\Plugin\ExportTypeInterface
+   *   The export type interface.
+   */
+  public function getExportType();
+
+  /**
    * Add a string of HTML to a new page.
    *
    * @param string $content

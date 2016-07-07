@@ -3,12 +3,14 @@
 namespace Drupal\entity_print\Plugin;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Plugin\PluginBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * The PrintEngineBase class.
  */
-abstract class PrintEngineBase extends PluginBase implements PrintEngineInterface {
+abstract class PrintEngineBase extends PluginBase implements PrintEngineInterface, ContainerFactoryPluginInterface {
 
   /**
    * The Print library object.
@@ -18,11 +20,38 @@ abstract class PrintEngineBase extends PluginBase implements PrintEngineInterfac
   protected $print;
 
   /**
+   * The export type plugin.
+   *
+   * @var \Drupal\entity_print\Plugin\ExportTypeInterface
+   */
+  protected $exportType;
+
+  /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ExportTypeInterface $export_type) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->setConfiguration($configuration);
+    $this->exportType = $export_type;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('plugin.manager.entity_print.export_type')->createInstance($plugin_definition['export_type'])
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getExportType() {
+    return $this->exportType;
   }
 
   /**

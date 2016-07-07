@@ -23,13 +23,6 @@ class TestPrintEngine extends PrintEngineBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function send($filename = NULL) {
     // Echo the response and then flush, just like a Print implementation would.
     echo 'Using testprintengine - ' . $this->configuration['test_engine_suffix'];

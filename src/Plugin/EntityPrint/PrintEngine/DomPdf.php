@@ -5,6 +5,7 @@ namespace Drupal\entity_print\Plugin\EntityPrint\PrintEngine;
 use Dompdf\Dompdf as DompdfLib;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\entity_print\Plugin\ExportTypeInterface;
 use Drupal\entity_print\PrintEngineException;
 use Drupal\entity_print\Plugin\PrintEngineBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -41,8 +42,8 @@ class DomPdf extends PrintEngineBase implements ContainerFactoryPluginInterface 
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, Request $request) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ExportTypeInterface $export_type, Request $request) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $export_type);
     $this->print = new DompdfLib($this->configuration);
     $this->print
       ->setBaseHost($request->getHttpHost())
@@ -57,6 +58,7 @@ class DomPdf extends PrintEngineBase implements ContainerFactoryPluginInterface 
       $configuration,
       $plugin_id,
       $plugin_definition,
+      $container->get('plugin.manager.entity_print.export_type')->createInstance($plugin_definition['export_type']),
       $container->get('request_stack')->getCurrentRequest()
     );
   }

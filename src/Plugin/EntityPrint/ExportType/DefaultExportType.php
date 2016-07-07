@@ -3,14 +3,12 @@
 namespace Drupal\entity_print\Plugin\EntityPrint\ExportType;
 
 use Drupal\Core\Plugin\PluginBase;
+use Drupal\entity_print\Plugin\ExportTypeInterface;
 
-class DefaultExportType extends PluginBase {
+class DefaultExportType extends PluginBase implements ExportTypeInterface {
 
   /**
-   * The export type label.
-   *
-   * @return string
-   *   The label string.
+   * {@inheritdoc}
    */
   public function label() {
     return $this->getPluginDefinition()['label'];

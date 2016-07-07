@@ -3,6 +3,7 @@
 namespace Drupal\entity_print\Plugin\EntityPrint\PrintEngine;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\entity_print\Plugin\ExportTypeInterface;
 use Drupal\entity_print\PrintEngineException;
 use Drupal\entity_print\Plugin\PrintEngineBase;
 use mikehaertl\wkhtmlto\Pdf;
@@ -30,8 +31,8 @@ class PhpWkhtmlToPdf extends PrintEngineBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ExportTypeInterface $export_type) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition, $export_type);
     $this->print = new Pdf(['binary' => $this->configuration['binary_location']]);
   }
 
