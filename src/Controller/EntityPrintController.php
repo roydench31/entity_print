@@ -111,7 +111,7 @@ class EntityPrintController extends ControllerBase {
     $entity = $this->entityTypeManager->getStorage($entity_type)->load($entity_id);
     try {
       $use_default_css = $this->config('entity_print.settings')->get('default_css');
-      return new Response($this->printBuilder->printHtml($entity, $use_default_css, $this->config('system.performance')->get('css.preprocess')));
+      return new Response($this->printBuilder->printHtml($entity, $use_default_css, FALSE));
     }
     catch (PrintEngineException $e) {
       drupal_set_message(new FormattableMarkup('Error generating Print: ' . Xss::filter($e->getMessage()), []), 'error');

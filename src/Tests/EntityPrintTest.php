@@ -38,46 +38,8 @@ class EntityPrintTest extends WebTestBase {
     user_role_revoke_permissions(AccountInterface::AUTHENTICATED_ROLE, ['access content']);
 
     // Create a content type and a dummy node.
-    $this->drupalCreateContentType(array(
-      'type' => 'page',
-      'name' => 'Page',
-    ));
-    $this->node = $this->drupalCreateNode();
-
-    // Install our custom theme.
-    $theme = 'entity_print_test_theme';
-    \Drupal::service('theme_handler')->install([$theme]);
-    $this->config('system.theme')
-      ->set('default', $theme)
-      ->save();
-  }
-
-  /**
-   * Test that CSS is parsed from our test theme correctly.
-   */
-  public function testEntityPrintThemeCss() {
-    // Create a user and login.
-    $account = $this->drupalCreateUser(['bypass entity print access', 'access content'], $this->randomMachineName());
-    $this->drupalLogin($account);
-
-    $this->drupalGet('entityprint/pdf/node/' . $this->node->id() . '/debug');
-    $config = \Drupal::configFactory()->getEditable('entity_print.settings');
-
-    // Test the global CSS is there.
-    $this->assertRaw('entity-print.css');
-    // Disable the global CSS and test it is not there.
-    $config->set('default_css', FALSE)->save();
-    $this->drupalGet($this->getUrl());
-    $this->assertNoRaw('entity-print.css');
-
-    // Assert that the css files have been parsed out of our test theme.
-    $this->assertRaw('entityprint-all.css');
-    $this->assertRaw('entityprint-page.css');
-    $this->assertRaw('entityprint-node.css');
-
-    // Test that CSS was added from hook_entity_print_css(). See the
-    // entity_print_test module for the implementation.
-    $this->assertRaw('entityprint-module.css');
+    $this->createContentType(['type' => 'page', 'name' => 'Page']);
+    $this->node = $this->createNode();
   }
 
   /**

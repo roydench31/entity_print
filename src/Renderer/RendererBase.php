@@ -72,48 +72,9 @@ abstract class RendererBase implements RendererInterface {
   }
 
   /**
-   * Gets the renderable for this entity.
-   *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   The entity we're rendering.
-   *
-   * @return array
-   *   The renderable array for the entity.
+   * {@inheritdoc}
    */
-  protected abstract function render(EntityInterface $entity);
-
-  /**
-   * Generate the HTML for the PDF.
-   *
-   * @param array $renderable_entities
-   *   The renderable array for our entities.
-   * @param array $entities
-   *   An array of entities that we're rendering.
-   * @param bool $use_default_css
-   *   TRUE if we're including the default CSS otherwise FALSE.
-   * @param bool $optimize_css
-   *   TRUE if we want to compress the CSS otherwise FALSE.
-   *
-   * @return string
-   *   The HTML rendered string.
-   */
-  public function generateHtml(array $entities, $use_default_css, $optimize_css) {
-    if (empty($entities)) {
-      throw new \InvalidArgumentException('You must pass at least 1 entity');
-    }
-
-    $renderable = [];
-    foreach ($entities as $entity) {
-      $renderable[] = $this->render($entity);
-    }
-
-    $first_entity = reset($entities);
-    $render = [
-      '#theme' => 'entity_print__' . $first_entity->getEntityTypeId(),
-      '#content' => $renderable,
-      '#attached' => [],
-    ];
-
+  public function generateHtml(array $entities, array $render, $use_default_css, $optimize_css) {
     // Inject some generic CSS across all templates.
     if ($use_default_css) {
       $render['#attached']['library'][] = 'entity_print/default';

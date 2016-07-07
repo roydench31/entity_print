@@ -59,4 +59,43 @@ class PrintBuilderTest extends KernelTestBase {
     ];
   }
 
+  /**
+   * @covers ::deliverPrintable
+   * @expectedException \InvalidArgumentException
+   * @expectedExceptionMessage You must pass at least 1 entity
+   */
+  public function testNoEntities() {
+    $print_engine = $this->container->get('plugin.manager.entity_print.print_engine')->createInstance('testprintengine');
+    $this->container->get('entity_print.print_manager')->deliverPrintable([], $print_engine, TRUE);
+  }
+
+  /**
+   * Test that CSS is parsed from our test theme correctly.
+   */
+  public function testEntityPrintThemeCss() {
+    $theme = 'entity_print_test_theme';
+    $this->container->get('theme_handler')->install([$theme]);
+    $this->config('system.theme')
+      ->set('default', $theme)
+      ->save();
+    $node = $this->createNode();
+
+    // Test the global CSS is there.
+    $html = $this->container->get('entity_print.print_manager')->printHtml($node, TRUE, FALSE);
+    $this->assertContains('entity-print.css', $html);
+
+    // Disable the global CSS and test it is not there.
+    $html = $this->container->get('entity_print.print_manager')->printHtml($node, FALSE, FALSE);
+    $this->assertNotContains('entity-print.css', $html);
+
+    // Assert that the css files have been parsed out of our test theme.
+    $this->assertContains('entityprint-all.css', $html);
+    $this->assertContains('entityprint-page.css', $html);
+    $this->assertContains('entityprint-node.css', $html);
+
+    // Test that CSS was added from hook_entity_print_css(). See the
+    // entity_print_test module for the implementation.
+    $this->assertContains('entityprint-module.css', $html);
+  }
+
 }

@@ -2,20 +2,35 @@
 
 namespace Drupal\entity_print\Renderer;
 
+use Drupal\Core\Entity\EntityInterface;
+
 interface RendererInterface {
 
   /**
-   * Generates the HTML for an array of entities.
+   * Gets the renderable for this entity.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity we're rendering.
+   *
+   * @return array
+   *   The renderable array for the entity.
+   */
+  public function render(EntityInterface $entity);
+
+  /**
+   * Generates the HTML from the renderable array of entities.
    *
    * @param array $entities
-   *   An array of entities to generate the HTML for.
+   *   An array of entities we're rendering.
+   * @param array $render
+   *   A renderable array.
    * @param bool $use_default_css
    *   TRUE if we should inject our default CSS otherwise FALSE.
    * @param bool $optimize_css
    *   TRUE if we should compress the CSS otherwise FALSE.
    * @return mixed
    */
-  public function generateHtml(array $entities, $use_default_css, $optimize_css);
+  public function generateHtml(array $entities, array $render, $use_default_css, $optimize_css);
 
   /**
    * Get the filename for the entity we're printing *without* the extension.

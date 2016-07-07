@@ -7,7 +7,7 @@ services:
     arguments: ['@cache.discovery', '@module_handler', '@theme_handler']
   entity_print.print_manager:
     class: Drupal\entity_print\PrintBuilder
-    arguments: ['@entity_print.renderer_factory', '@event_dispatcher']
+    arguments: ['@entity_print.renderer_factory', '@event_dispatcher', '@string_translation']
   entity_print.renderer_factory:
     class: Drupal\entity_print\Renderer\RendererFactory
     calls:

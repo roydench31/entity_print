@@ -13,7 +13,7 @@ class ViewRenderer extends RendererBase {
   /**
    * {@inheritdoc}
    */
-  protected function render(EntityInterface $view) {
+  public function render(EntityInterface $view) {
     /** @var \Drupal\views\Entity\View $view */
     $executable = $view->getExecutable();
     $render = $executable->render();

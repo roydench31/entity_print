@@ -19,6 +19,7 @@ function entity_print_theme($existing, $type, $theme, $path) {
       'path' => $path . '/templates',
       'template' => 'entity-print',
       'variables' => [
+        'title' => '',
         'content' => NULL,
         'entity_print_css' => NULL,
       ],

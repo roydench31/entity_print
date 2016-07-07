@@ -28,7 +28,7 @@ class ContentEntityRenderer extends RendererBase {
   /**
    * {@inheritdoc}
    */
-  protected function render(EntityInterface $entity) {
+  public function render(EntityInterface $entity) {
     $render_controller = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId());
     return $render_controller->view($entity, $this->getViewMode($entity));
   }
