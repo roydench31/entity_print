@@ -8,6 +8,7 @@ use Drupal\Core\Asset\AttachedAssets;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Extension\InfoParserInterface;
 use Drupal\Core\Extension\ThemeHandlerInterface;
+use Drupal\Core\Render\RenderContext;
 use Drupal\entity_print\Event\PrintCssAlterEvent;
 use Drupal\entity_print\Event\PrintEvents;
 use Drupal\entity_print\Event\PrintHtmlAlterEvent;
@@ -126,9 +127,14 @@ abstract class RendererBase implements RendererInterface {
     $this->dispatcher->dispatch(PrintEvents::CSS_ALTER, new PrintCssAlterEvent($render, $entities));
     $css_assets = $this->assetResolver->getCssAssets(AttachedAssets::createFromRenderArray($render), $optimize_css);
     $rendered_css = $this->cssRenderer->render($css_assets);
-    $render['#entity_print_css'] = $this->renderer->render($rendered_css);
 
-    $html = (string) $this->renderer->render($render);
+    $render['#entity_print_css'] = $this->renderer->executeInRenderContext(new RenderContext(), function () use (&$rendered_css) {
+      return $this->renderer->render($rendered_css);
+    });
+
+    $html = (string) $this->renderer->executeInRenderContext(new RenderContext(), function () use (&$render) {
+      return $this->renderer->render($render);
+    });
 
     // Allow other modules to alter the generated HTML.
     $this->dispatcher->dispatch(PrintEvents::POST_RENDER, new PrintHtmlAlterEvent($html, $entities));

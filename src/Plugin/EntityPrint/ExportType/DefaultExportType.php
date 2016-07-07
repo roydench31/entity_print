@@ -14,4 +14,11 @@ class DefaultExportType extends PluginBase implements ExportTypeInterface {
     return $this->getPluginDefinition()['label'];
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getFileExtension() {
+    return $this->getPluginDefinition()['file_extension'];
+  }
+
 }

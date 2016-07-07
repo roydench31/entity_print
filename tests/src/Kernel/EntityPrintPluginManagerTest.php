@@ -66,7 +66,7 @@ class EntityPrintPluginManagerTest extends KernelTestBase {
   public function getDisabledDefinitionsDataProvider() {
     return [
       'Filter by pdf' => ['pdf', ['dompdf', 'phpwkhtmltopdf', 'not_available_print_engine']],
-      'Filter by another type' => ['worddoc', []],
+      'Filter by another type' => ['word_docx', []],
     ];
   }
 

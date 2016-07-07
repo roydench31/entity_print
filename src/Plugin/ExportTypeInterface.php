@@ -14,4 +14,12 @@ interface ExportTypeInterface extends PluginInspectionInterface {
    */
   public function label();
 
+  /**
+   * Gets the file extension for the printed document.
+   *
+   * @return string
+   *   The file extension.
+   */
+  public function getFileExtension();
+
 }

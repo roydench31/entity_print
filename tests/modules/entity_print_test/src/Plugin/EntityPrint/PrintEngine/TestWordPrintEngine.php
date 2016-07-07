@@ -9,7 +9,7 @@ use Drupal\entity_print\Plugin\PrintEngineBase;
  * @PrintEngine(
  *   id = "test_word_print_engine",
  *   label = @Translation("Test Word Print Engine"),
- *   export_type = "worddoc"
+ *   export_type = "word_docx"
  * )
  */
 class TestWordPrintEngine extends PrintEngineBase {
@@ -32,9 +32,9 @@ class TestWordPrintEngine extends PrintEngineBase {
    * {@inheritdoc}
    */
   public function send($filename = NULL) {
+    echo $filename;
     echo 'Using ' . $this->getPluginId();
     echo $this->html;
-    flush();
   }
 
   /**

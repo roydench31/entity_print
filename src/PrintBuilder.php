@@ -50,8 +50,7 @@ class PrintBuilder implements PrintBuilderInterface {
 
     // If we're forcing a download we need a filename otherwise it's just sent
     // straight to the browser.
-    // @TODO, abstract the file extension. https://www.drupal.org/node/2760203.
-    $filename = $force_download ? $renderer->getFilename($entities) . '.pdf' : NULL;
+    $filename = $force_download ? $renderer->getFilename($entities) . '.' . $print_engine->getExportType()->getFileExtension() : NULL;
 
     return $print_engine->send($filename);
   }
