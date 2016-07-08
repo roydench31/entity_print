@@ -8,6 +8,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Render\HtmlResponse;
+use Drupal\entity_print\Plugin\ExportTypeManagerInterface;
 use Drupal\entity_print\PrintBuilderInterface;
 use Drupal\entity_print\PrintEngineException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -26,6 +27,13 @@ class EntityPrintController extends ControllerBase {
   protected $pluginManager;
 
   /**
+   * The export type manager.
+   *
+   * @var \Drupal\entity_print\Plugin\ExportTypeManagerInterface
+   */
+  protected $exportTypeManager;
+
+  /**
    * The Print builder.
    *
    * @var \Drupal\entity_print\PrintBuilderInterface
@@ -42,8 +50,9 @@ class EntityPrintController extends ControllerBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct(EntityPrintPluginManagerInterface $plugin_manager, PrintBuilderInterface $print_builder, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(EntityPrintPluginManagerInterface $plugin_manager, ExportTypeManagerInterface $export_type_manager, PrintBuilderInterface $print_builder, EntityTypeManagerInterface $entity_type_manager) {
     $this->pluginManager = $plugin_manager;
+    $this->exportTypeManager = $export_type_manager;
     $this->printBuilder = $print_builder;
     $this->entityTypeManager = $entity_type_manager;
   }
@@ -54,6 +63,7 @@ class EntityPrintController extends ControllerBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('plugin.manager.entity_print.print_engine'),
+      $container->get('plugin.manager.entity_print.export_type'),
       $container->get('entity_print.print_manager'),
       $container->get('entity_type.manager')
     );
@@ -149,6 +159,11 @@ class EntityPrintController extends ControllerBase {
 
     // Unable to find the entity requested.
     if (!$entity = $this->entityTypeManager->getStorage($entity_type)->load($entity_id)) {
+      return AccessResult::forbidden();
+    }
+
+    // Ensure it's a valid export type.
+    if (!in_array($export_type, array_keys($this->exportTypeManager->getDefinitions()))) {
       return AccessResult::forbidden();
     }
 

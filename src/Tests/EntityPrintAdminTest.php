@@ -101,7 +101,6 @@ class EntityPrintAdminTest extends WebTestBase {
     $this->assertText('Using testprintengine - overridden');
   }
 
-
   /**
    * Test the view PDF extra field and the configurable text.
    */
