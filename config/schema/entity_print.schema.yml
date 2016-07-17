@@ -56,6 +56,6 @@ core.entity_view_display.*.*.*.third_party.entity_print:
     type: string
     label: 'Entity print settings for each export type'
 
-action.configuration.entity_print_pdf_download_action:
+action.configuration.entity_print_download_action:
   type: action_configuration_default
-  label: 'Download entities as a PDF'
+  label: 'Print Action'

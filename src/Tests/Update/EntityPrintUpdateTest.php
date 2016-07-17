@@ -53,7 +53,7 @@ class EntityPrintUpdateTest extends UpdatePathTestBase {
     // Ensure the VBO plugin name is upgraded.
     $config = \Drupal::configFactory()->getEditable('system.action.entity_print_pdf_download_action');
     $this->assertEqual('entity_print_pdf_download_action', $config->get('id'));
-    $this->assertEqual('entity_print_pdf_download_action', $config->get('plugin'));
+    $this->assertEqual('entity_print_download_action', $config->get('plugin'));
   }
 
 }

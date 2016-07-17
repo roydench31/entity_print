@@ -6,5 +6,6 @@ dependencies:
 id: entity_print_pdf_download_action
 label: 'Download PDF'
 type: node
-plugin: entity_print_pdf_download_action
-configuration: {  }
+plugin: entity_print_download_action
+configuration:
+  export_type: pdf
