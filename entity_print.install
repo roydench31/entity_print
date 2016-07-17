@@ -56,6 +56,13 @@ function entity_print_requirements($phase) {
 }
 
 /**
+ * Clear the cache for a renamed service key.
+ */
+function entity_print_update_8104() {
+
+}
+
+/**
  * Rename the plugin id.
  */
 function entity_print_update_8103() {

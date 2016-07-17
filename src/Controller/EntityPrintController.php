@@ -64,7 +64,7 @@ class EntityPrintController extends ControllerBase {
     return new static(
       $container->get('plugin.manager.entity_print.print_engine'),
       $container->get('plugin.manager.entity_print.export_type'),
-      $container->get('entity_print.print_manager'),
+      $container->get('entity_print.print_builder'),
       $container->get('entity_type.manager')
     );
   }

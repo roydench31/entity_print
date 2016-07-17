@@ -67,7 +67,7 @@ class ViewPrintController extends ControllerBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('plugin.manager.entity_print.print_engine'),
-      $container->get('entity_print.print_manager'),
+      $container->get('entity_print.print_builder'),
       $container->get('entity_type.manager'),
       $container->get('request_stack')->getCurrentRequest(),
       $container->get('current_user')

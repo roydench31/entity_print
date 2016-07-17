@@ -85,7 +85,7 @@ class PrintDownload extends ConfigurableActionBase implements ContainerFactoryPl
       $plugin_id,
       $plugin_definition,
       $container->get('access_manager'),
-      $container->get('entity_print.print_manager'),
+      $container->get('entity_print.print_builder'),
       $container->get('plugin.manager.entity_print.print_engine'),
       $container->get('plugin.manager.entity_print.export_type')
     );

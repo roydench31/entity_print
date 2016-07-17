@@ -43,7 +43,7 @@ class PrintBuilderTest extends KernelTestBase {
     $node = $this->createNode(['title' => 'myfile']);
 
     ob_start();
-    $this->container->get('entity_print.print_manager')->deliverPrintable([$node], $print_engine, TRUE);
+    $this->container->get('entity_print.print_builder')->deliverPrintable([$node], $print_engine, TRUE);
     $contents = ob_get_contents();
     ob_end_clean();
     $this->assertTrue(strpos($contents, $file_name) !== FALSE, "The $file_name file was found in $contents");
@@ -66,7 +66,7 @@ class PrintBuilderTest extends KernelTestBase {
    */
   public function testNoEntities() {
     $print_engine = $this->container->get('plugin.manager.entity_print.print_engine')->createInstance('testprintengine');
-    $this->container->get('entity_print.print_manager')->deliverPrintable([], $print_engine, TRUE);
+    $this->container->get('entity_print.print_builder')->deliverPrintable([], $print_engine, TRUE);
   }
 
   /**
@@ -81,11 +81,11 @@ class PrintBuilderTest extends KernelTestBase {
     $node = $this->createNode();
 
     // Test the global CSS is there.
-    $html = $this->container->get('entity_print.print_manager')->printHtml($node, TRUE, FALSE);
+    $html = $this->container->get('entity_print.print_builder')->printHtml($node, TRUE, FALSE);
     $this->assertContains('entity-print.css', $html);
 
     // Disable the global CSS and test it is not there.
-    $html = $this->container->get('entity_print.print_manager')->printHtml($node, FALSE, FALSE);
+    $html = $this->container->get('entity_print.print_builder')->printHtml($node, FALSE, FALSE);
     $this->assertNotContains('entity-print.css', $html);
 
     // Assert that the css files have been parsed out of our test theme.
