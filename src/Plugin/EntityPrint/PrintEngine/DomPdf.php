@@ -48,6 +48,16 @@ class DomPdf extends PrintEngineBase implements ContainerFactoryPluginInterface 
     $this->print
       ->setBaseHost($request->getHttpHost())
       ->setProtocol($request->getScheme() . '://');
+
+    $context_options = [
+      'ssl' => [
+        'cafile' => $this->configuration['cafile'],
+        'verify_peer' => $this->configuration['verify_peer'],
+        'verify_peer_name' => $this->configuration['verify_peer_name'],
+      ],
+    ];
+    $http_context = stream_context_create($context_options);
+    $this->print->setHttpContext($http_context);
   }
 
   /**
@@ -78,6 +88,9 @@ class DomPdf extends PrintEngineBase implements ContainerFactoryPluginInterface 
       'enable_html5_parser' => TRUE,
       'enable_remote' => TRUE,
       'default_paper_size' => 'letter',
+      'cafile' => '',
+      'verify_peer' => TRUE,
+      'verify_peer_name' => TRUE,
     ];
   }
 
@@ -106,6 +119,24 @@ class DomPdf extends PrintEngineBase implements ContainerFactoryPluginInterface 
       '#type' => 'checkbox',
       '#default_value' => $this->configuration['enable_remote'],
       '#description' => $this->t('This settings must be enabled for CSS and Images to work unless you manipulate the source manually.'),
+    ];
+    $form['cafile'] = [
+      '#title' => $this->t('CA File'),
+      '#type' => 'textfield',
+      '#default_value' => $this->configuration['cafile'],
+      '#description' => $this->t('Path to the CA file. This may be needed for development boxes that use SSL'),
+    ];
+    $form['verify_peer'] = [
+      '#title' => $this->t('Verify Peer'),
+      '#type' => 'checkbox',
+      '#default_value' => $this->configuration['verify_peer'],
+      '#description' => $this->t('Verify an SSL Peer\'s certificate. For development only, do not disable this in production. See https://curl.haxx.se/libcurl/c/CURLOPT_SSL_VERIFYPEER.html'),
+    ];
+    $form['verify_peer_name'] = [
+      '#title' => $this->t('Verify Peer Name'),
+      '#type' => 'checkbox',
+      '#default_value' => $this->configuration['verify_peer_name'],
+      '#description' => $this->t('Verify an SSL Peer\'s certificate. For development only, do not disable this in production. See https://curl.haxx.se/libcurl/c/CURLOPT_SSL_VERIFYPEER.html'),
     ];
 
     return $form;

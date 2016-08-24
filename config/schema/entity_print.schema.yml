@@ -38,6 +38,15 @@ entity_print_print_engine.dompdf:
     enable_remote:
       type: boolean
       label: 'Enable remote urls'
+    cafile:
+      type: string
+      label: 'Path to the cafile'
+    verify_peer:
+      type: boolean
+      label: 'Verify Peer'
+    verify_peer_name:
+      type: boolean
+      label: 'Verify Peer Name'
 
 entity_print_print_engine.phpwkhtmltopdf:
   type: mapping
