@@ -28,6 +28,22 @@ class EntityPrintPluginManagerTest extends KernelTestBase {
   }
 
   /**
+   * Ensure that an empty plugin ID does not break the in unusual ways.
+   *
+   * @covers ::createSelectedInstance
+   * @expectedException \Drupal\entity_print\PrintEngineException
+   */
+  public function testCreateSelectedInstance() {
+    /** @var \Drupal\Core\Config\ConfigFactoryInterface $factory */
+    $factory = $this->container->get('config.factory');
+    $config = $factory->getEditable('entity_print.settings');
+    $config->set('print_engines', ['pdf_engine' => '']);
+    $config->save();
+
+    $this->pluginManager->createSelectedInstance('pdf');
+  }
+
+  /**
    * Test if an engine is enabled.
    *
    * @covers ::isPrintEngineEnabled

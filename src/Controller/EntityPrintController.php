@@ -92,7 +92,7 @@ class EntityPrintController extends ControllerBase {
     catch (PrintEngineException $e) {
       // Build a safe markup string using Xss::filter() so that the instructions
       // for installing dependencies can contain quotes.
-      drupal_set_message(new FormattableMarkup('Error generating Print: ' . Xss::filter($e->getMessage()), []), 'error');
+      drupal_set_message(new FormattableMarkup('Error generating document: ' . Xss::filter($e->getMessage()), []), 'error');
 
       return new RedirectResponse($entity->toUrl()->toString());
     }
@@ -141,8 +141,8 @@ class EntityPrintController extends ControllerBase {
    * @param int $entity_id
    *   The entity id.
    *
-   * @return bool
-   *   TRUE if they have access otherwise FALSE.
+   * @return \Drupal\Core\Access\AccessResult
+   *   The access result object.
    */
   public function checkAccess($export_type, $entity_type, $entity_id) {
     if (empty($entity_id)) {

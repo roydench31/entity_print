@@ -82,8 +82,13 @@ class EntityPrintPluginManager extends DefaultPluginManager implements EntityPri
   public function createSelectedInstance($export_type) {
     $config = $this->configFactory->get('entity_print.settings');
     $config_engine = 'print_engines.' . $export_type . '_engine';
+    $plugin_id = $config->get($config_engine);
 
-    return $this->createInstance($config->get($config_engine));
+    if (!$plugin_id) {
+      throw new PrintEngineException(sprintf('Please configure a %s print engine.', $export_type));
+    }
+
+    return $this->createInstance($plugin_id);
   }
 
   /**
