@@ -5,7 +5,6 @@ namespace Drupal\Tests\entity_print\Kernel;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\NodeType;
 use Drupal\simpletest\NodeCreationTrait;
-use Prophecy\Argument;
 
 /**
  * @coversDefaultClass \Drupal\entity_print\PrintBuilder

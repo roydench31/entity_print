@@ -2,7 +2,6 @@
 
 namespace Drupal\entity_print;
 
-use Drupal\Core\Entity;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;

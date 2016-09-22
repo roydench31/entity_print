@@ -4,7 +4,6 @@ namespace Drupal\entity_print_test\EventSubscriber;
 
 use Drupal\entity_print\Event\PrintCssAlterEvent;
 use Drupal\entity_print\Event\PrintEvents;
-use Drupal\entity_print\Event\PreSendPrintEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
 

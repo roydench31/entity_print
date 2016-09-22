@@ -7,7 +7,6 @@ use Drupal\Component\Utility\Xss;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Render\HtmlResponse;
 use Drupal\entity_print\Plugin\ExportTypeManagerInterface;
 use Drupal\entity_print\PrintBuilderInterface;
 use Drupal\entity_print\PrintEngineException;

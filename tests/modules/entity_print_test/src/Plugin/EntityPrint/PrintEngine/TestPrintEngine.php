@@ -3,7 +3,6 @@
 namespace Drupal\entity_print_test\Plugin\EntityPrint\PrintEngine;
 
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\entity_print\PrintEngineException;
 use Drupal\entity_print\Plugin\PrintEngineBase;
 
 /**

@@ -2,7 +2,6 @@
 
 namespace Drupal\entity_print\Event;
 
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\entity_print\Plugin\PrintEngineInterface;
 
 /**
