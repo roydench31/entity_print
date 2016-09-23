@@ -20,3 +20,8 @@ services:
     arguments: ['@config.factory', '@request_stack']
     tags:
       - { name: event_subscriber }
+  entity_print.print_engine_exception_subscriber:
+    class: Drupal\entity_print\EventSubscriber\PrintEngineExceptionSubscriber
+    arguments: ['@current_route_match', '@entity_type.manager']
+    tags:
+      - { name: event_subscriber }

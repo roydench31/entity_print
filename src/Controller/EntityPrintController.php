@@ -86,17 +86,7 @@ class EntityPrintController extends ControllerBase {
     $config = $this->config('entity_print.settings');
     $entity = $this->entityTypeManager->getStorage($entity_type)->load($entity_id);
 
-    try {
-      $print_engine = $this->pluginManager->createSelectedInstance($export_type);
-    }
-    catch (PrintEngineException $e) {
-      // Build a safe markup string using Xss::filter() so that the instructions
-      // for installing dependencies can contain quotes.
-      drupal_set_message(new FormattableMarkup('Error generating document: ' . Xss::filter($e->getMessage()), []), 'error');
-
-      return new RedirectResponse($entity->toUrl()->toString());
-    }
-
+    $print_engine = $this->pluginManager->createSelectedInstance($export_type);
     return (new StreamedResponse(function() use ($entity, $print_engine, $config) {
       // The Print is sent straight to the browser.
       $this->printBuilder->deliverPrintable([$entity], $print_engine, $config->get('force_download'), $config->get('default_css'));
@@ -118,14 +108,8 @@ class EntityPrintController extends ControllerBase {
    */
   public function viewPrintDebug($entity_type, $entity_id) {
     $entity = $this->entityTypeManager->getStorage($entity_type)->load($entity_id);
-    try {
-      $use_default_css = $this->config('entity_print.settings')->get('default_css');
-      return new Response($this->printBuilder->printHtml($entity, $use_default_css, FALSE));
-    }
-    catch (PrintEngineException $e) {
-      drupal_set_message(new FormattableMarkup('Error generating Print: ' . Xss::filter($e->getMessage()), []), 'error');
-      return new RedirectResponse($entity->toUrl()->toString());
-    }
+    $use_default_css = $this->config('entity_print.settings')->get('default_css');
+    return new Response($this->printBuilder->printHtml($entity, $use_default_css, FALSE));
   }
 
   /**
