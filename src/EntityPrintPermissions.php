@@ -70,17 +70,22 @@ class EntityPrintPermissions implements ContainerInjectionInterface {
     $permissions = [];
     foreach ($content_entity_types as $key => $content_entity_type) {
       $permissions['entity print access type ' . $content_entity_type->id()] = [
-        'title' => $this->t('Use Entity Print for all bundles of type %entity_label', [
+        'title' => $this->t('%entity_label: Use all print engines', [
           '%entity_label' => $content_entity_type->getLabel(),
         ]),
       ];
 
       // Add 1 permission for each bundle.
       $entity_type_bundles = $this->entityTypeBundleInfo->getBundleInfo($content_entity_type->id());
+
+      // Don't bother creating a new permission if there is only 1 bundle.
+      if (count($entity_type_bundles) === 1) {
+        continue;
+      }
+
       foreach ($entity_type_bundles as $bundle_key => $entity_type_bundle) {
         $permissions['entity print access bundle ' . $bundle_key] = [
-          'title' => $this->t('Use entity print for bundle %entity_label - %entity_bundle_label', [
-            '%entity_label' => $content_entity_type->getLabel(),
+          'title' => $this->t('%entity_bundle_label: Use all print engines', [
             '%entity_bundle_label' => $entity_type_bundle['label'],
           ]),
         ];

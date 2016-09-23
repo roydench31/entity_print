@@ -40,6 +40,7 @@ class EntityPrintAccessTest extends KernelTestBase {
     // Discard user 1 which causes havoc with access tests.
     $this->createUser();
     $this->createContentType(['type' => 'page', 'name' => 'Page']);
+    $this->createContentType(['type' => 'article', 'name' => 'Article']);
   }
 
   /**
@@ -65,7 +66,7 @@ class EntityPrintAccessTest extends KernelTestBase {
       'Per entity type permissions allow access.' => [['entity print access type node', 'access content'], TRUE],
       'Per bundle permissions allow access.' => [['entity print access bundle page', 'access content'], TRUE],
       'Incorrect entity type permission cannot access' => [['entity print access type user', 'access content'], FALSE],
-      'Incorrect bundle permissions cannot access' => [['entity print access bundle user', 'access content'], FALSE],
+      'Incorrect bundle permissions cannot access' => [['entity print access bundle article', 'access content'], FALSE],
       'No permissions cannot access' => [[], FALSE],
 
     ];
@@ -98,9 +99,9 @@ class EntityPrintAccessTest extends KernelTestBase {
    * @covers ::checkAccess
    */
   public function testSecondaryEntityTypeAccess() {
-    // User with print bundle user permissions and entity view.
-    $account = $this->createUser(array('entity print access bundle user', 'access content'));
-    $this->assertTrue($this->checkAccess($account, 'user', $account->id()), 'User with entity print user bundle permission and access content permission is allowed to see the content.');
+    // User with print entity type user permissions and entity view.
+    $account = $this->createUser(array('entity print access type user', 'access content'));
+    $this->assertTrue($this->checkAccess($account, 'user', $account->id()), 'User with "type user" permission and access content permission is allowed to see the content.');
   }
 
   /**
