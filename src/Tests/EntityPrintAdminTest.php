@@ -97,7 +97,7 @@ class EntityPrintAdminTest extends WebTestBase {
     $this->assertEqual(['test_word_setting' => 'test word setting'], $config_entity->getSettings());
 
     // Assert that the testprintengine is actually used.
-    $this->drupalGet('/entityprint/pdf/node/1');
+    $this->drupalGet('/print/pdf/node/1');
     $this->assertText('Using testprintengine - overridden');
   }
 
@@ -115,7 +115,7 @@ class EntityPrintAdminTest extends WebTestBase {
     // Ensure the link doesn't appear by default.
     $this->drupalGet($this->node->toUrl());
     $this->assertNoText('View PDF');
-    $this->assertNoLinkByHref('entityprint/pdf/node/1');
+    $this->assertNoLinkByHref('print/pdf/node/1');
 
     // Save the default display with custom text.
     $random_text = $this->randomMachineName();
@@ -127,10 +127,10 @@ class EntityPrintAdminTest extends WebTestBase {
     // Visit our page node and ensure the link is available.
     $this->drupalGet($this->node->toUrl());
     $this->assertLink($random_text);
-    $this->assertLinkByHref('/entityprint/pdf/node/1');
+    $this->assertLinkByHref('/print/pdf/node/1');
 
     // Ensure we're using the full view mode and not the PDF view mode.
-    $this->drupalGet('/entityprint/pdf/node/1/debug');
+    $this->drupalGet('/print/pdf/node/1/debug');
     $this->assertRaw('node--view-mode-full');
     $this->assertNoRaw('node--view-mode-pdf');
 
@@ -144,7 +144,7 @@ class EntityPrintAdminTest extends WebTestBase {
     ], 'Save');
 
     // Ensure the PDF view mode is now in use.
-    $this->drupalGet('/entityprint/pdf/node/1/debug');
+    $this->drupalGet('/print/pdf/node/1/debug');
     $this->assertRaw('node--view-mode-pdf');
     $this->assertNoRaw('node--view-mode-full');
 

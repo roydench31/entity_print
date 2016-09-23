@@ -96,6 +96,8 @@ class EntityPrintController extends ControllerBase {
   /**
    * A debug callback for styling up the Print.
    *
+   * @param string $export_type
+   *   The export type.
    * @param string $entity_type
    *   The entity type.
    * @param int $entity_id
@@ -106,7 +108,7 @@ class EntityPrintController extends ControllerBase {
    *
    * @TODO, improve permissions in https://www.drupal.org/node/2759553
    */
-  public function viewPrintDebug($entity_type, $entity_id) {
+  public function viewPrintDebug($export_type, $entity_type, $entity_id) {
     $entity = $this->entityTypeManager->getStorage($entity_type)->load($entity_id);
     $use_default_css = $this->config('entity_print.settings')->get('default_css');
     return new Response($this->printBuilder->printHtml($entity, $use_default_css, FALSE));
@@ -169,6 +171,48 @@ class EntityPrintController extends ControllerBase {
     }
 
     return AccessResult::forbidden();
+  }
+
+  /**
+   * Provides a redirect BC layer for the old routes.
+   *
+   * @param string $export_type
+   *   The export type.
+   * @param string $entity_type
+   *   The entity type.
+   * @param string|int $entity_id
+   *   The entity type id.
+   *
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   The redirect response.
+   */
+  public function viewRedirect($export_type, $entity_type, $entity_id) {
+    return $this->redirect('entity_print.view', [
+      'export_type' => $export_type,
+      'entity_type' => $entity_type,
+      'entity_id' => $entity_id,
+    ]);
+  }
+
+  /**
+   * Provides a redirect BC layer for the old routes.
+   *
+   * @param string $export_type
+   *   The export type.
+   * @param string $entity_type
+   *   The entity type.
+   * @param string|int $entity_id
+   *   The entity type id.
+   *
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   The redirect response.
+   */
+  public function viewRedirectDebug($export_type, $entity_type, $entity_id) {
+    return $this->redirect('entity_print.view.debug', [
+      'export_type' => $export_type,
+      'entity_type' => $entity_type,
+      'entity_id' => $entity_id,
+    ]);
   }
 
 }
