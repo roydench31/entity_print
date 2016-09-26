@@ -68,3 +68,11 @@ core.entity_view_display.*.*.*.third_party.entity_print:
 action.configuration.entity_print_download_action:
   type: action_configuration_default
   label: 'Print Action'
+
+field.formatter.settings.entity_print_base64_image_formatter:
+  type: mapping
+  label: 'Image field display format settings'
+  mapping:
+    image_style:
+      type: string
+      label: 'Image style'
