@@ -57,6 +57,18 @@ entity_print_print_engine.phpwkhtmltopdf:
       type: string
       label: 'Path to the wkhtmltopdf binary'
 
+entity_print_print_engine.tcpdfv1:
+  type: mapping
+  label: 'TCPDF (v1)'
+  type: mapping
+  mapping:
+    page_format:
+      type: string
+      label: 'The page format. E.g. A3, A4 or many more options'
+    orientation:
+      type: string
+      label: 'One of Landscape or Portrait'
+
 # Add schema for our extra field settings.
 core.entity_view_display.*.*.*.third_party.entity_print:
   type: sequence
