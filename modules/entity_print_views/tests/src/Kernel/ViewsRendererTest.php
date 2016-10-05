@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\entity_print_views\Kernel;
 
+use Drupal\entity_print\Renderer\RendererBase;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\views\Views;
 
@@ -49,6 +50,9 @@ class ViewsRendererTest extends KernelTestBase {
     $view->setDisplay('block_1');
     $renderer = $this->container->get('entity_print.renderer.view');
     $this->assertSame('My Test view block', $renderer->getFilename([$view->storage]));
+
+    $view->setTitle(' ');
+    $this->assertSame(RendererBase::DEFAULT_FILENAME, $renderer->getFilename([$view->storage]));
   }
 
 }

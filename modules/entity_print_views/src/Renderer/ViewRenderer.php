@@ -4,6 +4,7 @@ namespace Drupal\entity_print_views\Renderer;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\entity_print\Renderer\RendererBase;
+use Drupal\views\ViewEntityInterface;
 
 /**
  * Providers a renderer for Views.
@@ -31,14 +32,17 @@ class ViewRenderer extends RendererBase {
   }
 
   /**
-   * {@inheritdoc}
+   * Gets a label for the view object.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $view
+   *   The view object we want to get a label for.
+   *
+   * @return false|string
+   *   The view title.
    */
-  public function getFilename(array $views) {
-    $filenames = [];
-    foreach ($views as $view) {
-      $filenames[] = $this->sanitizeFilename($view->getExecutable()->getTitle());
-    }
-    return implode('-', $filenames);
+  protected function getLabel(EntityInterface $view) {
+    /** @var \Drupal\views\ViewEntityInterface $view */
+    return $view->getExecutable()->getTitle();
   }
 
   /**

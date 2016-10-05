@@ -28,22 +28,30 @@ function entity_print_theme($existing, $type, $theme, $path) {
 }
 
 /**
- * Implements hook_entity_extra_field_info_alter().
+ * Implements hook_entity_extra_field_info().
  */
-function entity_print_entity_extra_field_info_alter(&$info) {
+function entity_print_entity_extra_field_info() {
+  $manager = \Drupal::entityTypeManager();
+  $entity_types = $manager->getDefinitions();
   $export_types = \Drupal::service('plugin.manager.entity_print.export_type')->getDefinitions();
-  foreach ($info as &$entity_info) {
-    foreach ($entity_info as &$bundle_info) {
-      foreach ($export_types as $export_type => $definition) {
-        $bundle_info['display']['entity_print_view_' . $export_type] = [
-          'label' => t('View @label', ['@label' => $definition['label']]),
-          'description' => t('Provides a link to view the Print version of the entity'),
-          'weight' => 0,
-          'visible' => FALSE,
-        ];
+
+  $extra_fields = [];
+  foreach ($entity_types as $entity_type) {
+    if ($bundle = $entity_type->getBundleEntityType()) {
+      $bundles = $manager->getStorage($bundle)->loadMultiple();
+      foreach ($bundles as $bundle_entity) {
+        foreach ($export_types as $export_type => $definition) {
+          $extra_fields[$entity_type->id()][$bundle_entity->id()]['display']['entity_print_view_' . $export_type] = [
+            'label' => t('View @label', ['@label' => $definition['label']]),
+            'description' => t('Provides a link to view the Print version of the entity'),
+            'weight' => 0,
+            'visible' => FALSE,
+          ];
+        }
       }
     }
   }
+  return $extra_fields;
 }
 
 /**

@@ -21,6 +21,13 @@ use Drupal\Core\Render\RendererInterface as CoreRendererInterface;
 abstract class RendererBase implements RendererInterface {
 
   /**
+   * The filename used when we're unable to calculate a filename.
+   *
+   * @var string
+   */
+  const DEFAULT_FILENAME = 'document';
+
+  /**
    * The theme handler.
    *
    * @var \Drupal\Core\Extension\ThemeHandlerInterface
@@ -171,5 +178,29 @@ abstract class RendererBase implements RendererInterface {
 
     return $render;
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFilename(array $entities) {
+    $filenames = [];
+    foreach ($entities as $entity) {
+      if ($label = trim($this->sanitizeFilename($this->getLabel($entity)))) {
+        $filenames[] = $label;
+      }
+    }
+    return $filenames ? implode('-', $filenames) : static::DEFAULT_FILENAME;
+  }
+
+  /**
+   * Gets the entity label.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity we want to generate a label for.
+   *
+   * @return string
+   *   The label for this entity.
+   */
+  abstract protected function getLabel(EntityInterface $entity);
 
 }

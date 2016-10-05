@@ -8,7 +8,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\InfoParserInterface;
 use Drupal\Core\Extension\ThemeHandlerInterface;
-use Drupal\Core\Render\RendererInterface;
+use Drupal\Core\Render\RendererInterface as CoreRendererInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ContentEntityRenderer extends RendererBase {
@@ -20,7 +20,7 @@ class ContentEntityRenderer extends RendererBase {
    */
   protected $entityTypeManager;
 
-  public function __construct(ThemeHandlerInterface $theme_handler, InfoParserInterface $info_parser, AssetResolverInterface $asset_resolver, AssetCollectionRendererInterface $css_renderer, RendererInterface $renderer, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(ThemeHandlerInterface $theme_handler, InfoParserInterface $info_parser, AssetResolverInterface $asset_resolver, AssetCollectionRendererInterface $css_renderer, CoreRendererInterface $renderer, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($theme_handler, $info_parser, $asset_resolver, $css_renderer, $renderer, $event_dispatcher);
     $this->entityTypeManager = $entity_type_manager;
   }
@@ -36,12 +36,8 @@ class ContentEntityRenderer extends RendererBase {
   /**
    * {@inheritdoc}
    */
-  public function getFilename(array $entities) {
-    $filenames = [];
-    foreach ($entities as $entity) {
-      $filenames[] = $this->sanitizeFilename($entity->label());
-    }
-    return implode('-', $filenames);
+  protected function getLabel(EntityInterface $entity) {
+    return $entity->label();
   }
 
   /**
