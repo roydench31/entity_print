@@ -8,7 +8,7 @@
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Link;
+use Drupal\Core\Url;
 
 /**
  * Implements hook_theme().
@@ -67,8 +67,13 @@ function entity_print_entity_view_alter(array &$build, EntityInterface $entity, 
         'entity_id' => $entity->id(),
         'export_type' => trim($export_type, '_engine'),
       ];
-      $build[$key] = Link::createFromRoute($display->getThirdPartySetting('entity_print', $export_type . '_label', t('View @label', ['@label' => $definition['label']])), 'entity_print.view', $route_params)
-        ->toRenderable();
+
+      $build[$key] = [
+        '#type' => 'print_link',
+        '#title' => $display->getThirdPartySetting('entity_print', $export_type . '_label', t('View @label', ['@label' => $definition['label']])),
+        '#export_type' => $export_type,
+        '#url' => Url::fromRoute('entity_print.view', $route_params)
+      ];
 
       // Add the access control.
       $build['entity_print_view']['#access'] = \Drupal::accessManager()
