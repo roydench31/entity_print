@@ -88,3 +88,26 @@ field.formatter.settings.entity_print_base64_image_formatter:
     image_style:
       type: string
       label: 'Image style'
+
+block.settings.print_links:
+  type: block_settings
+  label: 'Print Links'
+  mapping:
+    pdf_enabled:
+      type: boolean
+      label: 'Flag to enable PDF link'
+    pdf_link_text:
+      type: label
+      label: 'PDF link text'
+    epub_enabled:
+      type: boolean
+      label: 'Flag to enable EPub link'
+    epub_link_text:
+      type: label
+      label: 'EPub link text'
+    word_docx_enabled:
+      type: boolean
+      label: 'Flag to enable Word Document link'
+    word_docx_link_text:
+      type: label
+      label: 'Word Document link text'
