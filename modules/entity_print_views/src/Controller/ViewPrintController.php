@@ -175,4 +175,46 @@ class ViewPrintController extends ControllerBase {
     return $result->isAllowed() && $view->access($display_id, $account) ? $result : AccessResult::forbidden();
   }
 
+  /**
+   * Provides a redirect BC layer for the old routes.
+   *
+   * @param string $export_type
+   *   The export type.
+   * @param string $view_name
+   *   The view machine name.
+   * @param string
+   *   The machine name of the display.
+   *
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   The redirect response.
+   */
+  public function viewRedirect($export_type, $view_name, $display_id) {
+    return $this->redirect('entity_print_views.view', [
+      'export_type' => $export_type,
+      'view_name' => $view_name,
+      'display_id' => $display_id,
+    ]);
+  }
+
+  /**
+   * Provides a redirect BC layer for the old routes.
+   *
+   * @param string $export_type
+   *   The export type.
+   * @param string $view_name
+   *   The view machine name.
+   * @param string
+   *   The machine name of the display.
+   *
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   The redirect response.
+   */
+  public function viewRedirectDebug($export_type, $view_name, $display_id) {
+    return $this->redirect('entity_print_views.view.debug', [
+      'export_type' => $export_type,
+      'view_name' => $view_name,
+      'display_id' => $display_id,
+    ]);
+  }
+
 }
