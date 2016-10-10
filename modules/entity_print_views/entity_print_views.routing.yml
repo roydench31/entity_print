@@ -5,3 +5,11 @@ entity_print_views.view:
     _title: 'Entity Print Views'
   requirements:
     _custom_access: '\Drupal\entity_print_views\Controller\ViewPrintController::checkAccess'
+
+entity_print_views.view_debug:
+  path: 'entityprint/view/{export_type}/{view_name}/{display_id}/debug'
+  defaults:
+    _controller: '\Drupal\entity_print_views\Controller\ViewPrintController::viewPrintDebug'
+    _title: 'Entity Print Views'
+  requirements:
+    _custom_access: '\Drupal\entity_print_views\Controller\ViewPrintController::checkAccess'

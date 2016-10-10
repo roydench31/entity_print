@@ -15,6 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\entity_print\Plugin\EntityPrintPluginManagerInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
@@ -116,6 +117,33 @@ class ViewPrintController extends ControllerBase {
       // The printed document is sent straight to the browser.
       $this->printBuilder->deliverPrintable([$view], $print_engine, $config->get('force_download'), $config->get('default_css'));
     }))->send();
+  }
+
+  /**
+   * Print the debug output.
+   *
+   * @param string $export_type
+   *   The export type machine name.
+   * @param string $view_name
+   *   The machine name of the view.
+   * @param string $display_id
+   *   The machine name of the display.
+   *
+   * @return \Symfony\Component\HttpFoundation\Response
+   *   The response object.
+   */
+  public function viewPrintDebug($export_type, $view_name, $display_id) {
+    /** @var \Drupal\views\Entity\View $view */
+    $view = $this->entityTypeManager->getStorage('view')->load($view_name);
+    $executable = $view->getExecutable();
+    $executable->setDisplay($display_id);
+
+    if ($args = $this->currentRequest->query->get('view_args')) {
+      $executable->setArguments($args);
+    }
+
+    $use_default_css = $this->config('entity_print.settings')->get('default_css');
+    return new Response($this->printBuilder->printHtml($view, $use_default_css, FALSE));
   }
 
   /**
