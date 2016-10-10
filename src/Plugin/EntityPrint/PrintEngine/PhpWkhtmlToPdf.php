@@ -83,7 +83,7 @@ class PhpWkhtmlToPdf extends PrintEngineBase {
   public function send($filename = NULL) {
     // If the filename received here is NULL, force open in the browser
     // otherwise attempt to have it downloaded.
-    if (!$this->print->send($filename, (bool) $filename)) {
+    if (!$this->print->send($filename, !(bool) $filename)) {
       throw new PrintEngineException(sprintf('Failed to generate PDF: %s', $this->print->getError()));
     }
   }

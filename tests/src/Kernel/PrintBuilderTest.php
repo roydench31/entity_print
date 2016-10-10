@@ -59,6 +59,24 @@ class PrintBuilderTest extends KernelTestBase {
   }
 
   /**
+   * Ensure when not using force download we do not get a filename.
+   */
+  public function testForceDownload() {
+    $print_engine = $this->getMock('Drupal\entity_print\Plugin\PrintEngineInterface');
+    $export_type = $this->getMock('Drupal\entity_print\Plugin\ExportTypeInterface');
+    $print_engine
+      ->expects($this->once())
+      ->method('send')
+      ->with(NULL);
+    $print_engine
+      ->expects($this->any())
+      ->method('getExportType')
+      ->willReturn($export_type);
+    $node = $this->createNode(['title' => 'myfile']);
+    $this->container->get('entity_print.print_builder')->deliverPrintable([$node], $print_engine, FALSE);
+  }
+
+  /**
    * @covers ::deliverPrintable
    * @expectedException \InvalidArgumentException
    * @expectedExceptionMessage You must pass at least 1 entity
