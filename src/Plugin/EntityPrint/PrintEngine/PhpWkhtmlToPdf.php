@@ -33,7 +33,10 @@ class PhpWkhtmlToPdf extends PrintEngineBase {
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, ExportTypeInterface $export_type) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $export_type);
-    $this->print = new Pdf(['binary' => $this->configuration['binary_location']]);
+    $this->print = new Pdf([
+      'binary' => $this->configuration['binary_location'],
+      'orientation' => $this->configuration['orientation'],
+    ]);
   }
 
   /**
@@ -49,6 +52,7 @@ class PhpWkhtmlToPdf extends PrintEngineBase {
   public function defaultConfiguration() {
     return [
       'binary_location' => '/usr/local/bin/wkhtmltopdf',
+      'orientation' => 'portrait',
     ];
   }
 
@@ -57,6 +61,16 @@ class PhpWkhtmlToPdf extends PrintEngineBase {
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildConfigurationForm($form, $form_state);
+    $form['orientation'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Paper Orientation'),
+      '#options' => [
+        static::PORTRAIT => $this->t('Portrait'),
+        static::LANDSCAPE => $this->t('Landscape'),
+      ],
+      '#description' => $this->t('The paper orientation one of Landscape or Portrait'),
+      '#default_value' => $this->configuration['orientation'],
+    ];
     $form['binary_location'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Binary Location'),

@@ -45,6 +45,7 @@ class DomPdf extends PrintEngineBase implements ContainerFactoryPluginInterface 
   public function __construct(array $configuration, $plugin_id, $plugin_definition, ExportTypeInterface $export_type, Request $request) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $export_type);
     $this->print = new DompdfLib($this->configuration);
+    $this->print->setPaper($this->configuration['default_paper_size'], $this->configuration['orientation']);
     $this->print
       ->setBaseHost($request->getHttpHost())
       ->setProtocol($request->getScheme() . '://');
@@ -88,6 +89,7 @@ class DomPdf extends PrintEngineBase implements ContainerFactoryPluginInterface 
       'enable_html5_parser' => TRUE,
       'enable_remote' => TRUE,
       'default_paper_size' => 'letter',
+      'orientation' => 'portrait',
       'cafile' => '',
       'verify_peer' => TRUE,
       'verify_peer_name' => TRUE,
@@ -107,6 +109,16 @@ class DomPdf extends PrintEngineBase implements ContainerFactoryPluginInterface 
       '#options' => $paper_sizes,
       '#default_value' => $this->configuration['default_paper_size'],
       '#description' => $this->t('The page size to print the PDF to.'),
+    ];
+    $form['orientation'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Paper Orientation'),
+      '#options' => [
+        static::PORTRAIT => $this->t('Portrait'),
+        static::LANDSCAPE => $this->t('Landscape'),
+      ],
+      '#description' => $this->t('The paper orientation one of Landscape or Portrait'),
+      '#default_value' => $this->configuration['orientation'],
     ];
     $form['enable_html5_parser'] = [
       '#title' => $this->t('Enable HTML5 Parser'),

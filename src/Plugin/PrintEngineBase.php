@@ -12,6 +12,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 abstract class PrintEngineBase extends PluginBase implements PrintEngineInterface, ContainerFactoryPluginInterface {
 
+  const PORTRAIT = 'portrait';
+  const LANDSCAPE = 'landscape';
+
   /**
    * The Print library object.
    *

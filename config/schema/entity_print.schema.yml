@@ -32,6 +32,9 @@ entity_print_print_engine.dompdf:
     default_paper_size:
       type: string
       label: 'Default Paper Size'
+    orientation:
+      type: string
+      label: 'Paper Orientation'
     enable_html5_parser:
       type: boolean
       label: 'Enable HTML5 parsing'
@@ -56,6 +59,9 @@ entity_print_print_engine.phpwkhtmltopdf:
     binary_location:
       type: string
       label: 'Path to the wkhtmltopdf binary'
+    orientation:
+      type: string
+      label: 'Paper Orientation'
 
 entity_print_print_engine.tcpdfv1:
   type: mapping
@@ -67,7 +73,7 @@ entity_print_print_engine.tcpdfv1:
       label: 'The page format. E.g. A3, A4 or many more options'
     orientation:
       type: string
-      label: 'One of Landscape or Portrait'
+      label: 'Paper Orientation'
 
 # Add schema for our extra field settings.
 core.entity_view_display.*.*.*.third_party.entity_print:

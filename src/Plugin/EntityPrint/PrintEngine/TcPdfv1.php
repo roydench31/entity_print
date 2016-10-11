@@ -21,9 +21,6 @@ use Drupal\entity_print\Plugin\PrintEngineBase;
  */
 class TcPdfv1 extends PrintEngineBase {
 
-  const PORTRAIT = 'PORTRAIT';
-  const LANDSCAPE = 'LANDSCAPE';
-
   /**
    * The TCPDF implementation.
    *
@@ -69,11 +66,14 @@ class TcPdfv1 extends PrintEngineBase {
       '#description' => $this->t('The page size to print the PDF to.'),
     ];
     $form['orientation'] = [
-      '#title' => $this->t('Orientation'),
+      '#title' => $this->t('Paper Orientation'),
       '#type' => 'select',
-      '#options' => [static::PORTRAIT => 'Portrait', static::LANDSCAPE => 'Landscape'],
+      '#options' => [
+        static::PORTRAIT => $this->t('Portrait'),
+        static::LANDSCAPE => $this->t('Landscape'),
+      ],
       '#default_value' => $this->configuration['orientation'],
-      '#description' => $this->t('Select the page orientation'),
+      '#description' => $this->t('The paper orientation one of Landscape or Portrait'),
     ];
     return $form;
   }
