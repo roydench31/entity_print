@@ -50,15 +50,7 @@ class DomPdf extends PrintEngineBase implements ContainerFactoryPluginInterface 
       ->setBaseHost($request->getHttpHost())
       ->setProtocol($request->getScheme() . '://');
 
-    $context_options = [
-      'ssl' => [
-        'cafile' => $this->configuration['cafile'],
-        'verify_peer' => $this->configuration['verify_peer'],
-        'verify_peer_name' => $this->configuration['verify_peer_name'],
-      ],
-    ];
-    $http_context = stream_context_create($context_options);
-    $this->print->setHttpContext($http_context);
+    $this->setupHttpContext();
   }
 
   /**
@@ -93,6 +85,8 @@ class DomPdf extends PrintEngineBase implements ContainerFactoryPluginInterface 
       'cafile' => '',
       'verify_peer' => TRUE,
       'verify_peer_name' => TRUE,
+      'username' => '',
+      'password' => '',
     ];
   }
 
@@ -132,23 +126,45 @@ class DomPdf extends PrintEngineBase implements ContainerFactoryPluginInterface 
       '#default_value' => $this->configuration['enable_remote'],
       '#description' => $this->t('This settings must be enabled for CSS and Images to work unless you manipulate the source manually.'),
     ];
-    $form['cafile'] = [
+    $form['ssl_configuration'] = [
+      '#type' => 'details',
+      '#title' => $this->t('SSL Configuration'),
+      '#open' => !empty($this->configuration['cafile']) || empty($this->configuration['verify_peer']) || empty($this->configuration['verify_peer_name']),
+    ];
+    $form['ssl_configuration']['cafile'] = [
       '#title' => $this->t('CA File'),
       '#type' => 'textfield',
       '#default_value' => $this->configuration['cafile'],
       '#description' => $this->t('Path to the CA file. This may be needed for development boxes that use SSL'),
     ];
-    $form['verify_peer'] = [
+    $form['ssl_configuration']['verify_peer'] = [
       '#title' => $this->t('Verify Peer'),
       '#type' => 'checkbox',
       '#default_value' => $this->configuration['verify_peer'],
       '#description' => $this->t('Verify an SSL Peer\'s certificate. For development only, do not disable this in production. See https://curl.haxx.se/libcurl/c/CURLOPT_SSL_VERIFYPEER.html'),
     ];
-    $form['verify_peer_name'] = [
+    $form['ssl_configuration']['verify_peer_name'] = [
       '#title' => $this->t('Verify Peer Name'),
       '#type' => 'checkbox',
       '#default_value' => $this->configuration['verify_peer_name'],
       '#description' => $this->t('Verify an SSL Peer\'s certificate. For development only, do not disable this in production. See https://curl.haxx.se/libcurl/c/CURLOPT_SSL_VERIFYPEER.html'),
+    ];
+    $form['credentials'] = [
+      '#type' => 'details',
+      '#title' => $this->t('HTTP Authentication'),
+      '#open' => !empty($this->configuration['username']) || !empty($this->configuration['password']),
+    ];
+    $form['credentials']['username'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Username'),
+      '#description' => $this->t('If your website is behind HTTP Authentication you can set the username'),
+      '#default_value' => $this->configuration['username'],
+    ];
+    $form['credentials']['password'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Password'),
+      '#description' => $this->t('If your website is behind HTTP Authentication you can set the password'),
+      '#default_value' => $this->configuration['password'],
     ];
 
     return $form;
@@ -201,6 +217,30 @@ class DomPdf extends PrintEngineBase implements ContainerFactoryPluginInterface 
    */
   public static function dependenciesAvailable() {
     return class_exists('Dompdf\Dompdf') && !drupal_valid_test_ua();
+  }
+
+  /**
+   * Setup the HTTP Context used by Dompdf for requesting resources.
+   */
+  protected function setupHttpContext() {
+    $context_options = [
+      'ssl' => [
+        'cafile' => $this->configuration['cafile'],
+        'verify_peer' => $this->configuration['verify_peer'],
+        'verify_peer_name' => $this->configuration['verify_peer_name'],
+      ],
+    ];
+
+    // If we have authentication then add it to the request context.
+    if (!empty($this->configuration['username'])) {
+      $auth = base64_encode(sprintf('%s:%s', $this->configuration['username'], $this->configuration['password']));
+      $context_options['http']['header'] = [
+        'Authorization: Basic ' . $auth,
+      ];
+    }
+
+    $http_context = stream_context_create($context_options);
+    $this->print->setHttpContext($http_context);
   }
 
 }

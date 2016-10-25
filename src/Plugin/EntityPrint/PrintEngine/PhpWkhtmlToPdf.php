@@ -36,6 +36,8 @@ class PhpWkhtmlToPdf extends PrintEngineBase {
     $this->print = new Pdf([
       'binary' => $this->configuration['binary_location'],
       'orientation' => $this->configuration['orientation'],
+      'username' => $this->configuration['username'],
+      'password' => $this->configuration['password'],
     ]);
   }
 
@@ -53,6 +55,8 @@ class PhpWkhtmlToPdf extends PrintEngineBase {
     return [
       'binary_location' => '/usr/local/bin/wkhtmltopdf',
       'orientation' => 'portrait',
+      'username' => '',
+      'password' => '',
     ];
   }
 
@@ -76,6 +80,23 @@ class PhpWkhtmlToPdf extends PrintEngineBase {
       '#title' => $this->t('Binary Location'),
       '#description' => $this->t('Set this to the system path where the PDF engine binary is located.'),
       '#default_value' => $this->configuration['binary_location'],
+    ];
+    $form['credentials'] = [
+      '#type' => 'details',
+      '#title' => $this->t('HTTP Authentication'),
+      '#open' => !empty($this->configuration['username']) || !empty($this->configuration['password']),
+    ];
+    $form['credentials']['username'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Username'),
+      '#description' => $this->t('If your website is behind HTTP Authentication you can set the username'),
+      '#default_value' => $this->configuration['username'],
+    ];
+    $form['credentials']['password'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Password'),
+      '#description' => $this->t('If your website is behind HTTP Authentication you can set the password'),
+      '#default_value' => $this->configuration['password'],
     ];
     return $form;
   }
