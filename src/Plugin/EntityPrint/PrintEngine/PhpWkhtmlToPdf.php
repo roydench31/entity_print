@@ -26,14 +26,14 @@ class PhpWkhtmlToPdf extends PrintEngineBase {
   /**
    * @var \mikehaertl\wkhtmlto\Pdf
    */
-  protected $print;
+  protected $pdf;
 
   /**
    * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, ExportTypeInterface $export_type) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $export_type);
-    $this->print = new Pdf([
+    $this->pdf = new Pdf([
       'binary' => $this->configuration['binary_location'],
       'orientation' => $this->configuration['orientation'],
       'username' => $this->configuration['username'],
@@ -118,8 +118,8 @@ class PhpWkhtmlToPdf extends PrintEngineBase {
   public function send($filename = NULL) {
     // If the filename received here is NULL, force open in the browser
     // otherwise attempt to have it downloaded.
-    if (!$this->print->send($filename, !(bool) $filename)) {
-      throw new PrintEngineException(sprintf('Failed to generate PDF: %s', $this->print->getError()));
+    if (!$this->pdf->send($filename, !(bool) $filename)) {
+      throw new PrintEngineException(sprintf('Failed to generate PDF: %s', $this->pdf->getError()));
     }
   }
 
@@ -127,7 +127,7 @@ class PhpWkhtmlToPdf extends PrintEngineBase {
    * {@inheritdoc}
    */
   public function addPage($content) {
-    $this->print->addPage($content);
+    $this->pdf->addPage($content);
   }
 
   /**

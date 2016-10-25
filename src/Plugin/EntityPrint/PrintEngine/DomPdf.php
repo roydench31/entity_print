@@ -30,7 +30,7 @@ class DomPdf extends PrintEngineBase implements ContainerFactoryPluginInterface 
   /**
    * @var \Dompdf\Dompdf
    */
-  protected $print;
+  protected $dompdf;
 
   /**
    * Keep track of HTML pages as they're added.
@@ -44,9 +44,9 @@ class DomPdf extends PrintEngineBase implements ContainerFactoryPluginInterface 
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, ExportTypeInterface $export_type, Request $request) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $export_type);
-    $this->print = new DompdfLib($this->configuration);
-    $this->print->setPaper($this->configuration['default_paper_size'], $this->configuration['orientation']);
-    $this->print
+    $this->dompdf = new DompdfLib($this->configuration);
+    $this->dompdf->setPaper($this->configuration['default_paper_size'], $this->configuration['orientation']);
+    $this->dompdf
       ->setBaseHost($request->getHttpHost())
       ->setProtocol($request->getScheme() . '://');
 
@@ -177,14 +177,14 @@ class DomPdf extends PrintEngineBase implements ContainerFactoryPluginInterface 
     // We must keep adding to previously added HTML as loadHtml() replaces the
     // entire document.
     $this->html .= (string) $content;
-    $this->print->loadHtml($this->html);
+    $this->dompdf->loadHtml($this->html);
   }
 
   /**
    * {@inheritdoc}
    */
   public function send($filename = NULL) {
-    $this->print->render();
+    $this->dompdf->render();
 
     // Dompdf doesn't have a return value for send so just check the error
     // global it provides.
@@ -198,7 +198,7 @@ class DomPdf extends PrintEngineBase implements ContainerFactoryPluginInterface 
 
     // If the filename received here is NULL, force open in the browser
     // otherwise attempt to have it downloaded.
-    $this->print->stream($filename, ['Attachment' => (bool) $filename]);
+    $this->dompdf->stream($filename, ['Attachment' => (bool) $filename]);
   }
 
   /**
@@ -240,7 +240,7 @@ class DomPdf extends PrintEngineBase implements ContainerFactoryPluginInterface 
     }
 
     $http_context = stream_context_create($context_options);
-    $this->print->setHttpContext($http_context);
+    $this->dompdf->setHttpContext($http_context);
   }
 
 }
