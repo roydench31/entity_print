@@ -122,6 +122,7 @@ class EntityPrintAdminTest extends WebTestBase {
     $this->drupalPostForm('admin/structure/types/manage/page/display', [
       'fields[entity_print_view_pdf][empty_cell]' => $random_text,
       'fields[entity_print_view_pdf][type]' => 'visible',
+      'fields[entity_print_view_pdf][region]' => 'content',
     ], 'Save');
 
     // Visit our page node and ensure the link is available.
@@ -141,6 +142,7 @@ class EntityPrintAdminTest extends WebTestBase {
     $this->drupalPostForm('admin/structure/types/manage/page/display/pdf', [
       'fields[entity_print_view_pdf][empty_cell]' => $random_text,
       'fields[entity_print_view_pdf][type]' => 'visible',
+      'fields[entity_print_view_pdf][region]' => 'content',
     ], 'Save');
 
     // Ensure the PDF view mode is now in use.
