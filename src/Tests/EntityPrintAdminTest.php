@@ -44,6 +44,7 @@ class EntityPrintAdminTest extends WebTestBase {
       'access content',
       'administer content types',
       'administer node display',
+      'administer user display',
     ]);
     $this->drupalLogin($account);
   }
@@ -154,8 +155,11 @@ class EntityPrintAdminTest extends WebTestBase {
     // place.
     /** @var \Drupal\Core\Entity\Entity\EntityViewDisplay $display */
     $display = EntityViewDisplay::load('node.page.default');
-
     $this->assertIdentical($random_text, $display->getThirdPartySetting('entity_print', 'pdf_label'));
+
+    // Ensure the View PDF links appear on a entity type without a bundle.
+    $this->drupalGet('/admin/config/people/accounts/display');
+    $this->assertText('View PDF');
   }
 
 }

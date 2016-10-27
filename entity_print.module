@@ -38,18 +38,23 @@ function entity_print_entity_extra_field_info() {
   $extra_fields = [];
   foreach ($entity_types as $entity_type) {
     if ($bundle = $entity_type->getBundleEntityType()) {
-      $bundles = $manager->getStorage($bundle)->loadMultiple();
-      foreach ($bundles as $bundle_entity) {
-        foreach ($export_types as $export_type => $definition) {
-          $extra_fields[$entity_type->id()][$bundle_entity->id()]['display']['entity_print_view_' . $export_type] = [
-            'label' => t('View @label', ['@label' => $definition['label']]),
-            'description' => t('Provides a link to view the Print version of the entity'),
-            'weight' => 0,
-            'visible' => FALSE,
-          ];
-        }
+      $bundle_ids = array_keys($manager->getStorage($bundle)->loadMultiple());
+    }
+    else {
+      $bundle_ids = [$entity_type->id()];
+    }
+
+    foreach ($bundle_ids as $bundle_id) {
+      foreach ($export_types as $export_type => $definition) {
+        $extra_fields[$entity_type->id()][$bundle_id]['display']['entity_print_view_' . $export_type] = [
+          'label' => t('View @label', ['@label' => $definition['label']]),
+          'description' => t('Provides a link to view the Print version of the entity'),
+          'weight' => 0,
+          'visible' => FALSE,
+        ];
       }
     }
+
   }
   return $extra_fields;
 }
