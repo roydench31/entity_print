@@ -204,6 +204,13 @@ class DomPdf extends PrintEngineBase implements ContainerFactoryPluginInterface 
   /**
    * {@inheritdoc}
    */
+  public function getBlob() {
+    return $this->dompdf->output();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   protected function getError() {
     global $_dompdf_warnings;
     if (is_array($_dompdf_warnings)) {

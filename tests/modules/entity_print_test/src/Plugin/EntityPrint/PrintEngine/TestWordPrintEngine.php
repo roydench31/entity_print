@@ -40,6 +40,13 @@ class TestWordPrintEngine extends PrintEngineBase {
   /**
    * {@inheritdoc}
    */
+  public function getBlob() {
+    return '';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function defaultConfiguration() {
     return [
       'test_word_setting' => 'my-default',

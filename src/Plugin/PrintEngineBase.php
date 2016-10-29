@@ -16,13 +16,6 @@ abstract class PrintEngineBase extends PluginBase implements PrintEngineInterfac
   const LANDSCAPE = 'landscape';
 
   /**
-   * The Print library object.
-   *
-   * @var object
-   */
-  protected $print;
-
-  /**
    * The export type plugin.
    *
    * @var \Drupal\entity_print\Plugin\ExportTypeInterface

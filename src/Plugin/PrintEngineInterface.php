@@ -38,6 +38,14 @@ interface PrintEngineInterface extends PluginInspectionInterface, PluginFormInte
   public function send($filename = NULL);
 
   /**
+   * Gets the binary data for the printed document.
+   *
+   * @return mixed
+   *   The binary data.
+   */
+  public function getBlob();
+
+  /**
    * Checks if the Print engine dependencies are available.
    *
    * @return bool

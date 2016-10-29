@@ -32,6 +32,13 @@ class TestPrintEngine extends PrintEngineBase {
   /**
    * {@inheritdoc}
    */
+  public function getBlob() {
+    return '';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildConfigurationForm($form, $form_state);
 

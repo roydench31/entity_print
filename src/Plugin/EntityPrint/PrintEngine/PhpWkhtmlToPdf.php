@@ -126,6 +126,13 @@ class PhpWkhtmlToPdf extends PrintEngineBase {
   /**
    * {@inheritdoc}
    */
+  public function getBlob() {
+    $this->pdf->toString();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function addPage($content) {
     $this->pdf->addPage($content);
   }

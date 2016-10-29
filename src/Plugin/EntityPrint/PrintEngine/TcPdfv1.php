@@ -98,6 +98,13 @@ class TcPdfv1 extends PrintEngineBase {
   /**
    * {@inheritdoc}
    */
+  public function getBlob() {
+    return $this->tcpdf->Output('S');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function dependenciesAvailable() {
     return class_exists('\TCPDF') && !drupal_valid_test_ua();
   }

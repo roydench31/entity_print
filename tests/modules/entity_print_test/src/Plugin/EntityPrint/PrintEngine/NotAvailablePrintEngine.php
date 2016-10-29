@@ -21,6 +21,11 @@ class NotAvailablePrintEngine extends PrintEngineBase {
   /**
    * {@inheritdoc}
    */
+  public function getBlob() {}
+
+  /**
+   * {@inheritdoc}
+   */
   public function getError() {}
 
   /**

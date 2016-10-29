@@ -24,6 +24,13 @@ class PrintExceptionEngine extends PrintEngineBase {
   /**
    * {@inheritdoc}
    */
+  public function getBlob() {
+    return '';
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getError() {}
 
   /**
