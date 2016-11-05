@@ -122,7 +122,6 @@ class EntityPrintAdminTest extends WebTestBase {
     $random_text = $this->randomMachineName();
     $this->drupalPostForm('admin/structure/types/manage/page/display', [
       'fields[entity_print_view_pdf][empty_cell]' => $random_text,
-      'fields[entity_print_view_pdf][type]' => 'visible',
       'fields[entity_print_view_pdf][region]' => 'content',
     ], 'Save');
 
@@ -142,7 +141,6 @@ class EntityPrintAdminTest extends WebTestBase {
     ], 'Save');
     $this->drupalPostForm('admin/structure/types/manage/page/display/pdf', [
       'fields[entity_print_view_pdf][empty_cell]' => $random_text,
-      'fields[entity_print_view_pdf][type]' => 'visible',
       'fields[entity_print_view_pdf][region]' => 'content',
     ], 'Save');
 
