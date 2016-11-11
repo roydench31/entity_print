@@ -157,7 +157,7 @@ abstract class RendererBase implements RendererInterface {
 
     // See if we have the special "all" key which is added to every PDF.
     if (isset($theme_info['entity_print']['all'])) {
-      $render['#attached']['library'][] = $theme_info['entity_print']['all'];
+      $render['#attached']['library'] = array_merge(isset($render['#attached']['library']) ? $render['#attached']['library'] : [], (array) $theme_info['entity_print']['all']);
       unset($theme_info['entity_print']['all']);
     }
 
@@ -171,7 +171,7 @@ abstract class RendererBase implements RendererInterface {
       foreach ($value as $css_bundle => $css) {
         // If it's magic key "all" add it otherwise check the bundle.
         if ($css_bundle === 'all' || $entity->bundle() === $css_bundle) {
-          $render['#attached']['library'][] = $css;
+          $render['#attached']['library'] = array_merge(isset($render['#attached']['library']) ? $render['#attached']['library'] : [], (array) $css);
         }
       }
     }
