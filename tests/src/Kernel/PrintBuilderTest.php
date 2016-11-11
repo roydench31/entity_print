@@ -32,59 +32,59 @@ class PrintBuilderTest extends KernelTestBase {
     $node_type->setDisplaySubmitted(FALSE);
     $node_type->save();
   }
-//
-//  /**
-//   * @covers ::deliverPrintable
-//   * @dataProvider outputtedFileDataProvider
-//   */
-//  public function testOutputtedFilename($print_engine_id, $file_name) {
-//    $print_engine = $this->container->get('plugin.manager.entity_print.print_engine')->createInstance($print_engine_id);
-//    $node = $this->createNode(['title' => 'myfile']);
-//
-//    ob_start();
-//    $this->container->get('entity_print.print_builder')->deliverPrintable([$node], $print_engine, TRUE);
-//    $contents = ob_get_contents();
-//    ob_end_clean();
-//    $this->assertTrue(strpos($contents, $file_name) !== FALSE, "The $file_name file was found in $contents");
-//  }
-//
-//  /**
-//   * Provides a data provider for testOutputtedFilename().
-//   */
-//  public function outputtedFileDataProvider() {
-//    return [
-//      'PDF file' => ['testprintengine', 'myfile.pdf'],
-//      'Word doc file' => ['test_word_print_engine', 'myfile.docx'],
-//    ];
-//  }
-//
-//  /**
-//   * Ensure when not using force download we do not get a filename.
-//   */
-//  public function testForceDownload() {
-//    $print_engine = $this->getMock('Drupal\entity_print\Plugin\PrintEngineInterface');
-//    $export_type = $this->getMock('Drupal\entity_print\Plugin\ExportTypeInterface');
-//    $print_engine
-//      ->expects($this->once())
-//      ->method('send')
-//      ->with(NULL);
-//    $print_engine
-//      ->expects($this->any())
-//      ->method('getExportType')
-//      ->willReturn($export_type);
-//    $node = $this->createNode(['title' => 'myfile']);
-//    $this->container->get('entity_print.print_builder')->deliverPrintable([$node], $print_engine, FALSE);
-//  }
-//
-//  /**
-//   * @covers ::deliverPrintable
-//   * @expectedException \InvalidArgumentException
-//   * @expectedExceptionMessage You must pass at least 1 entity
-//   */
-//  public function testNoEntities() {
-//    $print_engine = $this->container->get('plugin.manager.entity_print.print_engine')->createInstance('testprintengine');
-//    $this->container->get('entity_print.print_builder')->deliverPrintable([], $print_engine, TRUE);
-//  }
+
+  /**
+   * @covers ::deliverPrintable
+   * @dataProvider outputtedFileDataProvider
+   */
+  public function testOutputtedFilename($print_engine_id, $file_name) {
+    $print_engine = $this->container->get('plugin.manager.entity_print.print_engine')->createInstance($print_engine_id);
+    $node = $this->createNode(['title' => 'myfile']);
+
+    ob_start();
+    $this->container->get('entity_print.print_builder')->deliverPrintable([$node], $print_engine, TRUE);
+    $contents = ob_get_contents();
+    ob_end_clean();
+    $this->assertTrue(strpos($contents, $file_name) !== FALSE, "The $file_name file was found in $contents");
+  }
+
+  /**
+   * Provides a data provider for testOutputtedFilename().
+   */
+  public function outputtedFileDataProvider() {
+    return [
+      'PDF file' => ['testprintengine', 'myfile.pdf'],
+      'Word doc file' => ['test_word_print_engine', 'myfile.docx'],
+    ];
+  }
+
+  /**
+   * Ensure when not using force download we do not get a filename.
+   */
+  public function testForceDownload() {
+    $print_engine = $this->getMock('Drupal\entity_print\Plugin\PrintEngineInterface');
+    $export_type = $this->getMock('Drupal\entity_print\Plugin\ExportTypeInterface');
+    $print_engine
+      ->expects($this->once())
+      ->method('send')
+      ->with(NULL);
+    $print_engine
+      ->expects($this->any())
+      ->method('getExportType')
+      ->willReturn($export_type);
+    $node = $this->createNode(['title' => 'myfile']);
+    $this->container->get('entity_print.print_builder')->deliverPrintable([$node], $print_engine, FALSE);
+  }
+
+  /**
+   * @covers ::deliverPrintable
+   * @expectedException \InvalidArgumentException
+   * @expectedExceptionMessage You must pass at least 1 entity
+   */
+  public function testNoEntities() {
+    $print_engine = $this->container->get('plugin.manager.entity_print.print_engine')->createInstance('testprintengine');
+    $this->container->get('entity_print.print_builder')->deliverPrintable([], $print_engine, TRUE);
+  }
 
   /**
    * Test that CSS is parsed from our test theme correctly.
