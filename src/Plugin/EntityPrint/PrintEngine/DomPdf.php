@@ -7,7 +7,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\entity_print\Plugin\ExportTypeInterface;
 use Drupal\entity_print\PrintEngineException;
-use Drupal\entity_print\Plugin\PrintEngineBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Dompdf\Adapter\CPDF;
@@ -25,7 +24,7 @@ use Dompdf\Adapter\CPDF;
  *     composer require "dompdf/dompdf 0.7.0-beta3"
  * @endcode
  */
-class DomPdf extends PrintEngineBase implements ContainerFactoryPluginInterface {
+class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
 
   /**
    * @var \Dompdf\Dompdf
@@ -77,16 +76,13 @@ class DomPdf extends PrintEngineBase implements ContainerFactoryPluginInterface 
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return [
+    return parent::defaultConfiguration() + [
       'enable_html5_parser' => TRUE,
       'enable_remote' => TRUE,
       'default_paper_size' => 'letter',
-      'orientation' => 'portrait',
       'cafile' => '',
       'verify_peer' => TRUE,
       'verify_peer_name' => TRUE,
-      'username' => '',
-      'password' => '',
     ];
   }
 
@@ -94,26 +90,7 @@ class DomPdf extends PrintEngineBase implements ContainerFactoryPluginInterface 
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    $paper_sizes = array_combine(array_keys(CPDF::$PAPER_SIZES), array_map(function($value) {
-      return ucfirst($value);
-    }, array_keys(CPDF::$PAPER_SIZES)));
-    $form['default_paper_size'] = [
-      '#title' => $this->t('Paper Size'),
-      '#type' => 'select',
-      '#options' => $paper_sizes,
-      '#default_value' => $this->configuration['default_paper_size'],
-      '#description' => $this->t('The page size to print the PDF to.'),
-    ];
-    $form['orientation'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Paper Orientation'),
-      '#options' => [
-        static::PORTRAIT => $this->t('Portrait'),
-        static::LANDSCAPE => $this->t('Landscape'),
-      ],
-      '#description' => $this->t('The paper orientation one of Landscape or Portrait'),
-      '#default_value' => $this->configuration['orientation'],
-    ];
+    $form = parent::buildConfigurationForm($form, $form_state);
     $form['enable_html5_parser'] = [
       '#title' => $this->t('Enable HTML5 Parser'),
       '#type' => 'checkbox',
@@ -148,23 +125,6 @@ class DomPdf extends PrintEngineBase implements ContainerFactoryPluginInterface 
       '#type' => 'checkbox',
       '#default_value' => $this->configuration['verify_peer_name'],
       '#description' => $this->t('Verify an SSL Peer\'s certificate. For development only, do not disable this in production. See https://curl.haxx.se/libcurl/c/CURLOPT_SSL_VERIFYPEER.html'),
-    ];
-    $form['credentials'] = [
-      '#type' => 'details',
-      '#title' => $this->t('HTTP Authentication'),
-      '#open' => !empty($this->configuration['username']) || !empty($this->configuration['password']),
-    ];
-    $form['credentials']['username'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Username'),
-      '#description' => $this->t('If your website is behind HTTP Authentication you can set the username'),
-      '#default_value' => $this->configuration['username'],
-    ];
-    $form['credentials']['password'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Password'),
-      '#description' => $this->t('If your website is behind HTTP Authentication you can set the password'),
-      '#default_value' => $this->configuration['password'],
     ];
 
     return $form;
@@ -248,6 +208,15 @@ class DomPdf extends PrintEngineBase implements ContainerFactoryPluginInterface 
 
     $http_context = stream_context_create($context_options);
     $this->dompdf->setHttpContext($http_context);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getPaperSizes() {
+    return array_combine(array_keys(CPDF::$PAPER_SIZES), array_map(function($value) {
+      return ucfirst($value);
+    }, array_keys(CPDF::$PAPER_SIZES)));
   }
 
 }

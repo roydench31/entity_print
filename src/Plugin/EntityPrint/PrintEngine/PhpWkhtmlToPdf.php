@@ -5,7 +5,6 @@ namespace Drupal\entity_print\Plugin\EntityPrint\PrintEngine;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\entity_print\Plugin\ExportTypeInterface;
 use Drupal\entity_print\PrintEngineException;
-use Drupal\entity_print\Plugin\PrintEngineBase;
 use mikehaertl\wkhtmlto\Pdf;
 
 /**
@@ -21,7 +20,7 @@ use mikehaertl\wkhtmlto\Pdf;
  *     composer require "mikehaertl/phpwkhtmltopdf ~2.1"
  * @endcode
  */
-class PhpWkhtmlToPdf extends PrintEngineBase {
+class PhpWkhtmlToPdf extends PdfEngineBase {
 
   /**
    * @var \mikehaertl\wkhtmlto\Pdf
@@ -52,11 +51,8 @@ class PhpWkhtmlToPdf extends PrintEngineBase {
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return [
+    return parent::defaultConfiguration() + [
       'binary_location' => '/usr/local/bin/wkhtmltopdf',
-      'orientation' => 'portrait',
-      'username' => '',
-      'password' => '',
     ];
   }
 
@@ -65,39 +61,13 @@ class PhpWkhtmlToPdf extends PrintEngineBase {
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildConfigurationForm($form, $form_state);
-    $form['orientation'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Paper Orientation'),
-      '#options' => [
-        static::PORTRAIT => $this->t('Portrait'),
-        static::LANDSCAPE => $this->t('Landscape'),
-      ],
-      '#description' => $this->t('The paper orientation one of Landscape or Portrait'),
-      '#default_value' => $this->configuration['orientation'],
-    ];
     $form['binary_location'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Binary Location'),
       '#description' => $this->t('Set this to the system path where the PDF engine binary is located.'),
       '#default_value' => $this->configuration['binary_location'],
     ];
-    $form['credentials'] = [
-      '#type' => 'details',
-      '#title' => $this->t('HTTP Authentication'),
-      '#open' => !empty($this->configuration['username']) || !empty($this->configuration['password']),
-    ];
-    $form['credentials']['username'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Username'),
-      '#description' => $this->t('If your website is behind HTTP Authentication you can set the username'),
-      '#default_value' => $this->configuration['username'],
-    ];
-    $form['credentials']['password'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Password'),
-      '#description' => $this->t('If your website is behind HTTP Authentication you can set the password'),
-      '#default_value' => $this->configuration['password'],
-    ];
+
     return $form;
   }
 
@@ -142,6 +112,44 @@ class PhpWkhtmlToPdf extends PrintEngineBase {
    */
   public static function dependenciesAvailable() {
     return class_exists('mikehaertl\wkhtmlto\Pdf') && !drupal_valid_test_ua();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getPaperSizes() {
+    return [
+      'a0' => 'A0',
+      'a1' => 'A1',
+      'a2' => 'A2',
+      'a3' => 'A3',
+      'a4' => 'A4',
+      'a5' => 'A5',
+      'a6' => 'A6',
+      'a7' => 'A7',
+      'a8' => 'A8',
+      'a9' => 'A9',
+      'b0' => 'B0',
+      'b1' => 'B1',
+      'b10' => 'B10',
+      'b2' => 'B2',
+      'b3' => 'B3',
+      'b4' => 'B4',
+      'b5' => 'B5',
+      'b6' => 'B6',
+      'b7' => 'B7',
+      'b8' => 'B8',
+      'b9' => 'B9',
+      'ce5' => 'CE5',
+      'comm10e' => 'Comm10E',
+      'dle' => 'DLE',
+      'executive' => 'Executive',
+      'folio' => 'Folio',
+      'ledger' => 'Ledger',
+      'legal' => 'Legal',
+      'letter' => 'Letter',
+      'tabloid' => 'Tabloid',
+    ];
   }
 
 }

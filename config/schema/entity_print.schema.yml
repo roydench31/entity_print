@@ -14,6 +14,23 @@ entity_print.settings:
       sequence:
         type: string
 
+entint_print_engine_pdf:
+  type: mapping
+  label: 'Base settings for engines using the PDF base class'
+  mapping:
+    default_paper_size:
+      type: string
+      label: 'Default Paper Size'
+    orientation:
+      type: string
+      label: 'Paper Orientation'
+    username:
+      type: string
+      label: 'HTTP Auth username'
+    password:
+      type: string
+      label: 'HTTP Auth password'
+
 entity_print.print_engine.*:
   type: config_entity
   label: 'Print Engine'
@@ -26,15 +43,9 @@ entity_print.print_engine.*:
       label: 'Settings for the Print Engine.'
 
 entity_print_print_engine.dompdf:
-  type: mapping
+  type: entint_print_engine_pdf
   label: 'Dompdf specific settings'
   mapping:
-    default_paper_size:
-      type: string
-      label: 'Default Paper Size'
-    orientation:
-      type: string
-      label: 'Paper Orientation'
     enable_html5_parser:
       type: boolean
       label: 'Enable HTML5 parsing'
@@ -50,30 +61,15 @@ entity_print_print_engine.dompdf:
     verify_peer_name:
       type: boolean
       label: 'Verify Peer Name'
-    username:
-      type: string
-      label: 'HTTP Auth username'
-    password:
-      type: string
-      label: 'HTTP Auth password'
 
 entity_print_print_engine.phpwkhtmltopdf:
-  type: mapping
+  type: entint_print_engine_pdf
   label: 'PHP Wkhtmltopdf'
   type: mapping
   mapping:
     binary_location:
       type: string
       label: 'Path to the wkhtmltopdf binary'
-    orientation:
-      type: string
-      label: 'Paper Orientation'
-    username:
-      type: string
-      label: 'HTTP Auth username'
-    password:
-      type: string
-      label: 'HTTP Auth password'
 
 entity_print_print_engine.tcpdfv1:
   type: mapping
