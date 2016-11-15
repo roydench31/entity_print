@@ -79,7 +79,6 @@ class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
     return parent::defaultConfiguration() + [
       'enable_html5_parser' => TRUE,
       'enable_remote' => TRUE,
-      'default_paper_size' => 'letter',
       'cafile' => '',
       'verify_peer' => TRUE,
       'verify_peer_name' => TRUE,
@@ -214,9 +213,7 @@ class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
    * {@inheritdoc}
    */
   protected function getPaperSizes() {
-    return array_combine(array_keys(CPDF::$PAPER_SIZES), array_map(function($value) {
-      return ucfirst($value);
-    }, array_keys(CPDF::$PAPER_SIZES)));
+    return array_combine(array_keys(CPDF::$PAPER_SIZES), array_map('ucfirst', array_keys(CPDF::$PAPER_SIZES)));
   }
 
 }

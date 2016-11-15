@@ -20,7 +20,7 @@ use mikehaertl\wkhtmlto\Pdf;
  *     composer require "mikehaertl/phpwkhtmltopdf ~2.1"
  * @endcode
  */
-class PhpWkhtmlToPdf extends PdfEngineBase {
+class PhpWkhtmlToPdf extends PdfEngineBase implements AlignableHeaderFooterInterface {
 
   /**
    * @var \mikehaertl\wkhtmlto\Pdf
@@ -150,6 +150,22 @@ class PhpWkhtmlToPdf extends PdfEngineBase {
       'letter' => 'Letter',
       'tabloid' => 'Tabloid',
     ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setHeaderText($text, $alignment) {
+    $this->pdf->setOptions(['header-' . $alignment => $text]);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setFooterText($text, $alignment) {
+    $this->pdf->setOptions(['footer-' . $alignment => $text]);
+    return $this;
   }
 
 }

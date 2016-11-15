@@ -5,6 +5,9 @@ namespace Drupal\entity_print\Plugin\EntityPrint\PrintEngine;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\entity_print\Plugin\PrintEngineBase;
 
+/**
+ * Base class for all PDF print engines.
+ */
 abstract class PdfEngineBase extends PrintEngineBase {
 
   /**
@@ -64,6 +67,7 @@ abstract class PdfEngineBase extends PrintEngineBase {
   public function defaultConfiguration() {
     return parent::defaultConfiguration() + [
       'orientation' => 'portrait',
+      'default_paper_size' => 'letter',
       'username' => '',
       'password' => '',
     ];
