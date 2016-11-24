@@ -61,8 +61,8 @@ class TestPrintEngine extends PrintEngineBase {
    * {@inheritdoc}
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
-    $this->configuration['test_engine_setting'] = $form_state->getValue('test_engine_setting');
-    $this->configuration['test_engine_suffix'] = $form_state->getValue('test_engine_suffix');
+    $this->configuration['test_engine_setting'] = $form_state->getValue(['testprintengine', 'test_engine_setting']);
+    $this->configuration['test_engine_suffix'] = $form_state->getValue(['testprintengine', 'test_engine_suffix']);
   }
 
 
@@ -70,7 +70,7 @@ class TestPrintEngine extends PrintEngineBase {
    * {@inheritdoc}
    */
   public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
-    if ($form_state->getValue('test_engine_setting') === 'rejected') {
+    if ($form_state->getValue(['testprintengine', 'test_engine_setting']) === 'rejected') {
       $form_state->setErrorByName('test_engine_setting', 'Setting has an invalid value');
     }
   }

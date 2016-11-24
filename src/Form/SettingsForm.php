@@ -185,6 +185,7 @@ class SettingsForm extends ConfigFormBase {
     $form = [
       '#type' => 'fieldset',
       '#title' => $this->t('@engine Settings', ['@engine' => $plugin->getPluginDefinition()['label']]),
+      '#tree' => TRUE
     ];
     return $form + $plugin->buildConfigurationForm([], $form_state);
   }
