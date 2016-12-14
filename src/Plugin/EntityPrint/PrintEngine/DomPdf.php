@@ -164,6 +164,8 @@ class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
    * {@inheritdoc}
    */
   public function getBlob() {
+    $this->dompdf->render();
+
     return $this->dompdf->output();
   }
 
