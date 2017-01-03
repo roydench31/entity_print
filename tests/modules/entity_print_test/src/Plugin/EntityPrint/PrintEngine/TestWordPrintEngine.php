@@ -82,4 +82,9 @@ class TestWordPrintEngine extends PrintEngineBase {
     return TRUE;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getPrintObject() {}
+
 }

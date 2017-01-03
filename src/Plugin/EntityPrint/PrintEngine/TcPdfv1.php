@@ -109,4 +109,11 @@ class TcPdfv1 extends PrintEngineBase {
     return class_exists('\TCPDF') && !drupal_valid_test_ua();
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getPrintObject() {
+    return $this->tcpdf;
+  }
+
 }

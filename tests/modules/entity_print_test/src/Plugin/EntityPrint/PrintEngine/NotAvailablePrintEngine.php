@@ -40,4 +40,9 @@ class NotAvailablePrintEngine extends PrintEngineBase {
     return FALSE;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getPrintObject() {}
+
 }

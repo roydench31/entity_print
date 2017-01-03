@@ -45,4 +45,9 @@ class PrintExceptionEngine extends PrintEngineBase {
     return TRUE;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getPrintObject() {}
+
 }

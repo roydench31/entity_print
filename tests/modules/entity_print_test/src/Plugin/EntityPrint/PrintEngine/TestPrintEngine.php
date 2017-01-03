@@ -65,7 +65,6 @@ class TestPrintEngine extends PrintEngineBase {
     $this->configuration['test_engine_suffix'] = $form_state->getValue(['testprintengine', 'test_engine_suffix']);
   }
 
-
   /**
    * {@inheritdoc}
    */
@@ -103,5 +102,10 @@ class TestPrintEngine extends PrintEngineBase {
   public static function dependenciesAvailable() {
     return TRUE;
   }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getPrintObject() {}
 
 }

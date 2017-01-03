@@ -218,4 +218,11 @@ class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
     return array_combine(array_keys(CPDF::$PAPER_SIZES), array_map('ucfirst', array_keys(CPDF::$PAPER_SIZES)));
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getPrintObject() {
+    return $this->dompdf;
+  }
+
 }

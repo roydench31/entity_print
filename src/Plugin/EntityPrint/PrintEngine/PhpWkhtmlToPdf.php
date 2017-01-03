@@ -168,4 +168,11 @@ class PhpWkhtmlToPdf extends PdfEngineBase implements AlignableHeaderFooterInter
     return $this;
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getPrintObject() {
+    return $this->pdf;
+  }
+
 }
