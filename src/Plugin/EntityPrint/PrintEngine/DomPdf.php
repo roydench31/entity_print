@@ -142,7 +142,7 @@ class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
   /**
    * {@inheritdoc}
    */
-  public function send($filename = NULL) {
+  public function send($filename, $force_download = TRUE) {
     $this->dompdf->render();
 
     // Dompdf doesn't have a return value for send so just check the error
@@ -157,7 +157,7 @@ class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
 
     // If the filename received here is NULL, force open in the browser
     // otherwise attempt to have it downloaded.
-    $this->dompdf->stream($filename, ['Attachment' => (bool) $filename]);
+    $this->dompdf->stream($filename, ['Attachment' => $force_download]);
   }
 
   /**

@@ -16,7 +16,7 @@ class NotAvailablePrintEngine extends PrintEngineBase {
   /**
    * {@inheritdoc}
    */
-  public function send($filename = NULL) {}
+  public function send($filename, $force_download = TRUE) {}
 
   /**
    * {@inheritdoc}

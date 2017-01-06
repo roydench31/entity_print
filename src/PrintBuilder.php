@@ -67,11 +67,10 @@ class PrintBuilder implements PrintBuilderInterface {
     // Allow other modules to alter the generated Print object.
     $this->dispatcher->dispatch(PrintEvents::PRE_SEND, new PreSendPrintEvent($print_engine, $entities));
 
-    // If we're forcing a download we need a filename otherwise it's just sent
-    // straight to the browser.
-    $filename = $force_download ? $renderer->getFilename($entities) . '.' . $print_engine->getExportType()->getFileExtension() : NULL;
+    // Calculate the filename.
+    $filename = $renderer->getFilename($entities) . '.' . $print_engine->getExportType()->getFileExtension();
 
-    return $print_engine->send($filename);
+    return $print_engine->send($filename, $force_download);
   }
 
   /**

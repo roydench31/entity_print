@@ -31,7 +31,7 @@ class TestWordPrintEngine extends PrintEngineBase {
   /**
    * {@inheritdoc}
    */
-  public function send($filename = NULL) {
+  public function send($filename, $force_download = TRUE) {
     echo $filename;
     echo 'Using ' . $this->getPluginId();
     echo $this->html;

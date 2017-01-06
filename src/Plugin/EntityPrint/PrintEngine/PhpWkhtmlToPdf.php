@@ -85,10 +85,10 @@ class PhpWkhtmlToPdf extends PdfEngineBase implements AlignableHeaderFooterInter
   /**
    * {@inheritdoc}
    */
-  public function send($filename = NULL) {
+  public function send($filename, $force_download = TRUE) {
     // If the filename received here is NULL, force open in the browser
     // otherwise attempt to have it downloaded.
-    if (!$this->pdf->send($filename, !(bool) $filename)) {
+    if (!$this->pdf->send($filename, !$force_download)) {
       throw new PrintEngineException(sprintf('Failed to generate PDF: %s', $this->pdf->getError()));
     }
   }

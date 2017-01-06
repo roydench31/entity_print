@@ -17,7 +17,7 @@ class PrintExceptionEngine extends PrintEngineBase {
   /**
    * {@inheritdoc}
    */
-  public function send($filename = NULL) {
+  public function send($filename, $force_download = TRUE) {
     throw new PrintEngineException('Exception thrown by PrintExceptionEngine');
   }
 
