@@ -2,13 +2,10 @@
 
 namespace Drupal\entity_print\Renderer;
 
-use Drupal\Core\Asset\AssetCollectionRendererInterface;
-use Drupal\Core\Asset\AssetResolverInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Extension\InfoParserInterface;
-use Drupal\Core\Extension\ThemeHandlerInterface;
 use Drupal\Core\Render\RendererInterface as CoreRendererInterface;
+use Drupal\entity_print\Asset\AssetRendererInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ContentEntityRenderer extends RendererBase {
@@ -20,17 +17,33 @@ class ContentEntityRenderer extends RendererBase {
    */
   protected $entityTypeManager;
 
-  public function __construct(ThemeHandlerInterface $theme_handler, InfoParserInterface $info_parser, AssetResolverInterface $asset_resolver, AssetCollectionRendererInterface $css_renderer, CoreRendererInterface $renderer, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager) {
-    parent::__construct($theme_handler, $info_parser, $asset_resolver, $css_renderer, $renderer, $event_dispatcher);
+  /**
+   * ContentEntityRenderer constructor.
+   *
+   * @param \Drupal\Core\Render\RendererInterface $renderer
+   *   The renderer.
+   * @param \Drupal\entity_print\Asset\AssetRendererInterface $asset_renderer
+   *   The asset renderer.
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   *   The event dispatcher.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   */
+  public function __construct(CoreRendererInterface $renderer, AssetRendererInterface $asset_renderer, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager) {
+    parent::__construct($renderer, $asset_renderer, $event_dispatcher);
     $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function render(EntityInterface $entity) {
-    $render_controller = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId());
-    return $render_controller->view($entity, $this->getViewMode($entity));
+  public function render(array $entities) {
+    $build = [];
+    foreach ($entities as $entity) {
+      $render_controller = $this->entityTypeManager->getViewBuilder($entity->getEntityTypeId());
+      $build[] = $render_controller->view($entity, $this->getViewMode($entity));
+    }
+    return $build;
   }
 
   /**

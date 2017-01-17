@@ -3,6 +3,7 @@
 namespace Drupal\entity_print\Plugin\EntityPrint\PrintEngine;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Form\OptGroup;
 use Drupal\entity_print\Plugin\ExportTypeInterface;
 use Drupal\entity_print\PrintEngineException;
 use mikehaertl\wkhtmlto\Pdf;
@@ -76,7 +77,8 @@ class PhpWkhtmlToPdf extends PdfEngineBase implements AlignableHeaderFooterInter
    */
   public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
     parent::validateConfigurationForm($form, $form_state);
-    $binary_location = $form_state->getValue('binary_location');
+    $values = OptGroup::flattenOptions($form_state->getValues());
+    $binary_location = $values['binary_location'];
     if (!file_exists($binary_location)) {
       $form_state->setErrorByName('binary_location', sprintf('The wkhtmltopdf binary does not exist at %s', $binary_location));
     }

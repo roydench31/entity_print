@@ -2,20 +2,18 @@
 
 namespace Drupal\entity_print\Renderer;
 
-use Drupal\Core\Entity\EntityInterface;
-
 interface RendererInterface {
 
   /**
    * Gets the renderable for this entity.
    *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   The entity we're rendering.
+   * @param \Drupal\Core\Entity\EntityInterface[] $entities
+   *   The entities we're rendering.
    *
    * @return array
    *   The renderable array for the entity.
    */
-  public function render(EntityInterface $entity);
+  public function render(array $entities);
 
   /**
    * Generates the HTML from the renderable array of entities.

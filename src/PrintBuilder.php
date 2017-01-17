@@ -52,7 +52,7 @@ class PrintBuilder implements PrintBuilderInterface {
     }
 
     $renderer = $this->rendererFactory->create($entities);
-    $content = array_map([$renderer, 'render'], $entities);
+    $content = $renderer->render($entities);
 
     $first_entity = reset($entities);
     $render = [
@@ -78,7 +78,7 @@ class PrintBuilder implements PrintBuilderInterface {
    */
   public function printHtml(EntityInterface $entity, $use_default_css = TRUE, $optimize_css = TRUE) {
     $renderer = $this->rendererFactory->create([$entity]);
-    $content[] = $renderer->render($entity);
+    $content[] = $renderer->render([$entity]);
 
     $render = [
       '#theme' => 'entity_print__' . $entity->getEntityTypeId() . '__' . $entity->bundle(),

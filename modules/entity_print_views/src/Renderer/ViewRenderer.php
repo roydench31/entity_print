@@ -14,10 +14,23 @@ class ViewRenderer extends RendererBase {
   /**
    * {@inheritdoc}
    */
-  public function render(EntityInterface $view) {
+  public function render(array $views) {
+    return array_map([$this, 'renderSingle'], $views);
+  }
+
+  /**
+   * Render a single entity.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $view
+   *   The entity we're rendering.
+   *
+   * @return array
+   *   A render array.
+   */
+  protected function renderSingle(EntityInterface $view) {
     /** @var \Drupal\views\Entity\View $view */
     $executable = $view->getExecutable();
-    $render = $executable->render();
+    $render = $executable->render() ?: [];
 
     // We must remove ourselves from all areas otherwise it will cause an
     // infinite loop when rendering.
