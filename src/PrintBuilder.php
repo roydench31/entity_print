@@ -47,22 +47,7 @@ class PrintBuilder implements PrintBuilderInterface {
    * {@inheritdoc}
    */
   public function deliverPrintable(array $entities, PrintEngineInterface $print_engine, $force_download = FALSE, $use_default_css = TRUE) {
-    if (empty($entities)) {
-      throw new \InvalidArgumentException('You must pass at least 1 entity');
-    }
-
-    $renderer = $this->rendererFactory->create($entities);
-    $content = $renderer->render($entities);
-
-    $first_entity = reset($entities);
-    $render = [
-      '#theme' => 'entity_print__' . $first_entity->getEntityTypeId() . '__' . $first_entity->bundle(),
-      '#title' => $this->t('View @type', ['@type' => $print_engine->getExportType()->label()]),
-      '#content' => $content,
-      '#attached' => [],
-    ];
-
-    $print_engine->addPage($renderer->generateHtml($entities, $render, $use_default_css, TRUE));
+    $renderer = $this->prepareRenderer($entities, $print_engine, $use_default_css);
 
     // Allow other modules to alter the generated Print object.
     $this->dispatcher->dispatch(PrintEvents::PRE_SEND, new PreSendPrintEvent($print_engine, $entities));
@@ -87,6 +72,60 @@ class PrintBuilder implements PrintBuilderInterface {
       '#attached' => [],
     ];
     return $renderer->generateHtml([$entity], $render, $use_default_css, $optimize_css);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function savePrintable(array $entities, PrintEngineInterface $print_engine, $scheme = 'public', $filename = FALSE, $use_default_css = TRUE) {
+    $renderer = $this->prepareRenderer($entities, $print_engine, $use_default_css);
+
+    // Allow other modules to alter the generated Print object.
+    $this->dispatcher->dispatch(PrintEvents::PRE_SEND, new PreSendPrintEvent($print_engine, $entities));
+
+    // If we didn't have a URI passed in the generate one.
+    if (!$filename) {
+      $filename = $renderer->getFilename($entities) . '.' . $print_engine->getExportType()->getFileExtension();
+    }
+
+    $uri = "$scheme://$filename";
+
+    // Save the file.
+    return file_unmanaged_save_data($print_engine->getBlob(), $uri, FILE_EXISTS_REPLACE);
+  }
+
+  /**
+   * Configure the print engine with the passed entities.
+   *
+   * @param array $entities
+   *   An array of entities.
+   * @param \Drupal\entity_print\Plugin\PrintEngineInterface $print_engine
+   *   The print engine.
+   * @param bool $use_default_css
+   *   TRUE if we want the default CSS included.
+   *
+   * @return \Drupal\entity_print\Renderer\RendererInterface
+   *   A print renderer.
+   */
+  protected function prepareRenderer(array $entities, PrintEngineInterface $print_engine, $use_default_css) {
+    if (empty($entities)) {
+      throw new \InvalidArgumentException('You must pass at least 1 entity');
+    }
+
+    $renderer = $this->rendererFactory->create($entities);
+    $content = $renderer->render($entities);
+
+    $first_entity = reset($entities);
+    $render = [
+      '#theme' => 'entity_print__' . $first_entity->getEntityTypeId() . '__' . $first_entity->bundle(),
+      '#title' => $this->t('View @type', ['@type' => $print_engine->getExportType()->label()]),
+      '#content' => $content,
+      '#attached' => [],
+    ];
+
+    $print_engine->addPage($renderer->generateHtml($entities, $render, $use_default_css, TRUE));
+
+    return $renderer;
   }
 
 }

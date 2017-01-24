@@ -33,7 +33,7 @@ class TestPrintEngine extends PrintEngineBase {
    * {@inheritdoc}
    */
   public function getBlob() {
-    return '';
+    return 'Using testprintengine';
   }
 
   /**

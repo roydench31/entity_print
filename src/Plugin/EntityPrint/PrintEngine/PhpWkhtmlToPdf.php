@@ -99,7 +99,7 @@ class PhpWkhtmlToPdf extends PdfEngineBase implements AlignableHeaderFooterInter
    * {@inheritdoc}
    */
   public function getBlob() {
-    $this->pdf->toString();
+    return $this->pdf->toString();
   }
 
   /**
