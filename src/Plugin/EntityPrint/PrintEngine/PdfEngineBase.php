@@ -44,9 +44,9 @@ abstract class PdfEngineBase extends PrintEngineBase {
       '#default_value' => $this->configuration['username'],
     ];
     $form['credentials']['password'] = [
-      '#type' => 'textfield',
+      '#type' => 'password',
       '#title' => $this->t('Password'),
-      '#description' => $this->t('If your website is behind HTTP Authentication you can set the password'),
+      '#description' => $this->t('If your website is behind HTTP Authentication you can set the password. Note this data is not encrypted and will be exported to config.'),
       '#default_value' => $this->configuration['password'],
     ];
 
