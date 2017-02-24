@@ -18,7 +18,7 @@ services:
 
   entity_print.renderer.content:
     class: Drupal\entity_print\Renderer\ContentEntityRenderer
-    arguments: ['@renderer', '@entity_print.asset_renderer', '@event_dispatcher', '@entity_type.manager']
+    arguments: ['@renderer', '@entity_print.asset_renderer', '@entity_print.filename_generator', '@event_dispatcher', '@entity_type.manager']
 
   entity_print.post_render_subscriber:
     class: Drupal\entity_print\EventSubscriber\PostRenderSubscriber
@@ -33,6 +33,10 @@ services:
   entity_print.asset_renderer:
     class: Drupal\entity_print\Asset\AssetRenderer
     arguments: ['@asset.resolver', '@asset.css.collection_renderer', '@entity_print.asset_collector']
+
+  entity_print.filename_generator:
+    class: Drupal\entity_print\FilenameGenerator
+    arguments: ['@transliteration']
 
   entity_print.print_engine_exception_subscriber:
     class: Drupal\entity_print\EventSubscriber\PrintEngineExceptionSubscriber

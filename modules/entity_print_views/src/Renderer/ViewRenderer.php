@@ -45,17 +45,13 @@ class ViewRenderer extends RendererBase {
   }
 
   /**
-   * Gets a label for the view object.
-   *
-   * @param \Drupal\Core\Entity\EntityInterface $view
-   *   The view object we want to get a label for.
-   *
-   * @return false|string
-   *   The view title.
+   * {@inheritdoc}
    */
-  protected function getLabel(EntityInterface $view) {
-    /** @var \Drupal\views\ViewEntityInterface $view */
-    return $view->getExecutable()->getTitle();
+  public function getFilename(array $entities) {
+    return $this->filenameGenerator->generateFilename($entities, function ($view) {
+      /** @var \Drupal\views\ViewEntityInterface $view */
+      return $view->getExecutable()->getTitle();
+    });
   }
 
   /**

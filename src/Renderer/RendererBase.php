@@ -7,6 +7,7 @@ use Drupal\Core\Render\RenderContext;
 use Drupal\entity_print\Asset\AssetRendererInterface;
 use Drupal\entity_print\Event\PrintEvents;
 use Drupal\entity_print\Event\PrintHtmlAlterEvent;
+use Drupal\entity_print\FilenameGeneratorInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Drupal\Core\Render\RendererInterface as CoreRendererInterface;
 
@@ -14,13 +15,6 @@ use Drupal\Core\Render\RendererInterface as CoreRendererInterface;
  * The RendererBase class.
  */
 abstract class RendererBase implements RendererInterface {
-
-  /**
-   * The filename used when we're unable to calculate a filename.
-   *
-   * @var string
-   */
-  const DEFAULT_FILENAME = 'document';
 
   /**
    * The renderer for renderable arrays.
@@ -37,15 +31,23 @@ abstract class RendererBase implements RendererInterface {
   protected $assetRenderer;
 
   /**
+   * Generate filename's for a printed document.
+   *
+   * @var \Drupal\entity_print\FilenameGeneratorInterface
+   */
+  protected $filenameGenerator;
+
+  /**
    * The event dispatcher.
    *
    * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
    */
   protected $dispatcher;
 
-  public function __construct(CoreRendererInterface $renderer, AssetRendererInterface $asset_renderer, EventDispatcherInterface $event_dispatcher) {
+  public function __construct(CoreRendererInterface $renderer, AssetRendererInterface $asset_renderer, FilenameGeneratorInterface $filename_generator, EventDispatcherInterface $event_dispatcher) {
     $this->renderer = $renderer;
     $this->assetRenderer = $asset_renderer;
+    $this->filenameGenerator = $filename_generator;
     $this->dispatcher = $event_dispatcher;
   }
 
@@ -69,40 +71,10 @@ abstract class RendererBase implements RendererInterface {
   }
 
   /**
-   * Gets a safe filename.
-   *
-   * @param string $filename
-   *   The un-processed filename.
-   *
-   * @return string
-   *   The filename stripped to only safe characters.
-   */
-  protected function sanitizeFilename($filename) {
-    return preg_replace("/[^A-Za-z0-9 ]/", '', $filename);
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function getFilename(array $entities) {
-    $filenames = [];
-    foreach ($entities as $entity) {
-      if ($label = trim($this->sanitizeFilename($this->getLabel($entity)))) {
-        $filenames[] = $label;
-      }
-    }
-    return $filenames ? implode('-', $filenames) : static::DEFAULT_FILENAME;
+    return $this->filenameGenerator->generateFilename($entities);
   }
-
-  /**
-   * Gets the entity label.
-   *
-   * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   The entity we want to generate a label for.
-   *
-   * @return string
-   *   The label for this entity.
-   */
-  abstract protected function getLabel(EntityInterface $entity);
 
 }

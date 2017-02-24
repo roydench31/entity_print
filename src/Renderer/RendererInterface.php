@@ -35,6 +35,7 @@ interface RendererInterface {
    *
    * @param \Drupal\Core\Entity\EntityInterface[] $entities
    *   The entities for which to generate the filename from.
+   *
    * @return string
    *   The generate file name for this entity.
    */

@@ -6,8 +6,12 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Render\RendererInterface as CoreRendererInterface;
 use Drupal\entity_print\Asset\AssetRendererInterface;
+use Drupal\entity_print\FilenameGeneratorInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * A renderer for content entities.
+ */
 class ContentEntityRenderer extends RendererBase {
 
   /**
@@ -24,13 +28,15 @@ class ContentEntityRenderer extends RendererBase {
    *   The renderer.
    * @param \Drupal\entity_print\Asset\AssetRendererInterface $asset_renderer
    *   The asset renderer.
+   * @param \Drupal\entity_print\FilenameGeneratorInterface $filename_generator
+   *   A filename generator.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   The event dispatcher.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The entity type manager.
    */
-  public function __construct(CoreRendererInterface $renderer, AssetRendererInterface $asset_renderer, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager) {
-    parent::__construct($renderer, $asset_renderer, $event_dispatcher);
+  public function __construct(CoreRendererInterface $renderer, AssetRendererInterface $asset_renderer, FilenameGeneratorInterface $filename_generator, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager) {
+    parent::__construct($renderer, $asset_renderer, $filename_generator, $event_dispatcher);
     $this->entityTypeManager = $entity_type_manager;
   }
 
@@ -44,13 +50,6 @@ class ContentEntityRenderer extends RendererBase {
       $build[] = $render_controller->view($entity, $this->getViewMode($entity));
     }
     return $build;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function getLabel(EntityInterface $entity) {
-    return $entity->label();
   }
 
   /**

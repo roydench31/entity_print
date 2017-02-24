@@ -2,7 +2,7 @@
 
 namespace Drupal\Tests\entity_print\Kernel;
 
-use Drupal\entity_print\Renderer\RendererBase;
+use Drupal\entity_print\FilenameGeneratorInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\simpletest\NodeCreationTrait;
 
@@ -55,8 +55,9 @@ class ContentRendererTest extends KernelTestBase {
       ['Random Node Title', 'Random Node Title'],
       ['Title -=with special chars&*#', 'Title with special chars'],
       ['Title 5 with Nums 2', 'Title 5 with Nums 2'],
+      ['Dußeldorf will be transliterated', 'Dusseldorf will be transliterated'],
       // Ensure invalid filenames get the default.
-      [' ', RendererBase::DEFAULT_FILENAME],
+      [' ', FilenameGeneratorInterface::DEFAULT_FILENAME],
     ];
   }
 
