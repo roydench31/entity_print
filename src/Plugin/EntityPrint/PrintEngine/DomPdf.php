@@ -12,17 +12,13 @@ use Symfony\Component\HttpFoundation\Request;
 use Dompdf\Adapter\CPDF;
 
 /**
+ * A Entity Print plugin for the DomPdf library.
+ *
  * @PrintEngine(
  *   id = "dompdf",
  *   label = @Translation("Dompdf"),
  *   export_type = "pdf"
  * )
- *
- * To use this implementation you will need the DomPDF library, simply run
- *
- * @code
- *     composer require "dompdf/dompdf 0.7.0-beta3"
- * @endcode
  */
 class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
 
@@ -76,7 +72,7 @@ class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
    * {@inheritdoc}
    */
   public static function getInstallationInstructions() {
-    return t('Please install with: @command', ['@command' => 'composer require "dompdf/dompdf 0.7.0-beta3"']);
+    return t('Please install with: @command', ['@command' => 'composer require "dompdf/dompdf 0.8.0"']);
   }
 
   /**
