@@ -4,6 +4,8 @@
  * @file
  * Entity Print installation file.
  */
+use Drupal\Core\Config\Entity\ConfigEntityType;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
  * Implements hook_install().
@@ -78,8 +80,17 @@ function entity_print_update_8103() {
  */
 function entity_print_update_8102() {
   // Install the new entity definitions.
-  \Drupal::entityDefinitionUpdateManager()
-    ->installEntityType(\Drupal::entityTypeManager()->getDefinition('print_engine'));
+  \Drupal::entityDefinitionUpdateManager()->installEntityType(new ConfigEntityType([
+    'id' => 'print_engine',
+    'label' => new TranslatableMarkup('Print Engine'),
+    'config_prefix' => 'print_engine',
+    'admin_permission' => 'administer entity print',
+    'entity_keys' => ['id' => 'id'],
+    'config_export' => [
+      'id',
+      'settings',
+    ],
+  ]));
 
   $config = \Drupal::configFactory()->getEditable('entity_print.settings');
   $engine = $config->get('pdf_engine');
