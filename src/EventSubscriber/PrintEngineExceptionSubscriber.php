@@ -3,7 +3,6 @@
 namespace Drupal\entity_print\EventSubscriber;
 
 use Drupal\Component\Render\FormattableMarkup;
-use Drupal\Component\Utility\Xss;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
@@ -39,9 +38,7 @@ class PrintEngineExceptionSubscriber implements EventSubscriberInterface {
   public function handleException(GetResponseForExceptionEvent $event) {
     $exception = $event->getException();
     if ($exception instanceof PrintEngineException) {
-      // Build a safe markup string using Xss::filter() so that the instructions
-      // for installing dependencies can contain quotes.
-      drupal_set_message(new FormattableMarkup('Error generating document: ' . Xss::filter($exception->getMessage()), []), 'error');
+      drupal_set_message(new FormattableMarkup($exception->getPrettyMessage(), []), 'error');
 
       if ($entity = $this->getEntity()) {
         $event->setResponse(new RedirectResponse($entity->toUrl()->toString()));
