@@ -77,6 +77,10 @@ class EntityPrintController extends ControllerBase {
 
     try {
       $pdf_engine = $this->pluginManager->createInstance($config->get('pdf_engine'));
+      return (new StreamedResponse(function() use ($entity, $pdf_engine, $config) {
+        // The PDF is sent straight to the browser.
+        $this->pdfBuilder->getEntityRenderedAsPdf($entity, $pdf_engine, $config->get('force_download'), $config->get('default_css'));
+      }))->send();
     }
     catch (PdfEngineException $e) {
       // Build a safe markup string using Xss::filter() so that the instructions
@@ -85,11 +89,6 @@ class EntityPrintController extends ControllerBase {
 
       return new RedirectResponse($entity->toUrl()->toString());
     }
-
-    return (new StreamedResponse(function() use ($entity, $pdf_engine, $config) {
-      // The PDF is sent straight to the browser.
-      $this->pdfBuilder->getEntityRenderedAsPdf($entity, $pdf_engine, $config->get('force_download'), $config->get('default_css'));
-    }))->send();
   }
 
   /**
