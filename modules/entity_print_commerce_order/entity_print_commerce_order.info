@@ -1,5 +1,0 @@
-name = Entity Print Commerce Order
-core = 7.x
-package = Entity Print
-
-dependencies[] = entity_print
