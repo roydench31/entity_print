@@ -2,19 +2,21 @@
 
 namespace Drupal\entity_print\Renderer;
 
-use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityHandlerInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Render\RenderContext;
 use Drupal\entity_print\Asset\AssetRendererInterface;
 use Drupal\entity_print\Event\PrintEvents;
 use Drupal\entity_print\Event\PrintHtmlAlterEvent;
 use Drupal\entity_print\FilenameGeneratorInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Drupal\Core\Render\RendererInterface as CoreRendererInterface;
 
 /**
  * The RendererBase class.
  */
-abstract class RendererBase implements RendererInterface {
+abstract class RendererBase implements RendererInterface, EntityHandlerInterface {
 
   /**
    * The renderer for renderable arrays.
@@ -49,6 +51,18 @@ abstract class RendererBase implements RendererInterface {
     $this->assetRenderer = $asset_renderer;
     $this->filenameGenerator = $filename_generator;
     $this->dispatcher = $event_dispatcher;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
+    return new static (
+      $container->get('renderer'),
+      $container->get('entity_print.asset_renderer'),
+      $container->get('entity_print.filename_generator'),
+      $container->get('event_dispatcher')
+    );
   }
 
   /**

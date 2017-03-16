@@ -16,10 +16,6 @@ services:
     calls:
       - [setContainer, ['@service_container']]
 
-  entity_print.renderer.content:
-    class: Drupal\entity_print\Renderer\ContentEntityRenderer
-    arguments: ['@renderer', '@entity_print.asset_renderer', '@entity_print.filename_generator', '@event_dispatcher', '@entity_type.manager']
-
   entity_print.post_render_subscriber:
     class: Drupal\entity_print\EventSubscriber\PostRenderSubscriber
     arguments: ['@config.factory', '@request_stack']

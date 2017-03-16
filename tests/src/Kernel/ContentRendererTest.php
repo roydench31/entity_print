@@ -39,7 +39,7 @@ class ContentRendererTest extends KernelTestBase {
    */
   public function testGenerateFilename($title, $expected_filename) {
     $node = $this->createNode(['title' => $title]);
-    $renderer = $this->container->get('entity_print.renderer.content');
+    $renderer = $this->container->get('entity_type.manager')->getHandler('node', 'entity_print');
     $this->assertEquals($expected_filename, $renderer->getFilename([$node]));
   }
 

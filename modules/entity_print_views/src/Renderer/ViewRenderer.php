@@ -3,13 +3,26 @@
 namespace Drupal\entity_print_views\Renderer;
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\entity_print\Renderer\RendererBase;
-use Drupal\views\ViewEntityInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Providers a renderer for Views.
  */
 class ViewRenderer extends RendererBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
+    return new static (
+      $container->get('renderer'),
+      $container->get('entity_print.asset_renderer'),
+      $container->get('entity_print.filename_generator'),
+      $container->get('event_dispatcher')
+    );
+  }
 
   /**
    * {@inheritdoc}

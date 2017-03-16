@@ -3,10 +3,12 @@
 namespace Drupal\entity_print\Renderer;
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Render\RendererInterface as CoreRendererInterface;
 use Drupal\entity_print\Asset\AssetRendererInterface;
 use Drupal\entity_print\FilenameGeneratorInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -38,6 +40,19 @@ class ContentEntityRenderer extends RendererBase {
   public function __construct(CoreRendererInterface $renderer, AssetRendererInterface $asset_renderer, FilenameGeneratorInterface $filename_generator, EventDispatcherInterface $event_dispatcher, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($renderer, $asset_renderer, $filename_generator, $event_dispatcher);
     $this->entityTypeManager = $entity_type_manager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
+    return new static (
+      $container->get('renderer'),
+      $container->get('entity_print.asset_renderer'),
+      $container->get('entity_print.filename_generator'),
+      $container->get('event_dispatcher'),
+      $container->get('entity_type.manager')
+    );
   }
 
   /**

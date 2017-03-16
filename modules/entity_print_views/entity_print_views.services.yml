@@ -1,4 +1,0 @@
-services:
-  entity_print.renderer.view:
-    class: Drupal\entity_print_views\Renderer\ViewRenderer
-    arguments: ['@renderer', '@entity_print.asset_renderer', '@entity_print.filename_generator', '@event_dispatcher']
