@@ -59,18 +59,16 @@ class AssetCollector implements AssetCollectorInterface {
     $theme = $this->themeHandler->getTheme($this->themeHandler->getDefault());
     $theme_info = $this->infoParser->parse($theme->getPathname());
 
-    if (!isset($theme_info['entity_print'])) {
-      return $libraries;
-    }
+    if (isset($theme_info['entity_print'])) {
+      // See if we have the special "all" key which is added to every PDF.
+      if (isset($theme_info['entity_print']['all'])) {
+        $libraries = array_merge($libraries, (array) $theme_info['entity_print']['all']);
+        unset($theme_info['entity_print']['all']);
+      }
 
-    // See if we have the special "all" key which is added to every PDF.
-    if (isset($theme_info['entity_print']['all'])) {
-      $libraries = array_merge($libraries, (array) $theme_info['entity_print']['all']);
-      unset($theme_info['entity_print']['all']);
-    }
-
-    foreach ($entities as $entity) {
-      $this->buildCssForEntity($entity, $theme_info['entity_print'], $libraries);
+      foreach ($entities as $entity) {
+        $this->buildCssForEntity($entity, $theme_info['entity_print'], $libraries);
+      }
     }
 
     $this->dispatcher->dispatch(PrintEvents::CSS_ALTER, new PrintCssAlterEvent($libraries, $entities));
