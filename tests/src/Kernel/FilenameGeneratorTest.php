@@ -7,10 +7,10 @@ use Drupal\KernelTests\KernelTestBase;
 use Drupal\simpletest\NodeCreationTrait;
 
 /**
- * @coversDefaultClass \Drupal\entity_print\Renderer\ContentEntityRenderer
+ * @coversDefaultClass \Drupal\entity_print\FilenameGenerator
  * @group entity_print
  */
-class ContentRendererTest extends KernelTestBase {
+class FilenameGeneratorTest extends KernelTestBase {
 
   use NodeCreationTrait;
 
@@ -22,6 +22,13 @@ class ContentRendererTest extends KernelTestBase {
   public static $modules = ['system', 'user', 'node', 'filter', 'entity_print'];
 
   /**
+   * The filename generator.
+   *
+   * @var \Drupal\entity_print\FilenameGeneratorInterface
+   */
+  protected $filenameGenerator;
+
+  /**
    * {@inheritdoc}
    */
   public function setUp() {
@@ -29,18 +36,18 @@ class ContentRendererTest extends KernelTestBase {
     $this->installConfig(['system', 'filter']);
     $this->installEntitySchema('node');
     $this->installEntitySchema('user');
+    $this->filenameGenerator = $this->container->get('entity_print.filename_generator');
   }
 
   /**
    * Test filename generation for the content entities.
    *
-   * @covers ::getFilename
+   * @covers ::generateFilename
    * @dataProvider generateFilenameDataProvider
    */
   public function testGenerateFilename($title, $expected_filename) {
     $node = $this->createNode(['title' => $title]);
-    $renderer = $this->container->get('entity_type.manager')->getHandler('node', 'entity_print');
-    $this->assertEquals($expected_filename, $renderer->getFilename([$node]));
+    $this->assertEquals($expected_filename, $this->filenameGenerator->generateFilename([$node]));
   }
 
   /**
@@ -59,6 +66,24 @@ class ContentRendererTest extends KernelTestBase {
       // Ensure invalid filenames get the default.
       [' ', FilenameGeneratorInterface::DEFAULT_FILENAME],
     ];
+  }
+
+  /**
+   * Test the filename when using multiple entities.
+   */
+  public function testFilenameMultipleEntities() {
+    $entities = [$this->createNode(['title' => 'entity1']), $this->createNode(['title' => 'entity2'])];
+    $this->assertEquals('entity1-entity2', $this->filenameGenerator->generateFilename($entities));
+  }
+
+  /**
+   * Test filename generation with a custom label callback.
+   */
+  public function testGenerateCustomCallback() {
+    $node = $this->createNode([]);
+    $this->assertEquals($node->label() . 'appended', $this->filenameGenerator->generateFilename([$node], function ($entity) {
+      return $entity->label() . 'appended';
+    }));
   }
 
 }
