@@ -1,4 +1,5 @@
 name = Entity Print
+description = "Allows you to print any Drupal entity to PDF. You must also have WkHtmlToPdf already installed on the server."
 core = 7.x
 package = Entity Print
 configure = admin/config/content/entityprint
