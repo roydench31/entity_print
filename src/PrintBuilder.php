@@ -11,6 +11,9 @@ use Drupal\entity_print\Plugin\PrintEngineInterface;
 use Drupal\entity_print\Renderer\RendererFactoryInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * The print builder service.
+ */
 class PrintBuilder implements PrintBuilderInterface {
 
   use StringTranslationTrait;
@@ -36,6 +39,8 @@ class PrintBuilder implements PrintBuilderInterface {
    *   The Renderer factory.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
    *   The event dispatcher.
+   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
+   *   The string translation service.
    */
   public function __construct(RendererFactoryInterface $renderer_factory, EventDispatcherInterface $event_dispatcher, TranslationInterface $string_translation) {
     $this->rendererFactory = $renderer_factory;

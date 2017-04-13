@@ -86,7 +86,7 @@ class AssetCollector implements AssetCollectorInterface {
    * @param array $libraries
    *   A list of CSS libraries.
    */
-  protected function buildCssForEntity(EntityInterface $entity, array $theme_info, &$libraries) {
+  protected function buildCssForEntity(EntityInterface $entity, array $theme_info, array &$libraries) {
     foreach ($theme_info as $key => $value) {
       // If the entity type doesn't match just skip.
       if ($key !== $entity->getEntityTypeId()) {

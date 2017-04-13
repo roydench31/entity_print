@@ -7,6 +7,8 @@ use Drupal\entity_print\Plugin\ExportTypeInterface;
 use Drupal\entity_print\Plugin\PrintEngineBase;
 
 /**
+ * TCPDF plugin implementation.
+ *
  * @PrintEngine(
  *   id = "tcpdfv1",
  *   label = @Translation("TCPDF (v1)"),

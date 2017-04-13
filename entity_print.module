@@ -16,7 +16,7 @@ use Drupal\entity_print\Renderer\ContentEntityRenderer;
  * Implements hook_theme().
  */
 function entity_print_theme($existing, $type, $theme, $path) {
-  return array(
+  return [
     'entity_print' => [
       'path' => $path . '/templates',
       'template' => 'entity-print',
@@ -26,7 +26,7 @@ function entity_print_theme($existing, $type, $theme, $path) {
         'entity_print_css' => NULL,
       ],
     ],
-  );
+  ];
 }
 
 /**
@@ -129,7 +129,7 @@ function entity_print_form_entity_view_display_edit_form_validate(&$form, FormSt
     $key = 'entity_print_view_' . $export_type;
     if (empty($form_state->getValue(['fields', $key, 'empty_cell']))) {
       $form_state->setErrorByName("fields][$key][empty_cell", t('The Entity Print fields settings have not been saved. Please enter a non-empty value for the @label field.', [
-        '@label' => $definition['label']
+        '@label' => $definition['label'],
       ]));
     }
   }

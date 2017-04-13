@@ -51,7 +51,7 @@ class AssetRenderer implements AssetRendererInterface {
   /**
    * {@inheritdoc}
    */
-  public function render($entities, $use_default_css = TRUE, $optimize_css = TRUE) {
+  public function render(array $entities, $use_default_css = TRUE, $optimize_css = TRUE) {
     $build['#attached']['library'] = [];
 
     // Inject some generic CSS across all templates.

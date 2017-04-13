@@ -46,6 +46,18 @@ abstract class RendererBase implements RendererInterface, EntityHandlerInterface
    */
   protected $dispatcher;
 
+  /**
+   * RendererBase constructor.
+   *
+   * @param \Drupal\Core\Render\RendererInterface $renderer
+   *   Cores renderer.
+   * @param \Drupal\entity_print\Asset\AssetRendererInterface $asset_renderer
+   *   The asset renderer.
+   * @param \Drupal\entity_print\FilenameGeneratorInterface $filename_generator
+   *   Filename generator.
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $event_dispatcher
+   *   The event dispatcher.
+   */
   public function __construct(CoreRendererInterface $renderer, AssetRendererInterface $asset_renderer, FilenameGeneratorInterface $filename_generator, EventDispatcherInterface $event_dispatcher) {
     $this->renderer = $renderer;
     $this->assetRenderer = $asset_renderer;

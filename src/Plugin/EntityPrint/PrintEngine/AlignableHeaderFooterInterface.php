@@ -20,14 +20,14 @@ interface AlignableHeaderFooterInterface {
   /**
    * Align the text in the center.
    */
-  const ALIGN_CENTER= 'center';
+  const ALIGN_CENTER = 'center';
 
   /**
    * Sets the header text.
    *
    * @param string $text
    *   The plain text to add to the header.
-   * @param ALIGN_* $alignment
+   * @param string $alignment
    *   One of the align constants.
    *
    * @return $this
@@ -40,7 +40,7 @@ interface AlignableHeaderFooterInterface {
    *
    * @param string $text
    *   The plain text to add to the footer.
-   * @param ALIGN_* $position
+   * @param string $alignment
    *   One of the align constants.
    *
    * @return $this

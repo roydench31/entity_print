@@ -20,6 +20,6 @@ interface AssetRendererInterface {
    * @return array
    *   The renderable array for the assets.
    */
-  public function render($entities, $use_default_css = TRUE, $optimize_css = TRUE);
+  public function render(array $entities, $use_default_css = TRUE, $optimize_css = TRUE);
 
 }

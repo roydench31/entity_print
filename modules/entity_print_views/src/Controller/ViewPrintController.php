@@ -81,7 +81,7 @@ class ViewPrintController extends ControllerBase {
    * @param string $export_type
    *   The export type.
    * @param string $view_name
-   *   The view name
+   *   The view name.
    * @param string $display_id
    *   The view display to render.
    *
@@ -113,7 +113,7 @@ class ViewPrintController extends ControllerBase {
       return new RedirectResponse($url);
     }
 
-    return (new StreamedResponse(function() use ($view, $print_engine, $config) {
+    return (new StreamedResponse(function () use ($view, $print_engine, $config) {
       // The printed document is sent straight to the browser.
       $this->printBuilder->deliverPrintable([$view], $print_engine, $config->get('force_download'), $config->get('default_css'));
     }))->send();
@@ -155,7 +155,7 @@ class ViewPrintController extends ControllerBase {
    * @param string $export_type
    *   The export type.
    * @param string $view_name
-   *   The view name
+   *   The view name.
    * @param string $display_id
    *   The view display to render.
    *
@@ -182,7 +182,7 @@ class ViewPrintController extends ControllerBase {
    *   The export type.
    * @param string $view_name
    *   The view machine name.
-   * @param string
+   * @param string $display_id
    *   The machine name of the display.
    *
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
@@ -203,7 +203,7 @@ class ViewPrintController extends ControllerBase {
    *   The export type.
    * @param string $view_name
    *   The view machine name.
-   * @param string
+   * @param string $display_id
    *   The machine name of the display.
    *
    * @return \Symfony\Component\HttpFoundation\RedirectResponse

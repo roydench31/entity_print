@@ -83,7 +83,7 @@ class PrintEngineException extends \Exception {
    * @return bool
    *   TRUE if anyone of the patterns match otherwise FALSE.
    */
-  protected function evalulateRegex($patterns, $subject) {
+  protected function evalulateRegex(array $patterns, $subject) {
     foreach ($patterns as $pattern) {
       if (preg_match($pattern, $subject, $matches)) {
         return TRUE;

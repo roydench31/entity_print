@@ -6,6 +6,9 @@ use Drupal\Component\Plugin\PluginInspectionInterface;
 use Drupal\Component\Plugin\ConfigurablePluginInterface;
 use Drupal\Core\Plugin\PluginFormInterface;
 
+/**
+ * Print engine interface.
+ */
 interface PrintEngineInterface extends PluginInspectionInterface, PluginFormInterface, ConfigurablePluginInterface {
 
   /**

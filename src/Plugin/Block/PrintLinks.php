@@ -42,7 +42,7 @@ class PrintLinks extends BlockBase implements ContainerFactoryPluginInterface {
    * @param \Drupal\entity_print\Plugin\ExportTypeManagerInterface $exportTypeManager
    *   The export type manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ExportTypeManagerInterface $exportTypeManager) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, ExportTypeManagerInterface $exportTypeManager) {
     $this->exportTypeManager = $exportTypeManager;
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }

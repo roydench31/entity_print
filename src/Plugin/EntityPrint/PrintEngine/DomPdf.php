@@ -23,6 +23,8 @@ use Dompdf\Adapter\CPDF;
 class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
 
   /**
+   * The Dompdf instance.
+   *
    * @var \Dompdf\Dompdf
    */
   protected $dompdf;
@@ -97,7 +99,7 @@ class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
       '#title' => $this->t('Enable HTML5 Parser'),
       '#type' => 'checkbox',
       '#default_value' => $this->configuration['enable_html5_parser'],
-      '#description' => $this->t('Note, this library doesn\'t work without this option enabled.'),
+      '#description' => $this->t("Note, this library doesn't work without this option enabled."),
     ];
     $form['enable_remote'] = [
       '#title' => $this->t('Enable Remote URLs'),
@@ -120,13 +122,13 @@ class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
       '#title' => $this->t('Verify Peer'),
       '#type' => 'checkbox',
       '#default_value' => $this->configuration['verify_peer'],
-      '#description' => $this->t('Verify an SSL Peer\'s certificate. For development only, do not disable this in production. See https://curl.haxx.se/libcurl/c/CURLOPT_SSL_VERIFYPEER.html'),
+      '#description' => $this->t("Verify an SSL Peer's certificate. For development only, do not disable this in production. See https://curl.haxx.se/libcurl/c/CURLOPT_SSL_VERIFYPEER.html"),
     ];
     $form['ssl_configuration']['verify_peer_name'] = [
       '#title' => $this->t('Verify Peer Name'),
       '#type' => 'checkbox',
       '#default_value' => $this->configuration['verify_peer_name'],
-      '#description' => $this->t('Verify an SSL Peer\'s certificate. For development only, do not disable this in production. See https://curl.haxx.se/libcurl/c/CURLOPT_SSL_VERIFYPEER.html'),
+      '#description' => $this->t("Verify an SSL Peer's certificate. For development only, do not disable this in production. See https://curl.haxx.se/libcurl/c/CURLOPT_SSL_VERIFYPEER.html"),
     ];
 
     return $form;

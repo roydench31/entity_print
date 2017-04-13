@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\entity_print\Kernel;
 
-use Drupal\Core\Datetime\Entity\DateFormat;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\KernelTests\KernelTestBase;

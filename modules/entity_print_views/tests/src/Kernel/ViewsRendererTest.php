@@ -7,6 +7,8 @@ use Drupal\KernelTests\KernelTestBase;
 use Drupal\views\Views;
 
 /**
+ * Views renderer test.
+ *
  * @group entity_print_views
  */
 class ViewsRendererTest extends KernelTestBase {

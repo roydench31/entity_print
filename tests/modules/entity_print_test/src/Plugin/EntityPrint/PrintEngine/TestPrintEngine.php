@@ -6,6 +6,8 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\entity_print\Plugin\PrintEngineBase;
 
 /**
+ * A test print engine plugin.
+ *
  * @PrintEngine(
  *   id = "testprintengine",
  *   label = @Translation("Test Print Engine"),
@@ -15,6 +17,8 @@ use Drupal\entity_print\Plugin\PrintEngineBase;
 class TestPrintEngine extends PrintEngineBase {
 
   /**
+   * The HTML string.
+   *
    * @var string
    */
   protected $html;

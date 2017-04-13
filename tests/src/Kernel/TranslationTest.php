@@ -19,7 +19,15 @@ class TranslationTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['system', 'user', 'node', 'filter', 'language', 'entity_print', 'entity_print_test'];
+  public static $modules = [
+    'system',
+    'user',
+    'node',
+    'filter',
+    'language',
+    'entity_print',
+    'entity_print_test',
+  ];
 
   /**
    * {@inheritdoc}

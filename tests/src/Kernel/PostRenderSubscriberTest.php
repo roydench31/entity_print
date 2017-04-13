@@ -3,7 +3,6 @@
 namespace Drupal\Tests\entity_print\Kernel;
 
 use Drupal\entity_print\EventSubscriber\PostRenderSubscriber;
-use Drupal\entity_print\PrintEngineException;
 use Drupal\KernelTests\KernelTestBase;
 
 /**

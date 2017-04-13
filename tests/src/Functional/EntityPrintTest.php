@@ -6,6 +6,8 @@ use Drupal\Tests\BrowserTestBase;
 use Drupal\user\Entity\Role;
 
 /**
+ * Test file.
+ *
  * @group entity_print
  */
 class EntityPrintTest extends BrowserTestBase {
@@ -43,7 +45,12 @@ class EntityPrintTest extends BrowserTestBase {
     $config
       ->set('print_engines.pdf_engine', 'print_exception_engine')
       ->save();
-    user_role_grant_permissions(Role::ANONYMOUS_ID, ['access content', 'bypass entity print access', 'entity print views access', 'administer nodes']);
+    user_role_grant_permissions(Role::ANONYMOUS_ID, [
+      'access content',
+      'bypass entity print access',
+      'entity print views access',
+      'administer nodes',
+    ]);
   }
 
   /**

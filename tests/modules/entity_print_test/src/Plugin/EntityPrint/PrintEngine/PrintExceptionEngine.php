@@ -6,6 +6,8 @@ use Drupal\entity_print\Plugin\PrintEngineBase;
 use Drupal\entity_print\PrintEngineException;
 
 /**
+ * A test print engine that throws an exception.
+ *
  * @PrintEngine(
  *   id = "print_exception_engine",
  *   label = @Translation("Print Exception Engine"),

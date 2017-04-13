@@ -59,7 +59,7 @@ abstract class PdfEngineBase extends PrintEngineBase {
    * @return array
    *   An array of paper sizes keyed by their machine name.
    */
-  protected abstract function getPaperSizes();
+  abstract protected function getPaperSizes();
 
   /**
    * {@inheritdoc}

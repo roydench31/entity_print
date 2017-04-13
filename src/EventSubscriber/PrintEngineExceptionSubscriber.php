@@ -12,18 +12,33 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
+/**
+ * Exception event subscriber.
+ */
 class PrintEngineExceptionSubscriber implements EventSubscriberInterface {
 
   /**
+   * The route match service.
+   *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
   protected $routeMatch;
 
   /**
+   * The entity type manager.
+   *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
 
+  /**
+   * PrintEngineExceptionSubscriber constructor.
+   *
+   * @param \Drupal\Core\Routing\RouteMatchInterface $routeMatch
+   *   Route match service.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   Entity type manager.
+   */
   public function __construct(RouteMatchInterface $routeMatch, EntityTypeManagerInterface $entityTypeManager) {
     $this->routeMatch = $routeMatch;
     $this->entityTypeManager = $entityTypeManager;

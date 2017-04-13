@@ -5,6 +5,8 @@ namespace Drupal\entity_print_test\Plugin\EntityPrint\PrintEngine;
 use Drupal\entity_print\Plugin\PrintEngineBase;
 
 /**
+ * Unavailable print engine for testing.
+ *
  * @PrintEngine(
  *   id = "not_available_print_engine",
  *   label = @Translation("Not Available Print Engine"),

@@ -32,6 +32,8 @@ class PrintLinkTest extends KernelTestBase {
   }
 
   /**
+   * Test build links.
+   *
    * @covers ::build
    */
   public function testBuildLinks() {
@@ -56,7 +58,7 @@ class PrintLinkTest extends KernelTestBase {
    * @return \Drupal\entity_print\Plugin\Block\PrintLinks
    *   The loaded block.
    */
-  protected function getBlock($config = []) {
+  protected function getBlock(array $config = []) {
     $manager = $this->container->get('plugin.manager.block');
     $entity = $this->getMock('Drupal\Core\Entity\EntityInterface');
     $context = new Context(ContextDefinition::create(), $entity);

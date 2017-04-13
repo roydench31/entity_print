@@ -9,6 +9,8 @@ use Drupal\entity_print\PrintEngineException;
 use mikehaertl\wkhtmlto\Pdf;
 
 /**
+ * PHP wkhtmltopdf plugin.
+ *
  * @PrintEngine(
  *   id = "phpwkhtmltopdf",
  *   label = @Translation("Php Wkhtmltopdf"),
@@ -24,6 +26,8 @@ use mikehaertl\wkhtmlto\Pdf;
 class PhpWkhtmlToPdf extends PdfEngineBase implements AlignableHeaderFooterInterface {
 
   /**
+   * The library instance.
+   *
    * @var \mikehaertl\wkhtmlto\Pdf
    */
   protected $pdf;
