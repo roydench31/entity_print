@@ -42,6 +42,8 @@ class PhpWkhtmlToPdf extends PdfEngineBase implements AlignableHeaderFooterInter
       'orientation' => $this->configuration['orientation'],
       'username' => $this->configuration['username'],
       'password' => $this->configuration['password'],
+      'page-size' => $this->configuration['default_paper_size'],
+      'zoom' => $this->configuration['zoom'],
     ]);
   }
 
@@ -58,6 +60,7 @@ class PhpWkhtmlToPdf extends PdfEngineBase implements AlignableHeaderFooterInter
   public function defaultConfiguration() {
     return parent::defaultConfiguration() + [
       'binary_location' => '/usr/local/bin/wkhtmltopdf',
+      'zoom' => 1,
     ];
   }
 
@@ -66,11 +69,19 @@ class PhpWkhtmlToPdf extends PdfEngineBase implements AlignableHeaderFooterInter
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
     $form = parent::buildConfigurationForm($form, $form_state);
+    $form['zoom'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Zoom'),
+      '#description' => $this->t('Set this to zoom the pages - needed to produce hairlines.'),
+      '#default_value' => $this->configuration['zoom'],
+      '#weight' => -8,
+    ];
     $form['binary_location'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Binary Location'),
       '#description' => $this->t('Set this to the system path where the PDF engine binary is located.'),
       '#default_value' => $this->configuration['binary_location'],
+      '#weight' => -7,
     ];
 
     return $form;
