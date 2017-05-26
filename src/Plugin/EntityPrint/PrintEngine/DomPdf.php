@@ -116,7 +116,7 @@ class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
       '#title' => $this->t('CA File'),
       '#type' => 'textfield',
       '#default_value' => $this->configuration['cafile'],
-      '#description' => $this->t('Path to the CA file. This may be needed for development boxes that use SSL'),
+      '#description' => $this->t('Path to the CA file. This may be needed for development boxes that use SSL. You can leave this empty in production.'),
     ];
     $form['ssl_configuration']['verify_peer'] = [
       '#title' => $this->t('Verify Peer'),
@@ -207,11 +207,13 @@ class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
   protected function setupHttpContext() {
     $context_options = [
       'ssl' => [
-        'cafile' => $this->configuration['cafile'],
         'verify_peer' => $this->configuration['verify_peer'],
         'verify_peer_name' => $this->configuration['verify_peer_name'],
       ],
     ];
+    if ($this->configuration['cafile']) {
+      $context_options['ssl']['cafile'] = $this->configuration['cafile'];
+    }
 
     // If we have authentication then add it to the request context.
     if (!empty($this->configuration['username'])) {
