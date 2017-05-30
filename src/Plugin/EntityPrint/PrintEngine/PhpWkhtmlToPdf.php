@@ -17,7 +17,8 @@ use mikehaertl\wkhtmlto\Pdf;
  *   export_type = "pdf"
  * )
  *
- * To use this implementation you will need the DomPDF library, simply run:
+ * To use this implementation you will need the Php Wkhtmltopdf library, simply
+ * run:
  *
  * @code
  *     composer require "mikehaertl/phpwkhtmltopdf ~2.1"
