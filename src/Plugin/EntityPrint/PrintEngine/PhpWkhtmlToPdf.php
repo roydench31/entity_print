@@ -46,6 +46,23 @@ class PhpWkhtmlToPdf extends PdfEngineBase implements AlignableHeaderFooterInter
       'page-size' => $this->configuration['default_paper_size'],
       'zoom' => $this->configuration['zoom'],
     ]);
+
+    // Table of contents handling.
+    if ($this->configuration['toc_generate']) {
+      if ($this->configuration['toc_enable_back_links']) {
+        // This option is actually a page option.
+        $this->getPrintObject()->setOptions(['enable-toc-back-links']);
+      }
+
+      $options = [];
+      if ($this->configuration['toc_disable_dotted_lines']) {
+        $options[] = 'disable-dotted-lines';
+      }
+      if ($this->configuration['toc_disable_links']) {
+        $options[] = 'disable-toc-links';
+      }
+      $this->getPrintObject()->addToc($options);
+    }
   }
 
   /**
@@ -62,6 +79,10 @@ class PhpWkhtmlToPdf extends PdfEngineBase implements AlignableHeaderFooterInter
     return parent::defaultConfiguration() + [
       'binary_location' => '/usr/local/bin/wkhtmltopdf',
       'zoom' => 1,
+      'toc_generate' => FALSE,
+      'toc_enable_back_links' => FALSE,
+      'toc_disable_dotted_lines' => FALSE,
+      'toc_disable_links' => FALSE,
     ];
   }
 
@@ -77,12 +98,44 @@ class PhpWkhtmlToPdf extends PdfEngineBase implements AlignableHeaderFooterInter
       '#default_value' => $this->configuration['zoom'],
       '#weight' => -8,
     ];
+
     $form['binary_location'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Binary Location'),
       '#description' => $this->t('Set this to the system path where the PDF engine binary is located.'),
       '#default_value' => $this->configuration['binary_location'],
       '#weight' => -7,
+    ];
+
+    $form['toc'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Table of contents'),
+      '#tree' => TRUE,
+      '#open' => $this->configuration['toc_generate'],
+    ];
+
+    $form['toc']['toc_generate'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Generate table of contents?'),
+      '#default_value' => $this->configuration['toc_generate'],
+    ];
+
+    $form['toc']['toc_enable_back_links'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Link from section header to table of contents?'),
+      '#default_value' => $this->configuration['toc_enable_back_links'],
+    ];
+
+    $form['toc']['toc_disable_dotted_lines'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Do not use dotted lines in the table of contents?'),
+      '#default_value' => $this->configuration['toc_disable_dotted_lines'],
+    ];
+
+    $form['toc']['toc_disable_links'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Do not link from table of contents to sections'),
+      '#default_value' => $this->configuration['toc_disable_links'],
     ];
 
     return $form;

@@ -70,6 +70,18 @@ entity_print_print_engine.phpwkhtmltopdf:
     binary_location:
       type: string
       label: 'Path to the wkhtmltopdf binary'
+    toc_generate:
+      type: boolean
+      label: 'Generate table of content'
+    toc_enable_back_links:
+      type: boolean
+      label: 'Link from section header to table of content'
+    toc_disable_dotted_lines:
+      type: boolean
+      label: 'Do not use dotted lines in the table of content'
+    toc_disable_links:
+      type: boolean
+      label: 'Do not link from table of content to sections'
 
 entity_print_print_engine.tcpdfv1:
   type: mapping
