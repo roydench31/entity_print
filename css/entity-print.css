@@ -11,6 +11,6 @@ body {
   height: auto;
 }
 
-.page td img {
+td img {
   max-width: none;
 }
