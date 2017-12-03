@@ -65,7 +65,6 @@ entity_print_print_engine.dompdf:
 entity_print_print_engine.phpwkhtmltopdf:
   type: entint_print_engine_pdf
   label: 'PHP Wkhtmltopdf'
-  type: mapping
   mapping:
     binary_location:
       type: string
