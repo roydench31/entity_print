@@ -83,7 +83,6 @@ entity_print_print_engine.phpwkhtmltopdf:
       label: 'Do not link from table of content to sections'
 
 entity_print_print_engine.tcpdfv1:
-  type: mapping
   label: 'TCPDF (v1)'
   type: mapping
   mapping:
