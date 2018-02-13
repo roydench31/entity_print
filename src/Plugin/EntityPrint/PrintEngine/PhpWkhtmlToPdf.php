@@ -34,6 +34,25 @@ class PhpWkhtmlToPdf extends PdfEngineBase implements AlignableHeaderFooterInter
   protected $pdf;
 
   /**
+   * Popular viewport sizes.
+   *
+   * @var array
+   * @constant
+   */
+  public static $viewportSizeOptions = [
+    '_none'     => 'Default',
+    '1920x1080' => '1920x1080',
+    '1366x768'  => '1366x768',
+    '1280x1024' => '1280x1024',
+    '1280x800'  => '1280x800',
+    '1024x768'  => '1024x768',
+    '768x1024'  => '768x1024',
+    '720x1280'  => '720x1280',
+    '375x667'   => '375x667',
+    '360x640'   => '360x640',
+  ];
+
+  /**
    * {@inheritdoc}
    */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, ExportTypeInterface $export_type) {
@@ -45,7 +64,17 @@ class PhpWkhtmlToPdf extends PdfEngineBase implements AlignableHeaderFooterInter
       'password' => $this->configuration['password'],
       'page-size' => $this->configuration['default_paper_size'],
       'zoom' => $this->configuration['zoom'],
+      'viewport-size' => $this->configuration['viewport_size'],
     ]);
+
+    if ($this->configuration['remove_pdf_margins']) {
+      $this->pdf->setOptions([
+        'margin-top' => 0,
+        'margin-bottom' => 0,
+        'margin-left' => 0,
+        'margin-right' => 0,
+      ]);
+    }
 
     // Table of contents handling.
     if ($this->configuration['toc_generate']) {
@@ -83,6 +112,8 @@ class PhpWkhtmlToPdf extends PdfEngineBase implements AlignableHeaderFooterInter
       'toc_enable_back_links' => FALSE,
       'toc_disable_dotted_lines' => FALSE,
       'toc_disable_links' => FALSE,
+      'viewport_size' => '_none',
+      'remove_pdf_margins' => FALSE,
     ];
   }
 
@@ -136,6 +167,23 @@ class PhpWkhtmlToPdf extends PdfEngineBase implements AlignableHeaderFooterInter
       '#type' => 'checkbox',
       '#title' => $this->t('Do not link from table of contents to sections'),
       '#default_value' => $this->configuration['toc_disable_links'],
+    ];
+
+    $form['viewport_size'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Viewport Size'),
+      '#options' => self::$viewportSizeOptions,
+      '#description' => $this->t('Set viewport size if you have custom scrollbars or css attribute overflow to emulate window size.'),
+      '#default_value' => $this->configuration['viewport_size'],
+      '#weight' => -6,
+    ];
+
+    $form['remove_pdf_margins'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Remove PDF margins'),
+      '#description' => $this->t('Remove the page margins on the PDF'),
+      '#default_value' => $this->configuration['remove_pdf_margins'],
+      '#weight' => -5,
     ];
 
     return $form;

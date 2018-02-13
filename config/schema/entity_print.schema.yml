@@ -81,6 +81,12 @@ entity_print_print_engine.phpwkhtmltopdf:
     toc_disable_links:
       type: boolean
       label: 'Do not link from table of content to sections'
+    viewport_size:
+      type: string
+      label: 'Set viewport size if you have custom scrollbars or css attribute overflow to emulate window size.'
+    remove_pdf_margins:
+      type: boolean
+      label: 'Remove the page margins on the PDF'
 
 entity_print_print_engine.tcpdfv1:
   label: 'TCPDF (v1)'
