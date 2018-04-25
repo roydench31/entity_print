@@ -23,6 +23,13 @@ use Dompdf\Adapter\CPDF;
 class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
 
   /**
+   * Name of DomPdf log file.
+   *
+   * @var string
+   */
+  const LOG_FILE_NAME = 'log.html';
+
+  /**
    * The Dompdf instance.
    *
    * @var \Dompdf\Dompdf
@@ -50,6 +57,11 @@ class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $export_type);
     $this->dompdf = new DompdfLib($this->configuration);
     $this->dompdf->setPaper($this->configuration['default_paper_size'], $this->configuration['orientation']);
+    $this->dompdf->set_option('temp_dir', file_directory_temp());
+    $this->dompdf->set_option('log_output_file', file_directory_temp() . DIRECTORY_SEPARATOR . self::LOG_FILE_NAME);
+    if ($this->configuration['disable_log']) {
+      $this->dompdf->set_option('log_output_file', '');
+    }
     $this->dompdf
       ->setBaseHost($request->getHttpHost())
       ->setProtocol($request->getScheme() . '://');
@@ -83,6 +95,7 @@ class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
   public function defaultConfiguration() {
     return parent::defaultConfiguration() + [
       'enable_html5_parser' => TRUE,
+      'disable_log' => FALSE,
       'enable_remote' => TRUE,
       'cafile' => '',
       'verify_peer' => TRUE,
@@ -100,6 +113,14 @@ class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
       '#type' => 'checkbox',
       '#default_value' => $this->configuration['enable_html5_parser'],
       '#description' => $this->t("Note, this library doesn't work without this option enabled."),
+    ];
+    $form['disable_log'] = [
+      '#title' => $this->t('Disable Log'),
+      '#type' => 'checkbox',
+      '#default_value' => $this->configuration['disable_log'],
+      '#description' => $this->t("Check to disable DomPdf logging to <code>@log_file_name</code> in Drupal's temporary directory.", [
+        '@log_file_name' => self::LOG_FILE_NAME,
+      ]),
     ];
     $form['enable_remote'] = [
       '#title' => $this->t('Enable Remote URLs'),
