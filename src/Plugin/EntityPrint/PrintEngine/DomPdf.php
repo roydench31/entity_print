@@ -162,9 +162,6 @@ class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
     // We must keep adding to previously added HTML as loadHtml() replaces the
     // entire document.
     $this->html .= (string) $content;
-    // Sanitize the HTML by removing really special characters such
-    // as &#8023; which might get put into a CKEditor field unintentionally.
-    $this->html = preg_replace('/[^[:print:]]/', '', $this->html);
     $this->dompdf->loadHtml($this->html);
   }
 
