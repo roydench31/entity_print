@@ -195,8 +195,8 @@ class PhpWkhtmlToPdf extends PdfEngineBase implements AlignableHeaderFooterInter
   public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
     parent::validateConfigurationForm($form, $form_state);
     $values = OptGroup::flattenOptions($form_state->getValues());
-    $binary_location = $values['binary_location'];
-    if (!file_exists($binary_location)) {
+    $binary_location = isset($values['binary_location']) ? $values['binary_location'] : NULL;
+    if ($binary_location && !file_exists($binary_location)) {
       $form_state->setErrorByName('binary_location', sprintf('The wkhtmltopdf binary does not exist at %s', $binary_location));
     }
   }
