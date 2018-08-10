@@ -128,6 +128,7 @@ class PhpWkhtmlToPdf extends PdfEngineBase implements AlignableHeaderFooterInter
       '#description' => $this->t('Set this to zoom the pages - needed to produce hairlines.'),
       '#default_value' => $this->configuration['zoom'],
       '#weight' => -8,
+      '#step' => 0.01,
     ];
 
     $form['binary_location'] = [
