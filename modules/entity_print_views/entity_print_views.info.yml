@@ -5,5 +5,5 @@ core: 8.x
 package: Entity Print
 configure: entity_print.settings
 dependencies:
-  - entity_print
-  - views
+  - entity_print:entity_print
+  - drupal:views
