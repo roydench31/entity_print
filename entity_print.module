@@ -5,7 +5,7 @@
  * Print any entity.
  */
 
-define('ENTITY_PRINT_CSS_GROUP', 'entity_print');
+define('ENTITY_PRINT_CSS_GROUP', CSS_THEME);
 
 /**
  * Implements hook_entity_print().
