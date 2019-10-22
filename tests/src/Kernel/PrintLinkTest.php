@@ -29,6 +29,7 @@ class PrintLinkTest extends KernelTestBase {
    */
   public function testPlaceBlock() {
     $this->placeBlock('print_links');
+    $this->assertTrue(TRUE);
   }
 
   /**
