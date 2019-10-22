@@ -4,6 +4,7 @@ namespace Drupal\entity_print\Plugin\EntityPrint\PrintEngine;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\OptGroup;
+use Drupal\Core\Site\Settings;
 use Drupal\entity_print\Plugin\ExportTypeInterface;
 use Drupal\entity_print\PrintEngineException;
 use mikehaertl\wkhtmlto\Pdf;
@@ -91,6 +92,19 @@ class PhpWkhtmlToPdf extends PdfEngineBase implements AlignableHeaderFooterInter
         $options[] = 'disable-toc-links';
       }
       $this->getPrintObject()->addToc($options);
+    }
+
+    // Proxy configuration.
+    $config = Settings::get('http_client_config');
+    if (!empty($config['proxy']['https'])) {
+      $this->pdf->setOptions([
+        'proxy' => $config['proxy']['https'],
+      ]);
+    }
+    elseif (!empty($config['proxy']['http'])) {
+      $this->pdf->setOptions([
+        'proxy' => $config['proxy']['http'],
+      ]);
     }
   }
 
