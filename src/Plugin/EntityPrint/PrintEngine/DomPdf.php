@@ -66,10 +66,10 @@ class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
 
     $this->dompdfOptions = new DompdfLibOptions($this->configuration);
 
-    $this->dompdfOptions->setTempDir(file_directory_temp());
-    $this->dompdfOptions->setFontCache(file_directory_temp());
-    $this->dompdfOptions->setFontDir(file_directory_temp());
-    $this->dompdfOptions->setLogOutputFile(file_directory_temp() . DIRECTORY_SEPARATOR . self::LOG_FILE_NAME);
+    $this->dompdfOptions->setTempDir(\Drupal::service('file_system')->getTempDirectory());
+    $this->dompdfOptions->setFontCache(\Drupal::service('file_system')->getTempDirectory());
+    $this->dompdfOptions->setFontDir(\Drupal::service('file_system')->getTempDirectory());
+    $this->dompdfOptions->setLogOutputFile(\Drupal::service('file_system')->getTempDirectory() . DIRECTORY_SEPARATOR . self::LOG_FILE_NAME);
     $this->dompdfOptions->setIsRemoteEnabled($this->configuration['enable_remote']);
 
     $this->dompdf = new DompdfLib($this->dompdfOptions);

@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\entity_print\Functional;
 
-use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Render\RenderContext;
 use Drupal\field\Entity\FieldConfig;
@@ -49,7 +48,7 @@ class Base64ImageTest extends BrowserTestBase {
     FieldStorageConfig::create([
       'entity_type' => 'node',
       'type' => 'image',
-      'field_name' => $field_name = Unicode::strtolower($this->randomMachineName()),
+      'field_name' => $field_name = mb_strtolower($this->randomMachineName()),
     ])->save();
     FieldConfig::create([
       'entity_type' => 'node',
