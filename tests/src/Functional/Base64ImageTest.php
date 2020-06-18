@@ -24,6 +24,11 @@ class Base64ImageTest extends BrowserTestBase {
   public static $modules = ['user', 'node', 'image', 'entity_print_test'];
 
   /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'stark';
+
+  /**
    * The node we're printing.
    *
    * @var \Drupal\node\Entity\Node
@@ -40,7 +45,7 @@ class Base64ImageTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
     $this->createContentType(['type' => 'page']);
 
@@ -93,7 +98,7 @@ class Base64ImageTest extends BrowserTestBase {
 
     // Ensure the image is rendered as a base64 encoded image.
     $base64_image = base64_encode($this->imageContents);
-    $this->assertContains("data:image/jpeg;charset=utf-8;base64,$base64_image", $html);
+    $this->assertStringContainsString("data:image/jpeg;charset=utf-8;base64,$base64_image", $html);
   }
 
 }

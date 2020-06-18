@@ -12,8 +12,7 @@
     }
   ],
   "require": {
-    "dompdf/dompdf": "~0.8.0",
-    "drupal/core": "^8 || ^9"
+    "dompdf/dompdf": "~0.8.0"
   },
   "suggest": {
     "mikehaertl/phpwkhtmltopdf": "PhpWkhtmlToPdf provides the PHP library to use Wkhtmltopdf"

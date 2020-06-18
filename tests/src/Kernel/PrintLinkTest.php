@@ -5,7 +5,7 @@ namespace Drupal\Tests\entity_print\Kernel;
 use Drupal\Core\Plugin\Context\Context;
 use Drupal\Core\Plugin\Context\ContextDefinition;
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\simpletest\BlockCreationTrait;
+use Drupal\Tests\block\Traits\BlockCreationTrait;
 
 /**
  * Test the print links block.

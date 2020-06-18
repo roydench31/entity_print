@@ -4,13 +4,14 @@ namespace Drupal\entity_print_views\Renderer;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\entity_print\Renderer\RendererBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Providers a renderer for Views.
  */
-class ViewRenderer extends RendererBase {
+class ViewRenderer extends RendererBase implements TrustedCallbackInterface {
 
   /**
    * {@inheritdoc}
@@ -74,6 +75,13 @@ class ViewRenderer extends RendererBase {
     // Remove the exposed filters, we don't every want them on the PDF.
     $element['#exposed'] = [];
     return $element;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function trustedCallbacks() {
+    return ['preRender'];
   }
 
 }
