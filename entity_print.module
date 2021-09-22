@@ -86,7 +86,7 @@ function entity_print_entity_view_alter(array &$build, EntityInterface $entity, 
         '#title' => $display->getThirdPartySetting('entity_print', $export_type . '_label', t('View @label', ['@label' => $definition['label']])),
         '#export_type' => $export_type,
         '#url' => Url::fromRoute('entity_print.view', $route_params),
-        '#weight' => $component['weight'],
+        '#weight' => $component['weight'] ?? 0,
         '#access' => $access_manager->checkNamedRoute('entity_print.view', $route_params, NULL, TRUE),
       ];
     }
