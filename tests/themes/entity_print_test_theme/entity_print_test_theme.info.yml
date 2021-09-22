@@ -4,9 +4,9 @@ description: Test theme for testing Entity Print CSS
 hidden: true
 package: Testing
 base theme: stark
-
 entity_print:
   all: entity_print_test_theme/all
   node:
     all: entity_print_test_theme/node
-    page: entity_print_test_theme/page
+    # @see entity_print_test_system_info_alter
+    # page: entity_print_test_theme/page
