@@ -3,4 +3,4 @@ type: module
 package: Testing
 hidden: true
 dependencies:
-  - entity_print
+  - entity_print:entity_print
