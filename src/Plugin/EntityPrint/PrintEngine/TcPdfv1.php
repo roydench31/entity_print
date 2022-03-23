@@ -96,6 +96,16 @@ class TcPdfv1 extends PrintEngineBase {
     // browser.
     $this->tcpdf->Output($filename, $force_download ? 'D' : 'I');
   }
+  
+     /**
+   * {@inheritdoc}
+   */
+  public function save($filename, $force_download = TRUE) {
+    // If we have a filename then we force the download otherwise we open in the
+    // browser.
+    $this->tcpdf->Output($filename, $force_download ? 'D' : 'I');
+  }
+
 
   /**
    * {@inheritdoc}
