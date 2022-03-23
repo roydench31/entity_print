@@ -67,6 +67,19 @@ class PrintBuilder implements PrintBuilderInterface {
   /**
    * {@inheritdoc}
    */
+  public function saveFile(array $entities, PrintEngineInterface $print_engine, $force_download = FALSE, $use_default_css = TRUE) {
+    $renderer = $this->prepareRenderer($entities, $print_engine, $use_default_css);
+
+    // Allow other modules to alter the generated Print object.
+    $this->dispatcher->dispatch(PrintEvents::PRE_SEND, new PreSendPrintEvent($print_engine, $entities));
+
+    $filename = 'Catálogo';
+    return $print_engine->save($filename, $force_download);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function printHtml(EntityInterface $entity, $use_default_css = TRUE, $optimize_css = TRUE) {
     $renderer = $this->rendererFactory->create([$entity]);
     $content[] = $renderer->render([$entity]);
