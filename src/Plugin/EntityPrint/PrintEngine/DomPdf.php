@@ -209,6 +209,37 @@ class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
     // otherwise attempt to have it downloaded.
     $this->dompdf->stream($filename, ['Attachment' => $force_download]);
   }
+  
+  /**
+   * {@inheritdoc}
+   */
+  public function save($filename, $force_download = TRUE) {
+    $this->doRender();
+
+    // Dompdf doesn't have a return value for send so just check the error
+    // global it provides.
+    if ($errors = $this->getError()) {
+      throw new PrintEngineException(sprintf('Failed to generate PDF: %s', $errors));
+    }
+
+    // Assign a dinamic name
+    $filename = "document-".date("zYGis").".pdf";
+    $folder = "sites/default/files/documents";
+
+    // If folder doesn't exist, create a new one
+    if (!is_dir($folder)) {
+      mkdir($folder);
+    }
+    $file = $folder . "/" . $filename;
+    $output = $this->dompdf->output();
+
+    // Save the file
+    file_put_contents($file, $output);
+
+    // return filename
+    return $file;
+  }
+
 
   /**
    * {@inheritdoc}
