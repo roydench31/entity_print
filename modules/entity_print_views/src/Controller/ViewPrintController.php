@@ -113,11 +113,18 @@ class ViewPrintController extends ControllerBase {
       return new RedirectResponse($url);
     }
 
+    // Save and redirect to the file location
+    return new RedirectResponse("/".$this->printBuilder->saveFile([$view], $print_engine, $config->get('force_download'), $config->get('default_css')));
+
+    /* Uncomment to return the rendered view
     return (new StreamedResponse(function () use ($view, $print_engine, $config) {
       // The printed document is sent straight to the browser.
       $this->printBuilder->deliverPrintable([$view], $print_engine, $config->get('force_download'), $config->get('default_css'));
     }))->send();
+    */
   }
+
+
 
   /**
    * Print the debug output.
