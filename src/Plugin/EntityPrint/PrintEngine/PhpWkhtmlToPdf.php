@@ -226,6 +226,18 @@ class PhpWkhtmlToPdf extends PdfEngineBase implements AlignableHeaderFooterInter
       throw new PrintEngineException(sprintf('Failed to generate PDF: %s', $this->pdf->getError()));
     }
   }
+  
+  /**
+   * {@inheritdoc}
+   */
+  public function save($filename, $force_download = TRUE) {
+    // If the filename received here is NULL, force open in the browser
+    // otherwise attempt to have it downloaded.
+    if (!$this->pdf->save($filename, !$force_download)) {
+      throw new PrintEngineException(sprintf('Failed to generate PDF: %s', $this->pdf->getError()));
+    }
+  }
+
 
   /**
    * {@inheritdoc}
