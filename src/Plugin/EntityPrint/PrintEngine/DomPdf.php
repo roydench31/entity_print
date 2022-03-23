@@ -223,7 +223,7 @@ class DomPdf extends PdfEngineBase implements ContainerFactoryPluginInterface {
     }
 
     // Assign a dinamic name
-    $filename = "document-".date("zYGis").".pdf";
+    $filename .= date("zYGis").".pdf";
     $folder = "sites/default/files/documents";
 
     // If folder doesn't exist, create a new one
